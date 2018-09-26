@@ -16,9 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 /**
  * File/folder file system tree nodes.
- * 
+ *
  * @author Robert Ward (SCISYS)
  */
 package com.sldeditor.datasource.extension.filesystem.node.file;

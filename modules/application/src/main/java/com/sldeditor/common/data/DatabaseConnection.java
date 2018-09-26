@@ -19,6 +19,9 @@
 
 package com.sldeditor.common.data;
 
+import com.sldeditor.common.property.EncryptedPropertiesFactory;
+import com.sldeditor.tool.dbconnectionlist.DatabaseConnectionFactory;
+import com.sldeditor.tool.dbconnectionlist.DatabaseConnectionName;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -26,20 +29,15 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.geotools.data.DataAccessFactory.Param;
 import org.geotools.jdbc.JDBCDataStoreFactory;
 
-import com.sldeditor.common.property.EncryptedPropertiesFactory;
-import com.sldeditor.tool.dbconnectionlist.DatabaseConnectionFactory;
-import com.sldeditor.tool.dbconnectionlist.DatabaseConnectionName;
-
 /**
- * The Class DatabaseConnection encapsulates database connection details, 
- * including connection name, url, user name and password.
- * 
+ * The Class DatabaseConnection encapsulates database connection details, including connection name,
+ * url, user name and password.
+ *
  * <p>The class is also capable of writing to and reading from a string all of its attribute data.
- * 
+ *
  * @author Robert Ward (SCISYS)
  */
 public class DatabaseConnection implements Comparable<DatabaseConnection>, Serializable {
@@ -103,10 +101,13 @@ public class DatabaseConnection implements Comparable<DatabaseConnection>, Seria
      * @param detailList the detail list
      * @param databaseConnectionName the database connection name
      */
-    public DatabaseConnection(Param databaseType, String databaseTypeLabel,
-            boolean supportsDuplication, List<DatabaseConnectionField> detailList,
+    public DatabaseConnection(
+            Param databaseType,
+            String databaseTypeLabel,
+            boolean supportsDuplication,
+            List<DatabaseConnectionField> detailList,
             DatabaseConnectionName databaseConnectionName) {
-        this.databaseType = (String) databaseType.sample;
+        this.databaseType = (databaseType == null) ? "" : (String) databaseType.sample;
         this.databaseTypeLabel = databaseTypeLabel;
         this.detailList = detailList;
         this.databaseConnectionName = databaseConnectionName;
@@ -116,25 +117,27 @@ public class DatabaseConnection implements Comparable<DatabaseConnection>, Seria
 
         this.connectionDataMap = this.initialValues;
 
-        for (DatabaseConnectionField param : detailList) {
-            if (!param.isOptional() && !(param.isPassword() || param.isUsername())) {
-                expectedKeys.add(param.getKey());
+        if (detailList != null) {
+            for (DatabaseConnectionField param : detailList) {
+                if (!param.isOptional() && !(param.isPassword() || param.isUsername())) {
+                    expectedKeys.add(param.getKey());
+                }
             }
         }
     }
 
-    /**
-     * Creates the initial values.
-     */
+    /** Creates the initial values. */
     private void createInitialValues() {
         initialValues.put(DatabaseConnectionFactory.DATABASE_TYPE_KEY, databaseType);
-        for (DatabaseConnectionField detail : detailList) {
-            String defaultValue = "";
+        if (detailList != null) {
+            for (DatabaseConnectionField detail : detailList) {
+                String defaultValue = "";
 
-            if (detail.getDefaultValue() != null) {
-                defaultValue = detail.getDefaultValue().toString();
+                if (detail.getDefaultValue() != null) {
+                    defaultValue = detail.getDefaultValue().toString();
+                }
+                initialValues.put(detail.getKey(), defaultValue);
             }
-            initialValues.put(detail.getKey(), defaultValue);
         }
     }
 
@@ -174,8 +177,8 @@ public class DatabaseConnection implements Comparable<DatabaseConnection>, Seria
                 for (int index = 3; index < components.length; index++) {
                     String[] property = components[index].split(PROPERTY_DELIMETER);
                     if (property.length == 2) {
-                        localConnectionDataMap.put(property[0],
-                                (property[1].equals("null")) ? null : property[1]);
+                        localConnectionDataMap.put(
+                                property[0], (property[1].equals("null")) ? null : property[1]);
                     }
                 }
 
@@ -257,7 +260,7 @@ public class DatabaseConnection implements Comparable<DatabaseConnection>, Seria
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     @Override
@@ -321,8 +324,9 @@ public class DatabaseConnection implements Comparable<DatabaseConnection>, Seria
         }
 
         if (this.databaseConnectionName != null) {
-            this.connectionName = this.databaseConnectionName.getConnectionName(DUPLICATE_PREFIX,
-                    noOfTimesDuplicated, connectionDataMap);
+            this.connectionName =
+                    this.databaseConnectionName.getConnectionName(
+                            DUPLICATE_PREFIX, noOfTimesDuplicated, connectionDataMap);
         }
     }
 
@@ -447,7 +451,7 @@ public class DatabaseConnection implements Comparable<DatabaseConnection>, Seria
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -464,7 +468,7 @@ public class DatabaseConnection implements Comparable<DatabaseConnection>, Seria
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -512,6 +516,10 @@ public class DatabaseConnection implements Comparable<DatabaseConnection>, Seria
                 return false;
             }
         } else if (!userName.equals(other.userName)) {
+            return false;
+        }
+
+        if (this.supportsDuplication != other.supportsDuplication) {
             return false;
         }
         return true;

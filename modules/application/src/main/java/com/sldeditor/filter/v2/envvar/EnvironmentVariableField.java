@@ -19,40 +19,36 @@
 
 package com.sldeditor.filter.v2.envvar;
 
-import java.awt.BorderLayout;
+import com.sldeditor.common.console.ConsoleManager;
+import com.sldeditor.common.localisation.Localisation;
+import com.sldeditor.common.vendoroption.GeoServerVendorOption;
+import com.sldeditor.common.vendoroption.VendorOptionVersion;
+import com.sldeditor.common.vendoroption.VersionData;
+import com.sldeditor.filter.v2.envvar.dialog.EnvVarDlg;
+import com.sldeditor.ui.attribute.DataSourceAttributePanel;
+import com.sldeditor.ui.attribute.SubPanelUpdatedInterface;
+import com.sldeditor.ui.detail.BasePanel;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
-
 import org.geotools.filter.LiteralExpressionImpl;
 import org.geotools.filter.function.EnvFunction;
 import org.opengis.filter.expression.Expression;
 
-import com.sldeditor.common.console.ConsoleManager;
-import com.sldeditor.common.localisation.Localisation;
-import com.sldeditor.common.undo.UndoActionInterface;
-import com.sldeditor.common.undo.UndoEvent;
-import com.sldeditor.common.undo.UndoInterface;
-import com.sldeditor.common.undo.UndoManager;
-import com.sldeditor.common.vendoroption.GeoServerVendorOption;
-import com.sldeditor.common.vendoroption.VendorOptionVersion;
-import com.sldeditor.common.vendoroption.VersionData;
-import com.sldeditor.filter.v2.envvar.dialog.EnvVarDlg;
-import com.sldeditor.ui.attribute.SubPanelUpdatedInterface;
-
 /**
  * Panel to be able to edit EnvironmentVariableField objects.
- * 
+ *
  * @author Robert Ward (SCISYS)
  */
-public class EnvironmentVariableField extends JPanel implements UndoActionInterface {
+public class EnvironmentVariableField extends JPanel {
 
     /** The Constant ENVVARFIELD_PANEL. */
     private static final String ENVVARFIELD_PANEL = "EnvVarField";
@@ -65,9 +61,6 @@ public class EnvironmentVariableField extends JPanel implements UndoActionInterf
 
     /** The env var map. */
     private Map<String, EnvVar> envVarMap = new LinkedHashMap<String, EnvVar>();
-
-    /** The old value obj. */
-    private Object oldValueObj = null;
 
     /** The env var mgr. */
     private EnvironmentManagerInterface envVarMgr = null;
@@ -87,45 +80,44 @@ public class EnvironmentVariableField extends JPanel implements UndoActionInterf
      * @param parentObj the parent obj
      * @param envVarMgr the env var mgr
      */
-    public EnvironmentVariableField(SubPanelUpdatedInterface parentObj,
-            EnvironmentManagerInterface envVarMgr) {
-        final UndoActionInterface thisObj = this;
+    public EnvironmentVariableField(
+            SubPanelUpdatedInterface parentObj, EnvironmentManagerInterface envVarMgr) {
         this.envVarMgr = envVarMgr;
-
-        setLayout(new BorderLayout(5, 0));
+        setPreferredSize(new Dimension(300, BasePanel.WIDGET_HEIGHT));
+        setMinimumSize(new Dimension(300, BasePanel.WIDGET_HEIGHT));
+        setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
 
         envVarComboBox = new JComboBox<String>();
-        add(envVarComboBox, BorderLayout.CENTER);
-        envVarComboBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        add(envVarComboBox);
+        envVarComboBox.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
 
-                String newValueObj = (String) envVarComboBox.getSelectedItem();
+                        if (parentObj != null) {
+                            parentObj.updateSymbol();
+                        }
+                    }
+                });
+        envVarComboBox.setPreferredSize(
+                new Dimension(BasePanel.WIDGET_EXTENDED_WIDTH, BasePanel.WIDGET_HEIGHT));
 
-                UndoManager.getInstance()
-                        .addUndoEvent(new UndoEvent(thisObj, "EnvVar", oldValueObj, newValueObj));
-
-                if (parentObj != null) {
-                    parentObj.updateSymbol();
-                }
-            }
-        });
-
-        JButton editButton = new JButton(
-                Localisation.getString(EnvVarDlg.class, "EnvironmentVariableField.edit"));
-        editButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (envVarMgr.showDialog()) {
-                    populateFunctionComboBox();
-                }
-            }
-        });
-        add(editButton, BorderLayout.EAST);
-
+        JButton editButton =
+                new JButton(
+                        Localisation.getString(EnvVarDlg.class, "EnvironmentVariableField.edit"));
+        editButton.setPreferredSize(
+                new Dimension(BasePanel.WIDGET_BUTTON_WIDTH, BasePanel.WIDGET_HEIGHT));
+        editButton.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        if (envVarMgr.showDialog()) {
+                            populateFunctionComboBox();
+                        }
+                    }
+                });
+        add(editButton);
     }
 
-    /**
-     * Populate function combo box.
-     */
+    /** Populate function combo box. */
     private void populateFunctionComboBox() {
         if (envVarComboBox != null) {
             DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
@@ -166,19 +158,21 @@ public class EnvironmentVariableField extends JPanel implements UndoActionInterf
 
         if (expression instanceof EnvFunction) {
             EnvFunction envFunction = (EnvFunction) expression;
-            LiteralExpressionImpl literal = (LiteralExpressionImpl) envFunction.getParameters()
-                    .get(0);
-            oldValueObj = literal;
+            LiteralExpressionImpl literal =
+                    (LiteralExpressionImpl) envFunction.getParameters().get(0);
 
             envVarComboBox.setSelectedItem(literal.getValue());
         } else if (expression instanceof LiteralExpressionImpl) {
             LiteralExpressionImpl literal = (LiteralExpressionImpl) expression;
-            oldValueObj = literal;
 
             envVarComboBox.setSelectedItem(literal.getValue());
         } else {
-            ConsoleManager.getInstance().error(this, Localisation
-                    .getString(EnvironmentVariableField.class, "DataSourceAttributePanel.error1"));
+            ConsoleManager.getInstance()
+                    .error(
+                            this,
+                            Localisation.getString(
+                                    DataSourceAttributePanel.class,
+                                    "DataSourceAttributePanel.error1"));
         }
     }
 
@@ -198,49 +192,16 @@ public class EnvironmentVariableField extends JPanel implements UndoActionInterf
     }
 
     /**
-     * Undo action.
-     *
-     * @param undoRedoObject the undo redo object
-     */
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.sldeditor.undo.UndoActionInterface#undoAction(com.sldeditor.undo.UndoInterface)
-     */
-    @Override
-    public void undoAction(UndoInterface undoRedoObject) {
-        String oldValueObj = (String) undoRedoObject.getOldValue();
-
-        envVarComboBox.setSelectedItem(oldValueObj);
-    }
-
-    /**
-     * Redo action.
-     *
-     * @param undoRedoObject the undo redo object
-     */
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.sldeditor.undo.UndoActionInterface#redoAction(com.sldeditor.undo.UndoInterface)
-     */
-    @Override
-    public void redoAction(UndoInterface undoRedoObject) {
-        String newValueObj = (String) undoRedoObject.getNewValue();
-
-        envVarComboBox.setSelectedItem(newValueObj);
-    }
-
-    /**
      * Gets the vendor option.
      *
      * @return the vendor option
      */
     public static VendorOptionVersion getVendorOption() {
-        VendorOptionVersion vendorOptionVersion = new VendorOptionVersion(
-                GeoServerVendorOption.class,
-                VersionData.decode(GeoServerVendorOption.class, "2.0.2"),
-                VersionData.getLatestVersion(GeoServerVendorOption.class));
+        VendorOptionVersion vendorOptionVersion =
+                new VendorOptionVersion(
+                        GeoServerVendorOption.class,
+                        VersionData.decode(GeoServerVendorOption.class, "2.0.2"),
+                        VersionData.getLatestVersion(GeoServerVendorOption.class));
         return vendorOptionVersion;
     }
 

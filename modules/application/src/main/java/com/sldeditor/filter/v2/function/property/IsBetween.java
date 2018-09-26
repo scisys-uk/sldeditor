@@ -19,33 +19,28 @@
 
 package com.sldeditor.filter.v2.function.property;
 
-import java.util.List;
-
-import org.geotools.filter.IsBetweenImpl;
-import org.opengis.filter.Filter;
-import org.opengis.filter.expression.Expression;
-
 import com.sldeditor.filter.v2.expression.ExpressionTypeEnum;
+import com.sldeditor.filter.v2.function.FilterBase;
 import com.sldeditor.filter.v2.function.FilterConfigInterface;
 import com.sldeditor.filter.v2.function.FilterExtendedInterface;
 import com.sldeditor.filter.v2.function.FilterName;
 import com.sldeditor.filter.v2.function.FilterNameParameter;
+import java.util.List;
+import org.geotools.filter.IsBetweenImpl;
+import org.opengis.filter.Filter;
+import org.opengis.filter.expression.Expression;
 
 /**
  * The Class IsBetween.
  *
  * @author Robert Ward (SCISYS)
  */
-public class IsBetween implements FilterConfigInterface {
+public class IsBetween extends FilterBase implements FilterConfigInterface {
 
-    /**
-     * The Class IsBetweenExtended.
-     */
+    /** The Class IsBetweenExtended. */
     public class IsBetweenExtended extends IsBetweenImpl implements FilterExtendedInterface {
 
-        /**
-         * Instantiates a new checks if is between extended.
-         */
+        /** Instantiates a new checks if is between extended. */
         public IsBetweenExtended() {
             super(null, null, null);
         }
@@ -63,7 +58,7 @@ public class IsBetween implements FilterConfigInterface {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.sldeditor.filter.v2.function.FilterExtendedInterface#getOriginalFilter()
          */
         @Override
@@ -72,10 +67,9 @@ public class IsBetween implements FilterConfigInterface {
         }
     }
 
-    /**
-     * Default constructor.
-     */
-    public IsBetween() {
+    /** Default constructor. */
+    public IsBetween(String category) {
+        super(category);
     }
 
     /**
@@ -129,8 +123,9 @@ public class IsBetween implements FilterConfigInterface {
         if ((parameterList == null) || (parameterList.size() != 3)) {
             filter = new IsBetweenExtended();
         } else {
-            filter = new IsBetweenExtended(parameterList.get(0), parameterList.get(1),
-                    parameterList.get(2));
+            filter =
+                    new IsBetweenExtended(
+                            parameterList.get(0), parameterList.get(1), parameterList.get(2));
         }
 
         return filter;

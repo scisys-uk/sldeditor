@@ -19,26 +19,30 @@
 
 package com.sldeditor.test.unit.filter.v2.expression;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.sldeditor.common.vendoroption.VersionData;
+import com.sldeditor.datasource.impl.GeometryTypeEnum;
+import com.sldeditor.filter.v2.expression.ExpressionPanelv2;
+import java.util.ArrayList;
 import java.util.List;
-
 import org.geotools.factory.CommonFactoryFinder;
-import org.junit.Test;
+import org.geotools.filter.FunctionExpression;
+import org.geotools.filter.FunctionImpl;
+import org.geotools.filter.function.Collection_AverageFunction;
+import org.geotools.filter.function.string.ConcatenateFunction;
+import org.junit.jupiter.api.Test;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 
-import com.sldeditor.common.vendoroption.VersionData;
-import com.sldeditor.filter.v2.expression.ExpressionPanelv2;
-
 /**
  * Unit test for ExpressionPanelv2 class.
- * 
- * <p>{@link com.sldeditor.filter.v2.expression.ExpressionPanelv2}
- * 
- * @author Robert Ward (SCISYS)
  *
+ * <p>{@link com.sldeditor.filter.v2.expression.ExpressionPanelv2}
+ *
+ * @author Robert Ward (SCISYS)
  */
 public class ExpressionPanelv2Test {
 
@@ -53,7 +57,7 @@ public class ExpressionPanelv2Test {
          * @param vendorOptionList the vendor option list
          */
         public TestExpressionPanelv2(List<VersionData> vendorOptionList) {
-            super(vendorOptionList);
+            super(vendorOptionList, false);
         }
 
         public void testShowExpressionDialog(Class<?> type, Expression expression) {
@@ -66,10 +70,11 @@ public class ExpressionPanelv2Test {
     }
 
     /**
-     * Test method for {@link com.sldeditor.filter.v2.expression.ExpressionPanelv2#ExpressionPanelv2(java.util.List)}.
+     * Test method for {@link
+     * com.sldeditor.filter.v2.expression.ExpressionPanelv2#ExpressionPanelv2(java.util.List)}.
      */
     @Test
-    public void testExpressionPanelv2() {
+    public void testExpressionPanelv2Property() {
 
         TestExpressionPanelv2 testObj = new TestExpressionPanelv2(null);
 
@@ -81,7 +86,75 @@ public class ExpressionPanelv2Test {
         testObj.testShowExpressionDialog(null, null);
 
         FilterFactory ff = CommonFactoryFinder.getFilterFactory();
+
         Expression expectedExpression = ff.add(ff.property("field"), ff.literal(42));
+
+        testObj.populate(expectedExpression);
+        testObj.testShowExpressionDialog(Integer.class, expectedExpression);
+
+        assertEquals(testObj.getExpression().toString(), testObj.getExpressionString());
+
+        testObj.dataSourceLoaded(GeometryTypeEnum.POLYGON, true);
+        testObj.dataApplied();
+        testObj.testSelection();
+    }
+
+    /**
+     * Test method for {@link
+     * com.sldeditor.filter.v2.expression.ExpressionPanelv2#ExpressionPanelv2(java.util.List)}.
+     */
+    @Test
+    public void testExpressionPanelv2Concatenate() {
+
+        TestExpressionPanelv2 testObj = new TestExpressionPanelv2(null);
+
+        assertNull(testObj.getVendorOptionList());
+        testObj.dataSourceAboutToUnloaded(null);
+        testObj.populate((String) null);
+        testObj.configure("title", String.class, false);
+
+        testObj.testShowExpressionDialog(null, null);
+
+        FilterFactory ff = CommonFactoryFinder.getFilterFactory();
+
+        FunctionImpl expectedExpression = new ConcatenateFunction();
+        List<Expression> params = new ArrayList<Expression>();
+        params.add(ff.literal("world"));
+        params.add(ff.literal("dog"));
+        expectedExpression.setParameters(params);
+
+        testObj.populate(expectedExpression);
+        testObj.testShowExpressionDialog(String.class, expectedExpression);
+
+        assertEquals(testObj.getExpression().toString(), testObj.getExpressionString());
+
+        testObj.dataApplied();
+        testObj.testSelection();
+    }
+
+    /**
+     * Test method for {@link
+     * com.sldeditor.filter.v2.expression.ExpressionPanelv2#ExpressionPanelv2(java.util.List)}.
+     */
+    @Test
+    public void testExpressionPanelv2FunctionExpression() {
+
+        TestExpressionPanelv2 testObj = new TestExpressionPanelv2(null);
+
+        assertNull(testObj.getVendorOptionList());
+        testObj.dataSourceAboutToUnloaded(null);
+        testObj.populate((String) null);
+        testObj.configure("title", String.class, false);
+
+        testObj.testShowExpressionDialog(null, null);
+
+        FilterFactory ff = CommonFactoryFinder.getFilterFactory();
+
+        FunctionExpression expectedExpression = new Collection_AverageFunction();
+        List<Expression> params = new ArrayList<Expression>();
+        params.add(ff.literal(1));
+        expectedExpression.setParameters(params);
+
         testObj.populate(expectedExpression);
         testObj.testShowExpressionDialog(Integer.class, expectedExpression);
 
@@ -91,4 +164,31 @@ public class ExpressionPanelv2Test {
         testObj.testSelection();
     }
 
+    /**
+     * Test method for {@link
+     * com.sldeditor.filter.v2.expression.ExpressionPanelv2#ExpressionPanelv2(java.util.List)}.
+     */
+    @Test
+    public void testExpressionPanelv2Null() {
+
+        TestExpressionPanelv2 testObj = new TestExpressionPanelv2(null);
+
+        assertNull(testObj.getVendorOptionList());
+        testObj.dataSourceAboutToUnloaded(null);
+        testObj.populate((String) null);
+        testObj.configure("title", String.class, false);
+
+        testObj.testShowExpressionDialog(null, null);
+
+        FunctionExpression expectedExpression = null;
+
+        testObj.populate(expectedExpression);
+        testObj.testShowExpressionDialog(Integer.class, expectedExpression);
+
+        assertNull(testObj.getExpression());
+        assertTrue(testObj.getExpressionString().isEmpty());
+
+        testObj.dataApplied();
+        testObj.testSelection();
+    }
 }

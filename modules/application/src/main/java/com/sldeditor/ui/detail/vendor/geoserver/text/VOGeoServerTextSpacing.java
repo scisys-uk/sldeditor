@@ -19,16 +19,6 @@
 
 package com.sldeditor.ui.detail.vendor.geoserver.text;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.geotools.styling.FeatureTypeStyle;
-import org.geotools.styling.PolygonSymbolizer;
-import org.geotools.styling.RasterSymbolizer;
-import org.geotools.styling.TextSymbolizer;
-
-import com.sldeditor.common.console.ConsoleManager;
 import com.sldeditor.common.data.SelectedSymbol;
 import com.sldeditor.common.localisation.Localisation;
 import com.sldeditor.common.vendoroption.VendorOptionVersion;
@@ -37,18 +27,26 @@ import com.sldeditor.common.vendoroption.minversion.VendorOptionPresent;
 import com.sldeditor.common.xml.ui.FieldIdEnum;
 import com.sldeditor.ui.detail.GraphicPanelFieldManager;
 import com.sldeditor.ui.detail.StandardPanel;
-import com.sldeditor.ui.detail.config.FieldConfigBase;
-import com.sldeditor.ui.detail.config.FieldConfigDouble;
+import com.sldeditor.ui.detail.vendor.VOPopulation;
 import com.sldeditor.ui.detail.vendor.geoserver.VendorOptionInterface;
 import com.sldeditor.ui.iface.PopulateDetailsInterface;
 import com.sldeditor.ui.iface.UpdateSymbolInterface;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.geotools.styling.FeatureTypeStyle;
+import org.geotools.styling.PolygonSymbolizer;
+import org.geotools.styling.RasterSymbolizer;
+import org.geotools.styling.SelectedChannelType;
+import org.geotools.styling.TextSymbolizer;
 
 /**
- * Class to handle the getting and setting of GeoServer label word/character spacing vendor option data.
- * 
+ * Class to handle the getting and setting of GeoServer label word/character spacing vendor option
+ * data.
+ *
  * @author Robert Ward (SCISYS)
  */
-public class VOGeoServerTextSpacing extends StandardPanel
+public class VOGeoServerTextSpacing extends VOPopulation
         implements VendorOptionInterface, PopulateDetailsInterface, UpdateSymbolInterface {
 
     /** The Constant PANEL_CONFIG. */
@@ -80,9 +78,7 @@ public class VOGeoServerTextSpacing extends StandardPanel
         createUI();
     }
 
-    /**
-     * Creates the ui.
-     */
+    /** Creates the ui. */
     private void createUI() {
         readConfigFileNoScrollPane(null, getPanelId(), this, PANEL_CONFIG);
     }
@@ -94,7 +90,7 @@ public class VOGeoServerTextSpacing extends StandardPanel
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.vendor.geoserver.VendorOptionInterface#getVendorOption()
      */
     @Override
@@ -109,8 +105,10 @@ public class VOGeoServerTextSpacing extends StandardPanel
      */
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.ui.iface.UpdateSymbolInterface#dataChanged(com.sldeditor.ui.detail.config.xml.FieldId)
+     *
+     * @see
+     * com.sldeditor.ui.iface.UpdateSymbolInterface#dataChanged(com.sldeditor.ui.detail.config.xml.
+     * FieldId)
      */
     @Override
     public void dataChanged(FieldIdEnum changedField) {
@@ -126,8 +124,9 @@ public class VOGeoServerTextSpacing extends StandardPanel
      */
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.ui.iface.PopulateDetailsInterface#populate(com.sldeditor.ui.detail.selectedsymbol.SelectedSymbol)
+     *
+     * @see com.sldeditor.ui.iface.PopulateDetailsInterface#populate(com.sldeditor.ui.detail.
+     * selectedsymbol.SelectedSymbol)
      */
     @Override
     public void populate(SelectedSymbol selectedSymbol) {
@@ -141,8 +140,10 @@ public class VOGeoServerTextSpacing extends StandardPanel
      */
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.ui.detail.vendor.geoserver.VendorOptionInterface#populate(org.geotools.styling.TextSymbolizer)
+     *
+     * @see
+     * com.sldeditor.ui.detail.vendor.geoserver.VendorOptionInterface#populate(org.geotools.styling.
+     * TextSymbolizer)
      */
     @Override
     public void populate(TextSymbolizer textSymbolizer) {
@@ -157,8 +158,10 @@ public class VOGeoServerTextSpacing extends StandardPanel
 
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.ui.detail.vendor.geoserver.VendorOptionInterface#populate(org.geotools.styling.RasterSymbolizer)
+     *
+     * @see
+     * com.sldeditor.ui.detail.vendor.geoserver.VendorOptionInterface#populate(org.geotools.styling.
+     * RasterSymbolizer)
      */
     @Override
     public void populate(RasterSymbolizer rasterSymbolizer) {
@@ -167,8 +170,10 @@ public class VOGeoServerTextSpacing extends StandardPanel
 
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.ui.detail.vendor.geoserver.VendorOptionInterface#populate(org.geotools.styling.FeatureTypeStyle)
+     *
+     * @see
+     * com.sldeditor.ui.detail.vendor.geoserver.VendorOptionInterface#populate(org.geotools.styling.
+     * FeatureTypeStyle)
      */
     @Override
     public void populate(FeatureTypeStyle featureTypeStyle) {
@@ -182,8 +187,10 @@ public class VOGeoServerTextSpacing extends StandardPanel
      */
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.ui.detail.vendor.geoserver.VendorOptionInterface#populate(org.geotools.styling.PolygonSymbolizer)
+     *
+     * @see
+     * com.sldeditor.ui.detail.vendor.geoserver.VendorOptionInterface#populate(org.geotools.styling.
+     * PolygonSymbolizer)
      */
     @Override
     public void populate(PolygonSymbolizer polygonSymbolizer) {
@@ -197,7 +204,7 @@ public class VOGeoServerTextSpacing extends StandardPanel
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.iface.PopulateDetailsInterface#getFieldDataManager()
      */
     @Override
@@ -205,46 +212,12 @@ public class VOGeoServerTextSpacing extends StandardPanel
         return this.fieldConfigManager;
     }
 
-    /**
-     * Internal populate.
-     *
-     * @param options the options
-     * @param field the field
-     * @param key the key
-     */
-    private void internalPopulate(Map<String, String> options, FieldIdEnum field, String key) {
-        FieldConfigBase fieldConfig = fieldConfigManager.get(field);
-
-        if (fieldConfig instanceof FieldConfigDouble) {
-            internal_populateDoubleField(options, field, key);
-        } else {
-            ConsoleManager.getInstance().error(this,
-                    "Unsupported field type : " + field + " " + fieldConfig.getClass().getName());
-        }
-    }
-
-    /**
-     * Internal_populate double field.
-     *
-     * @param options the options
-     * @param fieldId the field id
-     * @param key the key
-     */
-    private void internal_populateDoubleField(Map<String, String> options, FieldIdEnum fieldId,
-            String key) {
-        if ((options != null) && options.containsKey(key)) {
-            String storedValue = options.get(key);
-            Double value = Double.valueOf(storedValue);
-            fieldConfigVisitor.populateDoubleField(fieldId, value);
-        } else {
-            setDefaultValue(fieldId);
-        }
-    }
-
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.ui.detail.vendor.geoserver.VendorOptionInterface#updateSymbol(org.geotools.styling.RasterSymbolizer)
+     *
+     * @see
+     * com.sldeditor.ui.detail.vendor.geoserver.VendorOptionInterface#updateSymbol(org.geotools.
+     * styling.RasterSymbolizer)
      */
     @Override
     public void updateSymbol(RasterSymbolizer rasterSymbolizer) {
@@ -258,8 +231,10 @@ public class VOGeoServerTextSpacing extends StandardPanel
      */
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.ui.detail.vendor.geoserver.VendorOptionInterface#updateSymbol(org.geotools.styling.PolygonSymbolizer)
+     *
+     * @see
+     * com.sldeditor.ui.detail.vendor.geoserver.VendorOptionInterface#updateSymbol(org.geotools.
+     * styling.PolygonSymbolizer)
      */
     @Override
     public void updateSymbol(PolygonSymbolizer polygonSymbolizer) {
@@ -273,8 +248,10 @@ public class VOGeoServerTextSpacing extends StandardPanel
      */
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.ui.detail.vendor.geoserver.VendorOptionInterface#updateSymbol(org.geotools.styling.TextSymbolizer)
+     *
+     * @see
+     * com.sldeditor.ui.detail.vendor.geoserver.VendorOptionInterface#updateSymbol(org.geotools.
+     * styling.TextSymbolizer)
      */
     @Override
     public void updateSymbol(TextSymbolizer textSymbolizer) {
@@ -289,50 +266,14 @@ public class VOGeoServerTextSpacing extends StandardPanel
 
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.ui.detail.vendor.geoserver.VendorOptionInterface#updateSymbol(org.geotools.styling.FeatureTypeStyle)
+     *
+     * @see
+     * com.sldeditor.ui.detail.vendor.geoserver.VendorOptionInterface#updateSymbol(org.geotools.
+     * styling.FeatureTypeStyle)
      */
     @Override
     public void updateSymbol(FeatureTypeStyle featureTypeStyle) {
         // Do nothing
-    }
-
-    /**
-     * Internal update symbol.
-     *
-     * @param options the options
-     * @param field the field
-     * @param key the key
-     */
-    private void internalUpdateSymbol(Map<String, String> options, FieldIdEnum field, String key) {
-        FieldConfigBase fieldConfig = fieldConfigManager.get(field);
-
-        if (fieldConfig instanceof FieldConfigDouble) {
-            internal_updateSymbolDoubleField(options, field, key);
-        } else {
-            ConsoleManager.getInstance().error(this,
-                    "Unsupported field type : " + field + " " + fieldConfig.getClass().getName());
-        }
-    }
-
-    /**
-     * Internal_update symbol double field.
-     *
-     * @param options the options
-     * @param field the field
-     * @param key the key
-     */
-    private void internal_updateSymbolDoubleField(Map<String, String> options, FieldIdEnum field,
-            String key) {
-        double value = fieldConfigVisitor.getDouble(field);
-
-        Double defaultValue = (Double) getDefaultFieldValue(field);
-
-        if (defaultValue == null) {
-            ConsoleManager.getInstance().error(this, "Failed to find default for field : " + field);
-        } else if (value != defaultValue) {
-            options.put(key, String.valueOf(value));
-        }
     }
 
     /**
@@ -342,7 +283,7 @@ public class VOGeoServerTextSpacing extends StandardPanel
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.vendor.geoserver.VendorOptionInterface#getPanel()
      */
     @Override
@@ -357,8 +298,10 @@ public class VOGeoServerTextSpacing extends StandardPanel
      */
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.ui.detail.vendor.geoserver.VendorOptionInterface#setParentPanel(com.sldeditor.ui.iface.UpdateSymbolInterface)
+     *
+     * @see
+     * com.sldeditor.ui.detail.vendor.geoserver.VendorOptionInterface#setParentPanel(com.sldeditor.
+     * ui.iface.UpdateSymbolInterface)
      */
     @Override
     public void setParentPanel(UpdateSymbolInterface parent) {
@@ -372,7 +315,7 @@ public class VOGeoServerTextSpacing extends StandardPanel
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.iface.PopulateDetailsInterface#isDataPresent()
      */
     @Override
@@ -382,7 +325,7 @@ public class VOGeoServerTextSpacing extends StandardPanel
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.iface.PopulateDetailsInterface#initialseFields()
      */
     @Override
@@ -392,7 +335,7 @@ public class VOGeoServerTextSpacing extends StandardPanel
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.vendor.geoserver.VendorOptionInterface#getParentPanel()
      */
     @Override
@@ -402,29 +345,33 @@ public class VOGeoServerTextSpacing extends StandardPanel
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.vendor.geoserver.VendorOptionInterface#getVendorOptionInfo()
      */
     @Override
     public VendorOptionInfo getVendorOptionInfo() {
         if (vendorOptionInfo == null) {
-            vendorOptionInfo = new VendorOptionInfo(
-                    Localisation.getString(VOGeoServerTextSpacing.class,
-                            "geoserver.text.spacing.title"),
-                    this.getVendorOption(), Localisation.getString(VOGeoServerTextSpacing.class,
-                            "geoserver.text.spacing.description"));
+            vendorOptionInfo =
+                    new VendorOptionInfo(
+                            Localisation.getString(
+                                    VOGeoServerTextSpacing.class, "geoserver.text.spacing.title"),
+                            this.getVendorOption(),
+                            Localisation.getString(
+                                    VOGeoServerTextSpacing.class,
+                                    "geoserver.text.spacing.description"));
         }
         return vendorOptionInfo;
     }
 
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.ui.iface.PopulateDetailsInterface#getMinimumVersion(java.lang.Object, java.util.List)
+     *
+     * @see com.sldeditor.ui.iface.PopulateDetailsInterface#getMinimumVersion(java.lang.Object,
+     * java.util.List)
      */
     @Override
-    public void getMinimumVersion(Object parentObj, Object sldObj,
-            List<VendorOptionPresent> vendorOptionsPresentList) {
+    public void getMinimumVersion(
+            Object parentObj, Object sldObj, List<VendorOptionPresent> vendorOptionsPresentList) {
         if (sldObj instanceof TextSymbolizer) {
             TextSymbolizer textSymbolizer = (TextSymbolizer) sldObj;
             Map<String, String> options = textSymbolizer.getOptions();
@@ -433,12 +380,38 @@ public class VOGeoServerTextSpacing extends StandardPanel
                 String vendorOptionAttributeKey = fieldMap.get(key);
 
                 if (options.containsKey(vendorOptionAttributeKey)) {
-                    VendorOptionPresent voPresent = new VendorOptionPresent(sldObj,
-                            getVendorOptionInfo());
+                    VendorOptionPresent voPresent =
+                            new VendorOptionPresent(sldObj, getVendorOptionInfo());
 
-                    vendorOptionsPresentList.add(voPresent);
+                    if (vendorOptionsPresentList != null) {
+                        vendorOptionsPresentList.add(voPresent);
+                    }
                 }
             }
         }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * com.sldeditor.ui.detail.vendor.geoserver.VendorOptionInterface#populate(org.geotools.styling.
+     * SelectedChannelType)
+     */
+    @Override
+    public void populate(SelectedChannelType channelType) {
+        // Do nothing
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * com.sldeditor.ui.detail.vendor.geoserver.VendorOptionInterface#updateSymbol(org.geotools.
+     * styling.SelectedChannelType)
+     */
+    @Override
+    public void updateSymbol(SelectedChannelType channelType) {
+        // Do nothing
     }
 }

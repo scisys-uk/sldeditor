@@ -19,24 +19,22 @@
 
 package com.sldeditor.test.unit.ui.detail.config.symboltype.externalgraphic;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
+import com.sldeditor.ui.detail.config.symboltype.externalgraphic.RelativePath;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import org.junit.Test;
-
-import com.sldeditor.ui.detail.config.symboltype.externalgraphic.RelativePath;
+import org.junit.jupiter.api.Test;
 
 /**
  * The unit test for RelativePath.
- * 
+ *
  * <p>{@link com.sldeditor.ui.detail.config.symboltype.externalgraphic.RelativePath}
  *
  * @author Robert Ward (SCISYS)
@@ -44,7 +42,8 @@ import com.sldeditor.ui.detail.config.symboltype.externalgraphic.RelativePath;
 public class RelativePathTest {
 
     /**
-     * Test method for {@link com.sldeditor.ui.detail.config.symboltype.externalgraphic.RelativePath#isRelativePath(java.lang.String)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.symboltype.externalgraphic.RelativePath#isRelativePath(java.lang.String)}.
      */
     @Test
     public void testIsRelativePath() {
@@ -57,7 +56,9 @@ public class RelativePathTest {
     }
 
     /**
-     * Test method for {@link com.sldeditor.ui.detail.config.symboltype.externalgraphic.RelativePath#convert(java.net.URL, boolean)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.symboltype.externalgraphic.RelativePath#convert(java.net.URL,
+     * boolean)}.
      */
     @Test
     public void testConvert() {
@@ -88,16 +89,16 @@ public class RelativePathTest {
             assertEquals(urlString, actualResult);
 
         } catch (MalformedURLException e) {
-            e.printStackTrace();
-            fail();
+            fail(e.getStackTrace().toString());
         } catch (IOException e1) {
-            e1.printStackTrace();
-            fail();
+            fail(e1.getStackTrace().toString());
         }
     }
 
     /**
-     * Test method for {@link com.sldeditor.ui.detail.config.symboltype.externalgraphic.RelativePath#getRelativePath(java.io.File, java.io.File)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.symboltype.externalgraphic.RelativePath#getRelativePath(java.io.File,
+     * java.io.File)}.
      */
     @Test
     public void testGetRelativePath() {
@@ -116,4 +117,37 @@ public class RelativePathTest {
         assertEquals(filename, actualResult);
     }
 
+    @Test
+    public void testIsLocalFile() {
+        assertFalse(RelativePath.isLocalFile(null));
+
+        String urlString = "http://example.com/test";
+        try {
+            URL httpURL = new URL(urlString);
+            assertFalse(RelativePath.isLocalFile(httpURL));
+
+            File f = File.createTempFile("tst", ".txt");
+            URL fileURL = f.toURI().toURL();
+            assertTrue(RelativePath.isLocalFile(fileURL));
+            f.delete();
+        } catch (MalformedURLException e) {
+            fail(e.getMessage());
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testHasHost() {
+        assertFalse(RelativePath.hasHost(null));
+
+        try {
+            String urlString = "http://example.com/test";
+            URL httpURL = new URL(urlString);
+            assertTrue(RelativePath.hasHost(httpURL));
+
+        } catch (MalformedURLException e) {
+            fail(e.getMessage());
+        }
+    }
 }

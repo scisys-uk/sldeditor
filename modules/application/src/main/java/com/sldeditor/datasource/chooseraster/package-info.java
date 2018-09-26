@@ -18,7 +18,8 @@
  */
 
 /**
- * @author Robert Ward (SCISYS)
+ * Package containing GUI classes for the user to select the correct raster format.
  *
+ * @author Robert Ward (SCISYS)
  */
 package com.sldeditor.datasource.chooseraster;

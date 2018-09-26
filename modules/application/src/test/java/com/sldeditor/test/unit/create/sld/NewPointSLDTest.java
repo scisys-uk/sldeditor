@@ -17,30 +17,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 package com.sldeditor.test.unit.create.sld;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.sldeditor.create.sld.NewPointSLD;
 import org.geotools.styling.NamedLayer;
 import org.geotools.styling.PointSymbolizer;
 import org.geotools.styling.StyledLayer;
 import org.geotools.styling.StyledLayerDescriptor;
 import org.geotools.styling.Symbolizer;
-import org.junit.Test;
-
-import com.sldeditor.create.sld.NewPointSLD;
+import org.junit.jupiter.api.Test;
 
 /**
  * The Class NewPointSLD.
- * 
+ *
  * @author Robert Ward (SCISYS)
  */
 public class NewPointSLDTest {
 
-    /**
-     * Test new point sld.
-     */
+    /** Test new point sld. */
     @Test
     public void testNewPointSLD() {
         NewPointSLD newData = new NewPointSLD();
@@ -53,8 +49,16 @@ public class NewPointSLDTest {
 
         NamedLayer namedLayer = (NamedLayer) styledLayer;
 
-        Symbolizer symbolizer = namedLayer.styles().get(0).featureTypeStyles().get(0).rules().get(0)
-                .symbolizers().get(0);
+        Symbolizer symbolizer =
+                namedLayer
+                        .styles()
+                        .get(0)
+                        .featureTypeStyles()
+                        .get(0)
+                        .rules()
+                        .get(0)
+                        .symbolizers()
+                        .get(0);
 
         assertTrue(symbolizer instanceof PointSymbolizer);
     }

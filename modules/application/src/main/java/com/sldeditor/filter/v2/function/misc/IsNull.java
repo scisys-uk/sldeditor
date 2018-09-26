@@ -19,33 +19,28 @@
 
 package com.sldeditor.filter.v2.function.misc;
 
-import java.util.List;
-
-import org.geotools.filter.IsNullImpl;
-import org.opengis.filter.Filter;
-import org.opengis.filter.expression.Expression;
-
 import com.sldeditor.filter.v2.expression.ExpressionTypeEnum;
+import com.sldeditor.filter.v2.function.FilterBase;
 import com.sldeditor.filter.v2.function.FilterConfigInterface;
 import com.sldeditor.filter.v2.function.FilterExtendedInterface;
 import com.sldeditor.filter.v2.function.FilterName;
 import com.sldeditor.filter.v2.function.FilterNameParameter;
+import java.util.List;
+import org.geotools.filter.IsNullImpl;
+import org.opengis.filter.Filter;
+import org.opengis.filter.expression.Expression;
 
 /**
  * The Class IsNull.
  *
  * @author Robert Ward (SCISYS)
  */
-public class IsNull implements FilterConfigInterface {
+public class IsNull extends FilterBase implements FilterConfigInterface {
 
-    /**
-     * The Class IsNullExtended.
-     */
+    /** The Class IsNullExtended. */
     public class IsNullExtended extends IsNullImpl implements FilterExtendedInterface {
 
-        /**
-         * Instantiates a new checks if is null extended.
-         */
+        /** Instantiates a new checks if is null extended. */
         public IsNullExtended() {
             super(null);
         }
@@ -61,16 +56,16 @@ public class IsNull implements FilterConfigInterface {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see org.geotools.filter.CompareFilterImpl#toString()
          */
         public String toString() {
-            return "[ IsNull " + getExpression() + " ]";
+            return "[ " + getExpression() + " IS NULL ]";
         }
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.sldeditor.filter.v2.function.FilterExtendedInterface#getOriginalFilter()
          */
         @Override
@@ -79,10 +74,9 @@ public class IsNull implements FilterConfigInterface {
         }
     }
 
-    /**
-     * Default constructor.
-     */
-    public IsNull() {
+    /** Default constructor. */
+    public IsNull(String category) {
+        super(category);
     }
 
     /**

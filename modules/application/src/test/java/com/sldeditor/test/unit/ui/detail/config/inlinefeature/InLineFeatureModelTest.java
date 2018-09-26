@@ -19,24 +19,23 @@
 
 package com.sldeditor.test.unit.ui.detail.config.inlinefeature;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import org.geotools.styling.UserLayer;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.sldeditor.common.vendoroption.VendorOptionManager;
 import com.sldeditor.test.unit.datasource.impl.DummyInlineSLDFile;
 import com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel;
 import com.sldeditor.ui.detail.config.inlinefeature.InlineFeatureUpdateInterface;
 import com.sldeditor.ui.widgets.ValueComboBoxData;
+import org.geotools.styling.UserLayer;
+import org.junit.jupiter.api.Test;
 
 /**
  * The unit test for InLineFeatureModel.
- * 
+ *
  * <p>{@link com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel}
  *
  * @author Robert Ward (SCISYS)
@@ -60,8 +59,10 @@ public class InLineFeatureModelTest {
     }
 
     /**
-     * Test method for {@link com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#isCellEditable(int, int)}.
-     * Test method for {@link com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#InLineFeatureModel(com.sldeditor.ui.detail.config.inlinefeature.InlineFeatureUpdateInterface)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#isCellEditable(int, int)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#InLineFeatureModel(com.sldeditor.ui.detail.config.inlinefeature.InlineFeatureUpdateInterface)}.
      */
     @Test
     public void testIsCellEditable() {
@@ -73,10 +74,14 @@ public class InLineFeatureModelTest {
     }
 
     /**
-     * Test method for {@link com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#getColumnCount()}.
-     * Test method for {@link com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#getColumnName(int)}.
-     * Test method for {@link com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#addNewColumn()}.
-     * Test method for {@link com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#getGeometryFieldIndex()}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#getColumnCount()}. Test
+     * method for {@link
+     * com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#getColumnName(int)}. Test
+     * method for {@link
+     * com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#addNewColumn()}. Test method
+     * for {@link
+     * com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#getGeometryFieldIndex()}.
      */
     @Test
     public void testGetColumnCount() {
@@ -109,7 +114,8 @@ public class InLineFeatureModelTest {
     }
 
     /**
-     * Test method for {@link com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#getRowCount()}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#getRowCount()}.
      */
     @Test
     public void testGetRowCount() {
@@ -126,8 +132,10 @@ public class InLineFeatureModelTest {
     }
 
     /**
-     * Test method for {@link com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#getValueAt(int, int)}.
-     * Test method for {@link com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#populate(org.geotools.styling.UserLayer)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#getValueAt(int, int)}. Test
+     * method for {@link
+     * com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#populate(org.geotools.styling.UserLayer)}.
      */
     @Test
     public void testGetValueAt() {
@@ -152,7 +160,9 @@ public class InLineFeatureModelTest {
     }
 
     /**
-     * Test method for {@link com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#setValueAt(java.lang.Object, int, int)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#setValueAt(java.lang.Object,
+     * int, int)}.
      */
     @Test
     public void testSetValueAtObjectIntInt() {
@@ -184,8 +194,10 @@ public class InLineFeatureModelTest {
     }
 
     /**
-     * Test method for {@link com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#getFeatureCollection()}.
-     * Test method for {@link com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#getInlineFeatures()}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#getFeatureCollection()}. Test
+     * method for {@link
+     * com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#getInlineFeatures()}.
      */
     @Test
     public void testGetFeatureCollection() {
@@ -203,8 +215,10 @@ public class InLineFeatureModelTest {
     }
 
     /**
-     * Test method for {@link com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#removeColumn(java.lang.String)}.
-     * Test method for {@link com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#getColumnNames()}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#removeColumn(java.lang.String)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#getColumnNames()}.
      */
     @Test
     public void testRemoveColumn() {
@@ -235,7 +249,8 @@ public class InLineFeatureModelTest {
     }
 
     /**
-     * Test method for {@link com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#updateCRS(com.sldeditor.ui.widgets.ValueComboBoxData)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#updateCRS(com.sldeditor.ui.widgets.ValueComboBoxData)}.
      */
     @Test
     public void testUpdateCRS() {
@@ -251,23 +266,37 @@ public class InLineFeatureModelTest {
 
         model.updateCRS(null);
 
-        assertNull(userLayer.getInlineFeatureType().getGeometryDescriptor()
-                .getCoordinateReferenceSystem());
+        assertNull(
+                userLayer
+                        .getInlineFeatureType()
+                        .getGeometryDescriptor()
+                        .getCoordinateReferenceSystem());
 
-        ValueComboBoxData expectedCRS = new ValueComboBoxData("EPSG:2000", "Test CRS",
-                VendorOptionManager.getInstance().getDefaultVendorOptionVersion());
+        ValueComboBoxData expectedCRS =
+                new ValueComboBoxData(
+                        "EPSG:2000",
+                        "Test CRS",
+                        VendorOptionManager.getInstance().getDefaultVendorOptionVersion());
         assertFalse(listener.hasInlineFeatureUpdatedCalled());
         model.updateCRS(expectedCRS);
         assertTrue(listener.hasInlineFeatureUpdatedCalled());
 
-        String newCRSCode = userLayer.getInlineFeatureType().getGeometryDescriptor()
-                .getCoordinateReferenceSystem().getCoordinateSystem().getName().getCode();
+        String newCRSCode =
+                userLayer
+                        .getInlineFeatureType()
+                        .getGeometryDescriptor()
+                        .getCoordinateReferenceSystem()
+                        .getCoordinateSystem()
+                        .getName()
+                        .getCode();
 
         assertNotNull(newCRSCode);
     }
 
     /**
-     * Test method for {@link com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#updateGeometry(int, com.vividsolutions.jts.geom.Geometry)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.inlinefeature.InLineFeatureModel#updateGeometry(int,
+     * org.locationtech.jts.geom.Geometry)}.
      */
     @Test
     public void testUpdateGeometry() {
@@ -285,5 +314,4 @@ public class InLineFeatureModelTest {
         model.updateGeometry(0, null);
         assertTrue(listener.hasInlineFeatureUpdatedCalled());
     }
-
 }

@@ -19,6 +19,13 @@
 
 package com.sldeditor.ui.detail;
 
+import com.sldeditor.common.console.ConsoleManager;
+import com.sldeditor.common.data.SLDTreeUpdatedInterface;
+import com.sldeditor.common.data.SelectedSymbol;
+import com.sldeditor.common.vendoroption.minversion.VendorOptionPresent;
+import com.sldeditor.datasource.RenderSymbolInterface;
+import com.sldeditor.ui.iface.PopulateDetailsInterface;
+import com.sldeditor.ui.iface.SymbolizerSelectedInterface;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -29,10 +36,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
-
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.FeatureTypeStyleImpl;
 import org.geotools.styling.FillImpl;
@@ -53,20 +58,13 @@ import org.geotools.styling.Symbolizer;
 import org.geotools.styling.TextSymbolizerImpl;
 import org.geotools.styling.UserLayerImpl;
 
-import com.sldeditor.common.console.ConsoleManager;
-import com.sldeditor.common.data.SLDTreeUpdatedInterface;
-import com.sldeditor.common.data.SelectedSymbol;
-import com.sldeditor.common.vendoroption.minversion.VendorOptionPresent;
-import com.sldeditor.datasource.RenderSymbolInterface;
-import com.sldeditor.ui.iface.PopulateDetailsInterface;
-import com.sldeditor.ui.iface.SymbolizerSelectedInterface;
-
 /**
- * The Class SymbolizerDetailsPanel handles the display of the correct panel when the user clicks on the SLD tree structure.
- * 
- * <p>
- * Implemented as panel with a card layout, all possible panels are added to the layout and displayed accordingly.
- * 
+ * The Class SymbolizerDetailsPanel handles the display of the correct panel when the user clicks on
+ * the SLD tree structure.
+ *
+ * <p>Implemented as panel with a card layout, all possible panels are added to the layout and
+ * displayed accordingly.
+ *
  * @author Robert Ward (SCISYS)
  */
 public class SymbolizerDetailsPanel extends JPanel implements SymbolizerSelectedInterface {
@@ -78,7 +76,8 @@ public class SymbolizerDetailsPanel extends JPanel implements SymbolizerSelected
     private static final long serialVersionUID = 1L;
 
     /** The panel map. */
-    private Map<String, List<PopulateDetailsInterface>> panelMap = new ConcurrentHashMap<String, List<PopulateDetailsInterface>>();
+    private Map<String, List<PopulateDetailsInterface>> panelMap =
+            new ConcurrentHashMap<String, List<PopulateDetailsInterface>>();
 
     /** The details panel. */
     private JPanel detailsPanel = null;
@@ -94,30 +93,34 @@ public class SymbolizerDetailsPanel extends JPanel implements SymbolizerSelected
      * @param rendererList the renderer list
      * @param sldTree the sld tree
      */
-    public SymbolizerDetailsPanel(List<RenderSymbolInterface> rendererList,
-            SLDTreeUpdatedInterface sldTree) {
+    public SymbolizerDetailsPanel(
+            List<RenderSymbolInterface> rendererList, SLDTreeUpdatedInterface sldTree) {
 
         Map<String, List<Class<?>>> classMap = new ConcurrentHashMap<String, List<Class<?>>>();
         classMap.put(EMPTY_PANEL_KEY, Arrays.asList(EmptyPanel.class));
-        classMap.put(PointSymbolizerImpl.class.toString(),
-                Arrays.asList(PointSymbolizerDetails.class));
-        classMap.put(LineSymbolizerImpl.class.toString(),
-                Arrays.asList(LineSymbolizerDetails.class));
-        classMap.put(TextSymbolizerImpl.class.toString(),
-                Arrays.asList(TextSymbolizerDetails.class));
-        classMap.put(PolygonSymbolizerImpl.class.toString(),
+        classMap.put(
+                PointSymbolizerImpl.class.toString(), Arrays.asList(PointSymbolizerDetails.class));
+        classMap.put(
+                LineSymbolizerImpl.class.toString(), Arrays.asList(LineSymbolizerDetails.class));
+        classMap.put(
+                TextSymbolizerImpl.class.toString(), Arrays.asList(TextSymbolizerDetails.class));
+        classMap.put(
+                PolygonSymbolizerImpl.class.toString(),
                 Arrays.asList(PolygonSymbolizerDetails.class));
-        classMap.put(RasterSymbolizerImpl.class.toString(),
+        classMap.put(
+                RasterSymbolizerImpl.class.toString(),
                 Arrays.asList(RasterSymbolizerDetails.class));
         classMap.put(RuleImpl.class.toString(), Arrays.asList(RuleDetails.class));
-        classMap.put(FeatureTypeStyleImpl.class.toString(),
+        classMap.put(
+                FeatureTypeStyleImpl.class.toString(),
                 Arrays.asList(FeatureTypeStyleDetails.class));
         classMap.put(StyleImpl.class.toString(), Arrays.asList(StyleDetails.class));
         classMap.put(NamedLayerImpl.class.toString(), Arrays.asList(NamedLayerDetails.class));
         classMap.put(UserLayerImpl.class.toString(), Arrays.asList(UserLayerDetails.class));
         classMap.put(StyledLayerDescriptorImpl.class.toString(), Arrays.asList(EmptyPanel.class));
         classMap.put(StrokeImpl.class.toString(), Arrays.asList(StrokeDetails.class));
-        classMap.put(FillImpl.class.toString(),
+        classMap.put(
+                FillImpl.class.toString(),
                 Arrays.asList(PointFillDetails.class, PolygonFillDetails.class));
 
         populateMap(classMap);
@@ -167,30 +170,39 @@ public class SymbolizerDetailsPanel extends JPanel implements SymbolizerSelected
     private void populateMap(Map<String, List<Class<?>>> classMap) {
         Set<String> keySet = classMap.keySet();
 
-        keySet.parallelStream().forEach((key) -> {
+        for (String key : keySet) {
             List<PopulateDetailsInterface> panelList = panelMap.get(key);
 
             if (panelList == null) {
                 panelList = new ArrayList<PopulateDetailsInterface>();
                 panelMap.put(key, panelList);
             }
+        }
 
-            List<Class<?>> clazzList = classMap.get(key);
+        keySet.parallelStream()
+                .forEach(
+                        (key) -> {
+                            List<PopulateDetailsInterface> panelList = panelMap.get(key);
 
-            for (Class<?> clazz : clazzList) {
-                System.out.println(clazz.getName());
-                PopulateDetailsInterface panelDetails = null;
-                try {
-                    panelDetails = (PopulateDetailsInterface) clazz.newInstance();
-                } catch (InstantiationException e) {
-                    ConsoleManager.getInstance().exception(this, e);
-                } catch (IllegalAccessException e) {
-                    ConsoleManager.getInstance().exception(this, e);
-                }
+                            if (panelList != null) {
+                                List<Class<?>> clazzList = classMap.get(key);
 
-                panelList.add(panelDetails);
-            }
-        });
+                                for (Class<?> clazz : clazzList) {
+                                    System.out.println(clazz.getName());
+                                    PopulateDetailsInterface panelDetails = null;
+                                    try {
+                                        panelDetails =
+                                                (PopulateDetailsInterface) clazz.newInstance();
+                                    } catch (InstantiationException e) {
+                                        ConsoleManager.getInstance().exception(this, e);
+                                    } catch (IllegalAccessException e) {
+                                        ConsoleManager.getInstance().exception(this, e);
+                                    }
+
+                                    panelList.add(panelDetails);
+                                }
+                            }
+                        });
     }
 
     /**
@@ -270,7 +282,7 @@ public class SymbolizerDetailsPanel extends JPanel implements SymbolizerSelected
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.iface.SymbolizerSelectedInterface#getPanelIds()
      */
     @Override
@@ -294,9 +306,7 @@ public class SymbolizerDetailsPanel extends JPanel implements SymbolizerSelected
         }
     }
 
-    /**
-     * Method called before symbol loaded.
-     */
+    /** Method called before symbol loaded. */
     public void preLoadSymbol() {
         for (String key : panelMap.keySet()) {
             List<PopulateDetailsInterface> panelList = panelMap.get(key);
@@ -314,8 +324,8 @@ public class SymbolizerDetailsPanel extends JPanel implements SymbolizerSelected
      * @param sldObj the sld obj
      * @param vendorOptionsPresentList the vendor options present list
      */
-    public void getMinimumVersion(Object parentObj, Object sldObj,
-            List<VendorOptionPresent> vendorOptionsPresentList) {
+    public void getMinimumVersion(
+            Object parentObj, Object sldObj, List<VendorOptionPresent> vendorOptionsPresentList) {
         Class<?> parentClass = null;
         Class<?> classSelected = sldObj.getClass();
 
@@ -333,42 +343,66 @@ public class SymbolizerDetailsPanel extends JPanel implements SymbolizerSelected
             parentClass = Rule.class;
         }
 
-        internal_getMinimumVersion(parentObj, sldObj, vendorOptionsPresentList, parentClass,
-                classSelected);
+        internal_getMinimumVersion(
+                parentObj, sldObj, vendorOptionsPresentList, parentClass, classSelected);
 
         if (sldObj instanceof PointSymbolizerImpl) {
             PointSymbolizerImpl pointSymbolizer = (PointSymbolizerImpl) sldObj;
             parentClass = PointSymbolizerImpl.class;
             classSelected = FillImpl.class;
-            internal_getMinimumVersion(pointSymbolizer, pointSymbolizer.getGraphic(),
-                    vendorOptionsPresentList, parentClass, classSelected);
+            internal_getMinimumVersion(
+                    pointSymbolizer,
+                    pointSymbolizer.getGraphic(),
+                    vendorOptionsPresentList,
+                    parentClass,
+                    classSelected);
         } else if (sldObj instanceof LineSymbolizerImpl) {
             LineSymbolizerImpl lineSymbolizer = (LineSymbolizerImpl) sldObj;
             parentClass = LineSymbolizerImpl.class;
             classSelected = StrokeImpl.class;
-            internal_getMinimumVersion(lineSymbolizer, lineSymbolizer.getStroke(),
-                    vendorOptionsPresentList, parentClass, classSelected);
+            internal_getMinimumVersion(
+                    lineSymbolizer,
+                    lineSymbolizer.getStroke(),
+                    vendorOptionsPresentList,
+                    parentClass,
+                    classSelected);
         } else if (sldObj instanceof PolygonSymbolizerImpl) {
             PolygonSymbolizerImpl polygonSymbolizer = (PolygonSymbolizerImpl) sldObj;
             parentClass = PolygonSymbolizerImpl.class;
             classSelected = FillImpl.class;
-            internal_getMinimumVersion(polygonSymbolizer, polygonSymbolizer.getFill(),
-                    vendorOptionsPresentList, parentClass, classSelected);
+            internal_getMinimumVersion(
+                    polygonSymbolizer,
+                    polygonSymbolizer.getFill(),
+                    vendorOptionsPresentList,
+                    parentClass,
+                    classSelected);
             classSelected = StrokeImpl.class;
-            internal_getMinimumVersion(polygonSymbolizer, polygonSymbolizer.getStroke(),
-                    vendorOptionsPresentList, parentClass, classSelected);
+            internal_getMinimumVersion(
+                    polygonSymbolizer,
+                    polygonSymbolizer.getStroke(),
+                    vendorOptionsPresentList,
+                    parentClass,
+                    classSelected);
         } else if (sldObj instanceof TextSymbolizerImpl) {
             TextSymbolizerImpl textSymbolizer = (TextSymbolizerImpl) sldObj;
             parentClass = Rule.class;
             classSelected = TextSymbolizerImpl.class;
-            internal_getMinimumVersion(parentObj, textSymbolizer, vendorOptionsPresentList,
-                    parentClass, classSelected);
+            internal_getMinimumVersion(
+                    parentObj,
+                    textSymbolizer,
+                    vendorOptionsPresentList,
+                    parentClass,
+                    classSelected);
         } else if (sldObj instanceof RasterSymbolizerImpl) {
             RasterSymbolizerImpl rasterSymbolizer = (RasterSymbolizerImpl) sldObj;
             parentClass = Rule.class;
             classSelected = RasterSymbolizerImpl.class;
-            internal_getMinimumVersion(parentObj, rasterSymbolizer, vendorOptionsPresentList,
-                    parentClass, classSelected);
+            internal_getMinimumVersion(
+                    parentObj,
+                    rasterSymbolizer,
+                    vendorOptionsPresentList,
+                    parentClass,
+                    classSelected);
         }
     }
 
@@ -380,8 +414,11 @@ public class SymbolizerDetailsPanel extends JPanel implements SymbolizerSelected
      * @param parentClass the parent class
      * @param classSelected the class selected
      */
-    private void internal_getMinimumVersion(Object parentObj, Object sldObj,
-            List<VendorOptionPresent> vendorOptionsPresentList, Class<?> parentClass,
+    private void internal_getMinimumVersion(
+            Object parentObj,
+            Object sldObj,
+            List<VendorOptionPresent> vendorOptionsPresentList,
+            Class<?> parentClass,
             Class<?> classSelected) {
         String key = null;
         if (classSelected != null) {
@@ -399,8 +436,9 @@ public class SymbolizerDetailsPanel extends JPanel implements SymbolizerSelected
 
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.ui.iface.SymbolizerSelectedInterface#refresh(java.lang.Class, java.lang.Class)
+     *
+     * @see com.sldeditor.ui.iface.SymbolizerSelectedInterface#refresh(java.lang.Class,
+     * java.lang.Class)
      */
     @Override
     public void refresh(Class<?> parentClass, Class<?> classSelected) {
@@ -420,5 +458,4 @@ public class SymbolizerDetailsPanel extends JPanel implements SymbolizerSelected
         }
         repaint();
     }
-
 }

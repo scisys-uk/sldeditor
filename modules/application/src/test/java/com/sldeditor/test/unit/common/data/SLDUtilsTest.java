@@ -19,18 +19,22 @@
 
 package com.sldeditor.test.unit.common.data;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
+import com.sldeditor.common.data.GeoServerConnection;
+import com.sldeditor.common.data.SLDData;
+import com.sldeditor.common.data.SLDUtils;
+import com.sldeditor.common.data.StyleWrapper;
+import com.sldeditor.common.defaultsymbol.DefaultSymbols;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Font;
@@ -45,25 +49,20 @@ import org.geotools.styling.StyledLayerDescriptor;
 import org.geotools.styling.Symbolizer;
 import org.geotools.styling.TextSymbolizer;
 import org.geotools.styling.visitor.DuplicatingStyleVisitor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opengis.filter.FilterFactory;
-
-import com.sldeditor.common.data.GeoServerConnection;
-import com.sldeditor.common.data.SLDData;
-import com.sldeditor.common.data.SLDUtils;
-import com.sldeditor.common.data.StyleWrapper;
-import com.sldeditor.common.defaultsymbol.DefaultSymbols;
 
 /**
  * The unit test for SLDUtils.
- * 
+ *
  * <p>{@link com.sldeditor.common.data.SLDUtils}
  *
  * @author Robert Ward (SCISYS)
  */
 public class SLDUtilsTest {
 
-    private String expectedSld = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><StyledLayerDescriptor version=\"1.0.0\" xsi:schemaLocation=\"http://www.opengis.net/sld StyledLayerDescriptor.xsd\" xmlns=\"http://www.opengis.net/sld\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">  <NamedLayer><Name>Simple Point</Name><UserStyle><Title>SLD Cook Book: Simple Point</Title><FeatureTypeStyle><Rule><PointSymbolizer><Graphic><Mark><WellKnownName>circle</WellKnownName><Fill><CssParameter name=\"fill\">#FF0000</CssParameter></Fill></Mark><Size>6</Size></Graphic></PointSymbolizer></Rule></FeatureTypeStyle></UserStyle></NamedLayer></StyledLayerDescriptor>";
+    private String expectedSld =
+            "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><StyledLayerDescriptor version=\"1.0.0\" xsi:schemaLocation=\"http://www.opengis.net/sld StyledLayerDescriptor.xsd\" xmlns=\"http://www.opengis.net/sld\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">  <NamedLayer><Name>Simple Point</Name><UserStyle><Title>SLD Cook Book: Simple Point</Title><FeatureTypeStyle><Rule><PointSymbolizer><Graphic><Mark><WellKnownName>circle</WellKnownName><Fill><CssParameter name=\"fill\">#FF0000</CssParameter></Fill></Mark><Size>6</Size></Graphic></PointSymbolizer></Rule></FeatureTypeStyle></UserStyle></NamedLayer></StyledLayerDescriptor>";
 
     @Test
     public void testCreateSLDFromStringFile() {
@@ -83,8 +82,15 @@ public class SLDUtilsTest {
         StyledLayer[] styledLayers = sld.getStyledLayers();
         NamedLayer namedLayer = (NamedLayer) styledLayers[0];
         Style[] actualStyles = namedLayer.getStyles();
-        PointSymbolizer pointSymbolizer = (PointSymbolizer) actualStyles[0].featureTypeStyles()
-                .get(0).rules().get(0).symbolizers().get(0);
+        PointSymbolizer pointSymbolizer =
+                (PointSymbolizer)
+                        actualStyles[0]
+                                .featureTypeStyles()
+                                .get(0)
+                                .rules()
+                                .get(0)
+                                .symbolizers()
+                                .get(0);
 
         MarkImpl mark = (MarkImpl) pointSymbolizer.getGraphic().graphicalSymbols().get(0);
         assertEquals("circle", mark.getWellKnownName().toString());
@@ -96,8 +102,7 @@ public class SLDUtilsTest {
             String expectedResourcelocator = url.toExternalForm();
             assertTrue(expectedResourcelocator.compareTo(actualResourceLocator) == 0);
         } catch (MalformedURLException e) {
-            e.printStackTrace();
-            fail();
+            fail(e.getStackTrace().toString());
         }
     }
 
@@ -121,8 +126,15 @@ public class SLDUtilsTest {
         StyledLayer[] styledLayers = sld.getStyledLayers();
         NamedLayer namedLayer = (NamedLayer) styledLayers[0];
         Style[] actualStyles = namedLayer.getStyles();
-        PointSymbolizer pointSymbolizer = (PointSymbolizer) actualStyles[0].featureTypeStyles()
-                .get(0).rules().get(0).symbolizers().get(0);
+        PointSymbolizer pointSymbolizer =
+                (PointSymbolizer)
+                        actualStyles[0]
+                                .featureTypeStyles()
+                                .get(0)
+                                .rules()
+                                .get(0)
+                                .symbolizers()
+                                .get(0);
 
         MarkImpl mark = (MarkImpl) pointSymbolizer.getGraphic().graphicalSymbols().get(0);
         assertEquals("circle", mark.getWellKnownName().toString());
@@ -149,8 +161,15 @@ public class SLDUtilsTest {
             StyledLayer[] styledLayers = sld.getStyledLayers();
             NamedLayer namedLayer = (NamedLayer) styledLayers[0];
             Style[] actualStyles = namedLayer.getStyles();
-            PointSymbolizer pointSymbolizer = (PointSymbolizer) actualStyles[0].featureTypeStyles()
-                    .get(0).rules().get(0).symbolizers().get(0);
+            PointSymbolizer pointSymbolizer =
+                    (PointSymbolizer)
+                            actualStyles[0]
+                                    .featureTypeStyles()
+                                    .get(0)
+                                    .rules()
+                                    .get(0)
+                                    .symbolizers()
+                                    .get(0);
 
             MarkImpl mark = (MarkImpl) pointSymbolizer.getGraphic().graphicalSymbols().get(0);
             assertEquals("circle", mark.getWellKnownName().toString());
@@ -192,8 +211,12 @@ public class SLDUtilsTest {
         rule.symbolizers().add(symbolizer);
         StyleFactoryImpl styleFactory = (StyleFactoryImpl) CommonFactoryFinder.getStyleFactory();
         FilterFactory ff = CommonFactoryFinder.getFilterFactory();
-        Font font = styleFactory.createFont(ff.literal("abc"), ff.literal("normal"),
-                ff.literal("normal"), ff.literal(10));
+        Font font =
+                styleFactory.createFont(
+                        ff.literal("abc"),
+                        ff.literal("normal"),
+                        ff.literal("normal"),
+                        ff.literal(10));
         symbolizer.setFont(font);
 
         DuplicatingStyleVisitor duplicate = new DuplicatingStyleVisitor();
@@ -203,7 +226,8 @@ public class SLDUtilsTest {
         Symbolizer actualSymbolizer = SLDUtils.findSymbolizer(sld, symbolizer, sldCopy);
 
         assertNotNull(actualSymbolizer);
-        assertEquals(symbolizer.getLabel().toString(),
+        assertEquals(
+                symbolizer.getLabel().toString(),
                 ((TextSymbolizer) actualSymbolizer).getLabel().toString());
 
         actualSymbolizer = SLDUtils.findSymbolizer(sld, null, sldCopy);
@@ -243,8 +267,12 @@ public class SLDUtilsTest {
         rule.symbolizers().add(symbolizer);
         StyleFactoryImpl styleFactory = (StyleFactoryImpl) CommonFactoryFinder.getStyleFactory();
         FilterFactory ff = CommonFactoryFinder.getFilterFactory();
-        Font font = styleFactory.createFont(ff.literal("abc"), ff.literal("normal"),
-                ff.literal("normal"), ff.literal(10));
+        Font font =
+                styleFactory.createFont(
+                        ff.literal("abc"),
+                        ff.literal("normal"),
+                        ff.literal("normal"),
+                        ff.literal(10));
         symbolizer.setFont(font);
 
         DuplicatingStyleVisitor duplicate = new DuplicatingStyleVisitor();

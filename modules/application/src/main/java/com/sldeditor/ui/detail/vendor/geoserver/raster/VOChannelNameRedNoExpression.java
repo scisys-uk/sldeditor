@@ -1,7 +1,7 @@
 /*
  * SLD Editor - The Open Source Java SLD Editor
  *
- * Copyright (C) 2017, SCISYS UK Limited
+ * Copyright (C) 2018, SCISYS UK Limited
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +17,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @author Robert Ward (SCISYS)
- *
- */
+package com.sldeditor.ui.detail.vendor.geoserver.raster;
 
-package com.sldeditor.test.unit.tool.mapbox;
+import com.sldeditor.common.xml.ui.FieldIdEnum;
+
+/**
+ * Class to handle the getting and setting of red raster channel names using strings
+ *
+ * @author Robert Ward (SCISYS)
+ */
+public class VOChannelNameRedNoExpression extends VOChannelNameNoExpression {
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Constructor.
+     *
+     * @param panelId the panel id
+     * @param fieldId the field id
+     */
+    public VOChannelNameRedNoExpression(Class<?> panelId, FieldIdEnum fieldId) {
+        super(panelId, fieldId);
+    }
+}

@@ -19,57 +19,50 @@
 
 package com.sldeditor.test.unit.filter.v2.function.logic;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.geotools.filter.LogicFilterImpl;
-import org.geotools.filter.text.cql2.CQL;
-import org.geotools.filter.text.cql2.CQLException;
-import org.junit.Test;
-import org.opengis.filter.Filter;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.sldeditor.filter.v2.function.FilterConfigInterface;
 import com.sldeditor.filter.v2.function.logic.And;
 import com.sldeditor.filter.v2.function.logic.Not;
 import com.sldeditor.filter.v2.function.logic.Or;
+import java.util.ArrayList;
+import java.util.List;
+import org.geotools.filter.LogicFilterImpl;
+import org.geotools.filter.text.cql2.CQL;
+import org.geotools.filter.text.cql2.CQLException;
+import org.junit.jupiter.api.Test;
+import org.opengis.filter.Filter;
 
 /**
- * Unit test for the following classes: {@link com.sldeditor.filter.v2.function.logic.And}
- * {@link com.sldeditor.filter.v2.function.logic.Or}
- * {@link com.sldeditor.filter.v2.function.logic.Not}
- * 
- * @author Robert Ward (SCISYS)
+ * Unit test for the following classes: {@link com.sldeditor.filter.v2.function.logic.And} {@link
+ * com.sldeditor.filter.v2.function.logic.Or} {@link com.sldeditor.filter.v2.function.logic.Not}
  *
+ * @author Robert Ward (SCISYS)
  */
 public class LogicTests {
 
-    /**
-     * {@link com.sldeditor.filter.v2.function.logic.And}.
-     */
+    private String category = "Test category";
+
+    /** {@link com.sldeditor.filter.v2.function.logic.And}. */
     @Test
     public void testAnd() {
-        testClass(new And(), 2);
+        testClass(new And(category), 2);
     }
 
-    /**
-     * {@link com.sldeditor.filter.v2.function.logic.Or}.
-     */
+    /** {@link com.sldeditor.filter.v2.function.logic.Or}. */
     @Test
     public void testOr() {
-        testClass(new Or(), 2);
+        testClass(new Or(category), 2);
     }
 
-    /**
-     * {@link com.sldeditor.filter.v2.function.logic.Not}.
-     */
+    /** {@link com.sldeditor.filter.v2.function.logic.Not}. */
     @Test
     public void testNot() {
-        testClass(new Not(), 1);
+        testClass(new Not(category), 1);
     }
 
     /**
@@ -90,8 +83,7 @@ public class LogicTests {
         try {
             filterList.add(CQL.toFilter("filter1 >= 5"));
         } catch (CQLException e) {
-            e.printStackTrace();
-            fail();
+            fail(e.getStackTrace().toString());
         }
 
         filter = (LogicFilterImpl) objUnderTest.createLogicFilter(filterList);
@@ -101,12 +93,12 @@ public class LogicTests {
             try {
                 filterList.add(CQL.toFilter("filter2 >= 5"));
             } catch (CQLException e) {
-                e.printStackTrace();
-                fail();
+                fail(e.getStackTrace().toString());
             }
             filter = (LogicFilterImpl) objUnderTest.createLogicFilter(filterList);
         }
         assertEquals(noOFExpectedFilters, filter.getChildren().size());
+        assertTrue(objUnderTest.category().compareTo(category) == 0);
 
         System.out.println(filter.toString());
     }

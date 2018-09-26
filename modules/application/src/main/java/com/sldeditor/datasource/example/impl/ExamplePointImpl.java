@@ -19,16 +19,15 @@
 
 package com.sldeditor.datasource.example.impl;
 
-import org.geotools.geometry.jts.JTSFactoryFinder;
-
 import com.sldeditor.datasource.example.ExamplePointInterface;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
+import org.geotools.geometry.jts.JTSFactoryFinder;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 
 /**
  * Example point geometry to be displayed when rendering point symbols.
- * 
+ *
  * @author Robert Ward (SCISYS)
  */
 public class ExamplePointImpl implements ExamplePointInterface {
@@ -41,7 +40,7 @@ public class ExamplePointImpl implements ExamplePointInterface {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.datasource.impl.ExamplePointInterface#getPoint()
      */
     @Override
@@ -54,5 +53,4 @@ public class ExamplePointImpl implements ExamplePointInterface {
         }
         return point;
     }
-
 }

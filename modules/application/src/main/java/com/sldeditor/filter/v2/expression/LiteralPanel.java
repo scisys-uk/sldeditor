@@ -17,23 +17,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 package com.sldeditor.filter.v2.expression;
-
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.tree.DefaultMutableTreeNode;
-
-import org.opengis.filter.expression.Expression;
 
 import com.sldeditor.common.localisation.Localisation;
 import com.sldeditor.common.xml.ui.FieldIdEnum;
 import com.sldeditor.ui.detail.config.FieldConfigBase;
 import com.sldeditor.ui.iface.UpdateSymbolInterface;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.tree.DefaultMutableTreeNode;
+import org.bouncycastle.util.StringList;
+import org.opengis.filter.expression.Expression;
 
 /**
  * The Class LiteralPanel.
@@ -54,14 +51,14 @@ public class LiteralPanel extends JPanel {
     /** The parent. */
     private ExpressionFilterInterface parent = null;
 
-    /** The btn apply. */
+    /** The Apply button. */
     private JButton btnApply;
 
-    /** The btn revert. */
+    /** The Revert button. */
     private JButton btnRevert;
 
     /**
-     * Instantiates a new expression panel.
+     * Instantiates a new literal panel.
      *
      * @param parent the parent
      */
@@ -70,9 +67,7 @@ public class LiteralPanel extends JPanel {
         createUI();
     }
 
-    /**
-     * Creates the ui.
-     */
+    /** Creates the ui. */
     private void createUI() {
         setLayout(new BorderLayout());
 
@@ -94,17 +89,24 @@ public class LiteralPanel extends JPanel {
             remove(fieldConfig.getPanel());
         }
 
-        fieldConfig = PanelField.getField(ExpressionPanelv2.class, "LiteralPanel.value",
-                node.getType());
+        fieldConfig =
+                PanelField.getField(
+                        ExpressionPanelv2.class,
+                        "LiteralPanel.value",
+                        (node.getType() == String.class) ? StringList.class : node.getType(),
+                        null,
+                        node.getMaxStringSize(),
+                        node.isRegExpString());
 
         if (fieldConfig != null) {
             fieldConfig.createUI();
-            fieldConfig.addDataChangedListener(new UpdateSymbolInterface() {
-                @Override
-                public void dataChanged(FieldIdEnum changedField) {
-                    updateButtonState(true);
-                }
-            });
+            fieldConfig.addDataChangedListener(
+                    new UpdateSymbolInterface() {
+                        @Override
+                        public void dataChanged(FieldIdEnum changedField) {
+                            updateButtonState(true);
+                        }
+                    });
             add(fieldConfig.getPanel(), BorderLayout.NORTH);
 
             fieldConfig.populate(node.getExpression());
@@ -122,29 +124,31 @@ public class LiteralPanel extends JPanel {
         JPanel panel = new JPanel();
 
         btnApply = new JButton(Localisation.getString(ExpressionPanelv2.class, "common.apply"));
-        btnApply.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Expression expression = fieldConfig.getExpression();
+        btnApply.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        Expression expression = fieldConfig.getExpression();
 
-                if (expression != null) {
-                    selectedNode.setExpression(expression);
-                }
+                        if (expression != null) {
+                            selectedNode.setExpression(expression);
+                        }
 
-                if (parent != null) {
-                    parent.dataApplied();
-                }
-                updateButtonState(false);
-            }
-        });
+                        if (parent != null) {
+                            parent.dataApplied();
+                        }
+                        updateButtonState(false);
+                    }
+                });
         panel.add(btnApply);
 
         btnRevert = new JButton(Localisation.getString(ExpressionPanelv2.class, "common.revert"));
-        btnRevert.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                displayLiteral(selectedNode);
-                updateButtonState(false);
-            }
-        });
+        btnRevert.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        displayLiteral(selectedNode);
+                        updateButtonState(false);
+                    }
+                });
         panel.add(btnRevert);
 
         return panel;

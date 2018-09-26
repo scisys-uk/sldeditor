@@ -19,16 +19,10 @@
 
 package com.sldeditor.test.unit.ui.detail.config;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.sldeditor.common.Controller;
 import com.sldeditor.common.undo.UndoEvent;
@@ -39,11 +33,18 @@ import com.sldeditor.ui.detail.config.FieldConfigCommonData;
 import com.sldeditor.ui.detail.config.FieldConfigEnum;
 import com.sldeditor.ui.detail.config.FieldConfigPopulate;
 import com.sldeditor.ui.detail.config.symboltype.SymbolTypeConfig;
+import com.sldeditor.ui.iface.UpdateSymbolInterface;
 import com.sldeditor.ui.widgets.ValueComboBoxData;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import org.geotools.factory.CommonFactoryFinder;
+import org.junit.jupiter.api.Test;
+import org.opengis.filter.FilterFactory;
 
 /**
  * The unit test for FieldConfigEnum.
- * 
+ *
  * <p>{@link com.sldeditor.ui.detail.config.FieldConfigEnum}
  *
  * @author Robert Ward (SCISYS)
@@ -51,16 +52,18 @@ import com.sldeditor.ui.widgets.ValueComboBoxData;
 public class FieldConfigEnumTest {
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigEnum#internal_setEnabled(boolean)}. Test
-     * method for {@link com.sldeditor.ui.detail.config.FieldConfigEnum#isEnabled()}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigEnum#internal_setEnabled(boolean)}. Test method for
+     * {@link com.sldeditor.ui.detail.config.FieldConfigEnum#isEnabled()}.
      */
     @Test
     public void testSetEnabled() {
         // Value only, no attribute/expression dropdown
         boolean valueOnly = true;
-        FieldConfigEnum field = new FieldConfigEnum(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        FieldConfigEnum field =
+                new FieldConfigEnum(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
 
         // Text field will not have been created
         boolean expectedValue = true;
@@ -79,8 +82,10 @@ public class FieldConfigEnumTest {
 
         // Has attribute/expression dropdown
         valueOnly = false;
-        FieldConfigEnum field2 = new FieldConfigEnum(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        FieldConfigEnum field2 =
+                new FieldConfigEnum(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
 
         // Text field will not have been created
         expectedValue = true;
@@ -105,8 +110,10 @@ public class FieldConfigEnumTest {
     @Test
     public void testSetVisible() {
         boolean valueOnly = true;
-        FieldConfigEnum field = new FieldConfigEnum(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        FieldConfigEnum field =
+                new FieldConfigEnum(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
 
         boolean expectedValue = true;
         field.setVisible(expectedValue);
@@ -119,14 +126,15 @@ public class FieldConfigEnumTest {
 
     /**
      * Test method for {@link com.sldeditor.ui.detail.config.FieldConfigEnum#generateExpression()}.
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigEnum#populateExpression(java.lang.Object, org.opengis.filter.expression.Expression)}.
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigEnum#populateField(java.lang.String)}. Test
-     * method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigEnum#setTestValue(com.sldeditor.ui.detail.config.FieldId, java.lang.String)}.
-     * Test method for {@link com.sldeditor.ui.detail.config.FieldConfigEnum#getEnumValue()}. Test
-     * method for {@link com.sldeditor.ui.detail.config.FieldConfigEnum#getStringValue()}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigEnum#populateExpression(java.lang.Object,
+     * org.opengis.filter.expression.Expression)}. Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigEnum#populateField(java.lang.String)}. Test method
+     * for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigEnum#setTestValue(com.sldeditor.ui.detail.config.FieldId,
+     * java.lang.String)}. Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigEnum#getEnumValue()}. Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigEnum#getStringValue()}.
      */
     @Test
     public void testGenerateExpression() {
@@ -149,8 +157,10 @@ public class FieldConfigEnumTest {
         configList.add(s2);
 
         boolean valueOnly = true;
-        FieldConfigEnum field = new FieldConfigEnum(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        FieldConfigEnum field =
+                new FieldConfigEnum(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
         field.undoAction(null);
         field.redoAction(null);
         field.addConfig(null);
@@ -173,7 +183,15 @@ public class FieldConfigEnumTest {
         ValueComboBoxData actualValue = field.getEnumValue();
         assertTrue(expectedValue1.compareTo(actualValue.getKey()) == 0);
 
+        String expectedValue2 = "key6";
+        FilterFactory ff = CommonFactoryFinder.getFilterFactory();
+        field.populateExpression(ff.literal(expectedValue2));
+        String actualValueString2 = field.getStringValue();
+        assertTrue(expectedValue2.compareTo(actualValueString2) == 0);
+
         // Try valid/invalid option values
+        field.populateExpression(Double.valueOf(1.3));
+
         assertTrue(field.isValidOption("key1"));
         assertTrue(field.isValidOption("key4"));
         assertFalse(field.isValidOption("key24"));
@@ -181,17 +199,18 @@ public class FieldConfigEnumTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigEnum#revertToDefaultValue()}. Test method
-     * for {@link com.sldeditor.ui.detail.config.FieldConfigEnum#addConfig(java.util.List)}. Test
-     * method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigEnum#setDefaultValue(java.lang.String)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigEnum#revertToDefaultValue()}. Test method for
+     * {@link com.sldeditor.ui.detail.config.FieldConfigEnum#addConfig(java.util.List)}. Test method
+     * for {@link com.sldeditor.ui.detail.config.FieldConfigEnum#setDefaultValue(java.lang.String)}.
      */
     @Test
     public void testRevertToDefaultValue() {
         boolean valueOnly = true;
-        FieldConfigEnum field = new FieldConfigEnum(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        FieldConfigEnum field =
+                new FieldConfigEnum(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
 
         field.revertToDefaultValue();
         assertEquals(0, field.getIntValue());
@@ -222,8 +241,8 @@ public class FieldConfigEnumTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigEnum#createCopy(com.sldeditor.ui.detail.config.FieldConfigBase)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigEnum#createCopy(com.sldeditor.ui.detail.config.FieldConfigBase)}.
      */
     @Test
     public void testCreateCopy() {
@@ -239,8 +258,10 @@ public class FieldConfigEnumTest {
             }
         }
 
-        TestFieldConfigEnum field = new TestFieldConfigEnum(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        TestFieldConfigEnum field =
+                new TestFieldConfigEnum(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
         FieldConfigEnum copy = (FieldConfigEnum) field.callCreateCopy(null);
         assertNull(copy);
 
@@ -251,14 +272,16 @@ public class FieldConfigEnumTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigEnum#attributeSelection(java.lang.String)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigEnum#attributeSelection(java.lang.String)}.
      */
     @Test
     public void testAttributeSelection() {
         boolean valueOnly = true;
-        FieldConfigEnum field = new FieldConfigEnum(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        FieldConfigEnum field =
+                new FieldConfigEnum(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
         field.attributeSelection(null);
 
         field.createUI();
@@ -285,8 +308,10 @@ public class FieldConfigEnumTest {
         configList.add(s1);
 
         boolean valueOnly = true;
-        FieldConfigEnum field = new FieldConfigEnum(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        FieldConfigEnum field =
+                new FieldConfigEnum(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
 
         field.addConfig(configList);
 
@@ -302,10 +327,10 @@ public class FieldConfigEnumTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigEnum#undoAction(com.sldeditor.common.undo.UndoInterface)}.
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigEnum#redoAction(com.sldeditor.common.undo.UndoInterface)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigEnum#undoAction(com.sldeditor.common.undo.UndoInterface)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigEnum#redoAction(com.sldeditor.common.undo.UndoInterface)}.
      */
     @Test
     public void testUndoAction() {
@@ -326,8 +351,10 @@ public class FieldConfigEnumTest {
         s2.addField(FieldIdEnum.DESCRIPTION, false);
         configList.add(s2);
         boolean valueOnly = true;
-        FieldConfigEnum field = new FieldConfigEnum(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        FieldConfigEnum field =
+                new FieldConfigEnum(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
         field.addConfig(null);
         assertNull(field.getStringValue());
 
@@ -362,4 +389,73 @@ public class FieldConfigEnumTest {
                 new UndoEvent(null, FieldIdEnum.NAME, Double.valueOf(0), Double.valueOf(54)));
     }
 
+    @Test
+    public void testValueStored() {
+        boolean valueOnly = true;
+
+        SymbolTypeConfig s1 = new SymbolTypeConfig(null);
+        s1.addOption("key1", "Value 1");
+        s1.addOption("key2", "Value 2");
+        s1.addOption("key3", "Value 3");
+        s1.addField(FieldIdEnum.ANCHOR_POINT_H, true);
+        s1.addField(FieldIdEnum.ANCHOR_POINT_V, false);
+        List<SymbolTypeConfig> configList = new ArrayList<SymbolTypeConfig>();
+        configList.add(s1);
+
+        SymbolTypeConfig s2 = new SymbolTypeConfig(null);
+        s2.addOption("key4", "Value 4");
+        s2.addOption("key5", "Value 5");
+        s2.addOption("key6", "Value 6");
+        s2.addField(FieldIdEnum.ANGLE, true);
+        s2.addField(FieldIdEnum.DESCRIPTION, false);
+        configList.add(s2);
+
+        class TestFieldConfigEnum extends FieldConfigEnum {
+            public TestFieldConfigEnum(FieldConfigCommonData commonData) {
+                super(commonData);
+            }
+        }
+
+        TestFieldConfigEnum field =
+                new TestFieldConfigEnum(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.NAME, "label", valueOnly, false));
+
+        class TestUpdateSymbol implements UpdateSymbolInterface {
+            public boolean dataChanged = false;
+
+            @Override
+            public void dataChanged(FieldIdEnum changedField) {
+                dataChanged = true;
+            }
+        };
+        TestUpdateSymbol update = new TestUpdateSymbol();
+
+        int undoListSize = UndoManager.getInstance().getUndoListSize();
+        field.addConfig(configList);
+        field.createUI();
+        field.addDataChangedListener(update);
+        assertFalse(update.dataChanged);
+        field.populateField("key2");
+        assertTrue(update.dataChanged);
+
+        assertEquals(undoListSize + 1, UndoManager.getInstance().getUndoListSize());
+        update.dataChanged = false;
+
+        // now suppress undo events
+        field =
+                new TestFieldConfigEnum(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.NAME, "label", valueOnly, true));
+
+        undoListSize = UndoManager.getInstance().getUndoListSize();
+        field.addConfig(configList);
+        field.createUI();
+        field.addDataChangedListener(update);
+        assertFalse(update.dataChanged);
+        field.populateField("key3");
+        assertTrue(update.dataChanged);
+
+        assertEquals(undoListSize, UndoManager.getInstance().getUndoListSize());
+    }
 }

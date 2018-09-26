@@ -19,26 +19,27 @@
 
 package com.sldeditor.test.unit.ui.detail.config;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import org.jaitools.numeric.Range;
-import org.junit.Test;
-import org.opengis.filter.expression.Expression;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.sldeditor.common.undo.UndoEvent;
 import com.sldeditor.common.undo.UndoManager;
 import com.sldeditor.common.xml.ui.FieldIdEnum;
 import com.sldeditor.ui.detail.config.FieldConfigBase;
 import com.sldeditor.ui.detail.config.FieldConfigCommonData;
-import com.sldeditor.ui.detail.config.FieldConfigRange;
 import com.sldeditor.ui.detail.config.FieldConfigPopulate;
+import com.sldeditor.ui.detail.config.FieldConfigRange;
+import com.sldeditor.ui.iface.UpdateSymbolInterface;
+import org.jaitools.numeric.Range;
+import org.junit.jupiter.api.Test;
+import org.locationtech.jts.geom.Geometry;
+import org.opengis.filter.expression.Expression;
 
 /**
  * The unit test for FieldConfigRange.
- * 
+ *
  * <p>{@link com.sldeditor.ui.detail.config.FieldConfigRange}
  *
  * @author Robert Ward (SCISYS)
@@ -46,17 +47,20 @@ import com.sldeditor.ui.detail.config.FieldConfigPopulate;
 public class FieldConfigRangeTest {
 
     /**
-     * Test method for {@link com.sldeditor.ui.detail.config.FieldConfigRange#internal_setEnabled(boolean)}. Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigRange#isEnabled()}. Test method for
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigRange#internal_setEnabled(boolean)}. Test method
+     * for {@link com.sldeditor.ui.detail.config.FieldConfigRange#isEnabled()}. Test method for
      * {@link com.sldeditor.ui.detail.config.FieldConfigRange#createUI(javax.swing.Box)}.
      */
     @Test
     public void testSetEnabled() {
         // Value only, no attribute/expression dropdown
         boolean valueOnly = true;
-        FieldConfigRange field = new FieldConfigRange(
-                new FieldConfigCommonData(Double.class, FieldIdEnum.NAME, "label", valueOnly),
-                org.jaitools.numeric.Range.class);
+        FieldConfigRange field =
+                new FieldConfigRange(
+                        new FieldConfigCommonData(
+                                Double.class, FieldIdEnum.NAME, "label", valueOnly, false),
+                        org.jaitools.numeric.Range.class);
 
         // Text field will not have been created
         boolean expectedValue = true;
@@ -75,9 +79,11 @@ public class FieldConfigRangeTest {
 
         // Has attribute/expression dropdown
         valueOnly = false;
-        FieldConfigRange field2 = new FieldConfigRange(
-                new FieldConfigCommonData(Double.class, FieldIdEnum.NAME, "label", valueOnly),
-                org.jaitools.numeric.Range.class);
+        FieldConfigRange field2 =
+                new FieldConfigRange(
+                        new FieldConfigCommonData(
+                                Double.class, FieldIdEnum.NAME, "label", valueOnly, false),
+                        org.jaitools.numeric.Range.class);
 
         // Text field will not have been created
         expectedValue = true;
@@ -101,9 +107,11 @@ public class FieldConfigRangeTest {
     @Test
     public void testSetVisible() {
         boolean valueOnly = true;
-        FieldConfigRange field = new FieldConfigRange(
-                new FieldConfigCommonData(Double.class, FieldIdEnum.NAME, "label", valueOnly),
-                org.jaitools.numeric.Range.class);
+        FieldConfigRange field =
+                new FieldConfigRange(
+                        new FieldConfigCommonData(
+                                Double.class, FieldIdEnum.NAME, "label", valueOnly, false),
+                        org.jaitools.numeric.Range.class);
 
         boolean expectedValue = true;
         field.setVisible(expectedValue);
@@ -115,90 +123,130 @@ public class FieldConfigRangeTest {
     }
 
     /**
-     * Test method for {@link com.sldeditor.ui.detail.config.FieldConfigRange#generateExpression()}. Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigRange#populateExpression(java.lang.Object, org.opengis.filter.expression.Expression)}. Test
-     * method for {@link com.sldeditor.ui.detail.config.FieldConfigRange#populateField(java.lang.Double)}. Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigRange#setTestValue(com.sldeditor.ui.detail.config.FieldId, double)}. Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigRange#getDoubleValue()}.
+     * Test method for {@link com.sldeditor.ui.detail.config.FieldConfigRange#generateExpression()}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigRange#populateExpression(java.lang.Object,
+     * org.opengis.filter.expression.Expression)}. Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigRange#populateField(java.lang.Double)}. Test method
+     * for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigRange#setTestValue(com.sldeditor.ui.detail.config.FieldId,
+     * double)}. Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigRange#getDoubleValue()}.
      */
     @SuppressWarnings("rawtypes")
     @Test
     public void testGenerateExpression() {
         boolean valueOnly = true;
-        FieldConfigRange field = new FieldConfigRange(
-                new FieldConfigCommonData(Double.class, FieldIdEnum.NAME, "label", valueOnly),
-                org.jaitools.numeric.Range.class);
+        FieldConfigRange field =
+                new FieldConfigRange(
+                        new FieldConfigCommonData(
+                                Double.class, FieldIdEnum.NAME, "label", valueOnly, false),
+                        org.jaitools.numeric.Range.class);
         field.createUI();
 
         Range expectedValue = Range.create(3.0, false, 11.0, false);
         field.populateField(expectedValue);
         Range actualValueJAITools = field.getRange();
-        assertTrue(Math.abs(actualValueJAITools.getMin().doubleValue()
-                - expectedValue.getMin().doubleValue()) < 0.001);
+        assertTrue(
+                Math.abs(
+                                actualValueJAITools.getMin().doubleValue()
+                                        - expectedValue.getMin().doubleValue())
+                        < 0.001);
         assertEquals(actualValueJAITools.isMinIncluded(), expectedValue.isMinIncluded());
-        assertTrue(Math.abs(actualValueJAITools.getMax().doubleValue()
-                - expectedValue.getMax().doubleValue()) < 0.001);
+        assertTrue(
+                Math.abs(
+                                actualValueJAITools.getMax().doubleValue()
+                                        - expectedValue.getMax().doubleValue())
+                        < 0.001);
         assertEquals(actualValueJAITools.isMaxIncluded(), expectedValue.isMaxIncluded());
 
         field.populateExpression(null);
         actualValueJAITools = field.getRange();
         Range expectedDefaultValue = Range.create(0.0, true, 1.0, true);
 
-        assertTrue(Math.abs(actualValueJAITools.getMin().doubleValue()
-                - expectedDefaultValue.getMin().doubleValue()) < 0.001);
+        assertTrue(
+                Math.abs(
+                                actualValueJAITools.getMin().doubleValue()
+                                        - expectedDefaultValue.getMin().doubleValue())
+                        < 0.001);
         assertEquals(actualValueJAITools.isMinIncluded(), expectedDefaultValue.isMinIncluded());
-        assertTrue(Math.abs(actualValueJAITools.getMax().doubleValue()
-                - expectedDefaultValue.getMax().doubleValue()) < 0.001);
+        assertTrue(
+                Math.abs(
+                                actualValueJAITools.getMax().doubleValue()
+                                        - expectedDefaultValue.getMax().doubleValue())
+                        < 0.001);
         assertEquals(actualValueJAITools.isMaxIncluded(), expectedDefaultValue.isMaxIncluded());
 
         // Try using it.geosolutions.jaiext.range.Range
-        field = new FieldConfigRange(
-                new FieldConfigCommonData(Double.class, FieldIdEnum.NAME, "label", valueOnly),
-                it.geosolutions.jaiext.range.Range.class);
+        field =
+                new FieldConfigRange(
+                        new FieldConfigCommonData(
+                                Double.class, FieldIdEnum.NAME, "label", valueOnly, false),
+                        it.geosolutions.jaiext.range.Range.class);
         field.createUI();
 
         field.populateField(expectedValue);
         Range actualValueJAIExt = field.getRange();
-        assertTrue(Math.abs(actualValueJAIExt.getMin().doubleValue()
-                - expectedValue.getMin().doubleValue()) < 0.001);
+        assertTrue(
+                Math.abs(
+                                actualValueJAIExt.getMin().doubleValue()
+                                        - expectedValue.getMin().doubleValue())
+                        < 0.001);
         assertEquals(actualValueJAIExt.isMinIncluded(), expectedValue.isMinIncluded());
-        assertTrue(Math.abs(actualValueJAIExt.getMax().doubleValue()
-                - expectedValue.getMax().doubleValue()) < 0.001);
+        assertTrue(
+                Math.abs(
+                                actualValueJAIExt.getMax().doubleValue()
+                                        - expectedValue.getMax().doubleValue())
+                        < 0.001);
         assertEquals(actualValueJAIExt.isMaxIncluded(), expectedValue.isMaxIncluded());
         Expression rangeJAIToolsExpression = field.getExpression();
 
         field.populate(rangeJAIToolsExpression);
         actualValueJAITools = field.getRange();
-        assertTrue(Math.abs(actualValueJAIExt.getMin().doubleValue()
-                - expectedValue.getMin().doubleValue()) < 0.001);
+        assertTrue(
+                Math.abs(
+                                actualValueJAIExt.getMin().doubleValue()
+                                        - expectedValue.getMin().doubleValue())
+                        < 0.001);
         assertEquals(actualValueJAIExt.isMinIncluded(), expectedValue.isMinIncluded());
-        assertTrue(Math.abs(actualValueJAIExt.getMax().doubleValue()
-                - expectedValue.getMax().doubleValue()) < 0.001);
+        assertTrue(
+                Math.abs(
+                                actualValueJAIExt.getMax().doubleValue()
+                                        - expectedValue.getMax().doubleValue())
+                        < 0.001);
         assertEquals(actualValueJAIExt.isMaxIncluded(), expectedValue.isMaxIncluded());
-
     }
 
     /**
-     * Test method for {@link com.sldeditor.ui.detail.config.FieldConfigRange#revertToDefaultValue()}. Test method for
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigRange#revertToDefaultValue()}. Test method for
      * {@link com.sldeditor.ui.detail.config.FieldConfigRange#setDefaultValue(double)}.
      */
     @SuppressWarnings("rawtypes")
     @Test
     public void testRevertToDefaultValue() {
         boolean valueOnly = true;
-        FieldConfigRange field = new FieldConfigRange(
-                new FieldConfigCommonData(Double.class, FieldIdEnum.NAME, "label", valueOnly),
-                org.jaitools.numeric.Range.class);
+        FieldConfigRange field =
+                new FieldConfigRange(
+                        new FieldConfigCommonData(
+                                Double.class, FieldIdEnum.NAME, "label", valueOnly, false),
+                        org.jaitools.numeric.Range.class);
 
         Range expectedDefaultValue = Range.create(0.0, true, 1.0, true);
         field.revertToDefaultValue();
         Range actualValue = field.getRange();
 
-        assertTrue(Math.abs(actualValue.getMin().doubleValue()
-                - expectedDefaultValue.getMin().doubleValue()) < 0.001);
+        assertTrue(
+                Math.abs(
+                                actualValue.getMin().doubleValue()
+                                        - expectedDefaultValue.getMin().doubleValue())
+                        < 0.001);
         assertEquals(actualValue.isMinIncluded(), expectedDefaultValue.isMinIncluded());
-        assertTrue(Math.abs(actualValue.getMax().doubleValue()
-                - expectedDefaultValue.getMax().doubleValue()) < 0.001);
+        assertTrue(
+                Math.abs(
+                                actualValue.getMax().doubleValue()
+                                        - expectedDefaultValue.getMax().doubleValue())
+                        < 0.001);
         assertEquals(actualValue.isMaxIncluded(), expectedDefaultValue.isMaxIncluded());
 
         field.createUI();
@@ -207,17 +255,24 @@ public class FieldConfigRangeTest {
         field.setDefaultValue(expectedDefaultValue);
         field.revertToDefaultValue();
         actualValue = field.getRange();
-        assertTrue(Math.abs(actualValue.getMin().doubleValue()
-                - expectedDefaultValue.getMin().doubleValue()) < 0.001);
+        assertTrue(
+                Math.abs(
+                                actualValue.getMin().doubleValue()
+                                        - expectedDefaultValue.getMin().doubleValue())
+                        < 0.001);
         assertEquals(actualValue.isMinIncluded(), expectedDefaultValue.isMinIncluded());
-        assertTrue(Math.abs(actualValue.getMax().doubleValue()
-                - expectedDefaultValue.getMax().doubleValue()) < 0.001);
+        assertTrue(
+                Math.abs(
+                                actualValue.getMax().doubleValue()
+                                        - expectedDefaultValue.getMax().doubleValue())
+                        < 0.001);
         assertEquals(actualValue.isMaxIncluded(), expectedDefaultValue.isMaxIncluded());
         assertTrue(String.valueOf(expectedDefaultValue).compareTo(field.getStringValue()) == 0);
     }
 
     /**
-     * Test method for {@link com.sldeditor.ui.detail.config.FieldConfigRange#createCopy(com.sldeditor.ui.detail.config.FieldConfigBase)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigRange#createCopy(com.sldeditor.ui.detail.config.FieldConfigBase)}.
      */
     @Test
     public void testCreateCopy() {
@@ -233,9 +288,11 @@ public class FieldConfigRangeTest {
             }
         }
 
-        TestFieldConfigRange field = new TestFieldConfigRange(
-                new FieldConfigCommonData(Double.class, FieldIdEnum.NAME, "label", valueOnly),
-                org.jaitools.numeric.Range.class);
+        TestFieldConfigRange field =
+                new TestFieldConfigRange(
+                        new FieldConfigCommonData(
+                                Double.class, FieldIdEnum.NAME, "label", valueOnly, false),
+                        org.jaitools.numeric.Range.class);
         FieldConfigRange copy = (FieldConfigRange) field.callCreateCopy(null);
         assertNull(copy);
 
@@ -246,14 +303,17 @@ public class FieldConfigRangeTest {
     }
 
     /**
-     * Test method for {@link com.sldeditor.ui.detail.config.FieldConfigRange#attributeSelection(java.lang.String)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigRange#attributeSelection(java.lang.String)}.
      */
     @Test
     public void testAttributeSelection() {
         boolean valueOnly = true;
-        FieldConfigRange field = new FieldConfigRange(
-                new FieldConfigCommonData(Double.class, FieldIdEnum.NAME, "label", valueOnly),
-                org.jaitools.numeric.Range.class);
+        FieldConfigRange field =
+                new FieldConfigRange(
+                        new FieldConfigCommonData(
+                                Double.class, FieldIdEnum.NAME, "label", valueOnly, false),
+                        org.jaitools.numeric.Range.class);
         field.attributeSelection(null);
 
         field.createUI();
@@ -265,16 +325,20 @@ public class FieldConfigRangeTest {
     }
 
     /**
-     * Test method for {@link com.sldeditor.ui.detail.config.FieldConfigRange#undoAction(com.sldeditor.common.undo.UndoInterface)}. Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigRange#redoAction(com.sldeditor.common.undo.UndoInterface)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigRange#undoAction(com.sldeditor.common.undo.UndoInterface)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigRange#redoAction(com.sldeditor.common.undo.UndoInterface)}.
      */
     @SuppressWarnings("rawtypes")
     @Test
     public void testUndoAction() {
         boolean valueOnly = true;
-        FieldConfigRange field = new FieldConfigRange(
-                new FieldConfigCommonData(Double.class, FieldIdEnum.NAME, "label", valueOnly),
-                org.jaitools.numeric.Range.class);
+        FieldConfigRange field =
+                new FieldConfigRange(
+                        new FieldConfigCommonData(
+                                Double.class, FieldIdEnum.NAME, "label", valueOnly, false),
+                        org.jaitools.numeric.Range.class);
 
         field.undoAction(null);
         field.redoAction(null);
@@ -283,38 +347,46 @@ public class FieldConfigRangeTest {
         field.createUI();
         field.populateField(expectedValue1);
         Range actualValue = field.getRange();
-        assertTrue(Math.abs(actualValue.getMin().doubleValue()
-                - expectedValue1.getMin().doubleValue()) < 0.001);
+        assertTrue(
+                Math.abs(actualValue.getMin().doubleValue() - expectedValue1.getMin().doubleValue())
+                        < 0.001);
         assertEquals(actualValue.isMinIncluded(), expectedValue1.isMinIncluded());
-        assertTrue(Math.abs(actualValue.getMax().doubleValue()
-                - expectedValue1.getMax().doubleValue()) < 0.001);
+        assertTrue(
+                Math.abs(actualValue.getMax().doubleValue() - expectedValue1.getMax().doubleValue())
+                        < 0.001);
         assertEquals(actualValue.isMaxIncluded(), expectedValue1.isMaxIncluded());
 
         Range expectedValue2 = Range.create(23.0, true, 51.0, false);
         field.populateField(expectedValue2);
         actualValue = field.getRange();
-        assertTrue(Math.abs(actualValue.getMin().doubleValue()
-                - expectedValue2.getMin().doubleValue()) < 0.001);
+        assertTrue(
+                Math.abs(actualValue.getMin().doubleValue() - expectedValue2.getMin().doubleValue())
+                        < 0.001);
         assertEquals(actualValue.isMinIncluded(), expectedValue2.isMinIncluded());
-        assertTrue(Math.abs(actualValue.getMax().doubleValue()
-                - expectedValue2.getMax().doubleValue()) < 0.001);
+        assertTrue(
+                Math.abs(actualValue.getMax().doubleValue() - expectedValue2.getMax().doubleValue())
+                        < 0.001);
         assertEquals(actualValue.isMaxIncluded(), expectedValue2.isMaxIncluded());
 
         UndoManager.getInstance().undo();
         actualValue = field.getRange();
-        assertTrue(Math.abs(actualValue.getMin().doubleValue()
-                - expectedValue1.getMin().doubleValue()) < 0.001);
+        assertTrue(
+                Math.abs(actualValue.getMin().doubleValue() - expectedValue1.getMin().doubleValue())
+                        < 0.001);
         assertEquals(actualValue.isMinIncluded(), expectedValue1.isMinIncluded());
-        assertTrue(Math.abs(actualValue.getMax().doubleValue()
-                - expectedValue1.getMax().doubleValue()) < 0.001);
+        assertTrue(
+                Math.abs(actualValue.getMax().doubleValue() - expectedValue1.getMax().doubleValue())
+                        < 0.001);
         assertEquals(actualValue.isMaxIncluded(), expectedValue1.isMaxIncluded());
         UndoManager.getInstance().redo();
         actualValue = field.getRange();
-        assertTrue(Math.abs(actualValue.getMin().doubleValue()
-                - expectedValue2.getMin().doubleValue()) < 0.001);
+        assertTrue(
+                Math.abs(actualValue.getMin().doubleValue() - expectedValue2.getMin().doubleValue())
+                        < 0.001);
         assertEquals(actualValue.isMinIncluded(), expectedValue2.isMinIncluded());
-        assertTrue(Math.abs(actualValue.getMax().doubleValue()
-                - expectedValue2.getMax().doubleValue()) < 0.001);
+        assertTrue(
+                Math.abs(actualValue.getMax().doubleValue() - expectedValue2.getMax().doubleValue())
+                        < 0.001);
         assertEquals(actualValue.isMaxIncluded(), expectedValue2.isMaxIncluded());
 
         // Increase the code coverage
@@ -325,15 +397,18 @@ public class FieldConfigRangeTest {
     }
 
     /**
-     * Test method for {@link com.sldeditor.ui.detail.config.FieldConfigRange#testSetConfig(double, double, double, double)}.
+     * Test method for {@link com.sldeditor.ui.detail.config.FieldConfigRange#testSetConfig(double,
+     * double, double, double)}.
      */
     @SuppressWarnings("rawtypes")
     @Test
     public void testSetConfig() {
         boolean valueOnly = true;
-        FieldConfigRange field = new FieldConfigRange(
-                new FieldConfigCommonData(Double.class, FieldIdEnum.NAME, "label", valueOnly),
-                org.jaitools.numeric.Range.class);
+        FieldConfigRange field =
+                new FieldConfigRange(
+                        new FieldConfigCommonData(
+                                Double.class, FieldIdEnum.NAME, "label", valueOnly, false),
+                        org.jaitools.numeric.Range.class);
 
         field.createUI();
 
@@ -349,38 +424,94 @@ public class FieldConfigRangeTest {
         Range expectedValue1 = Range.create(3.0, false, 11.0, false);
         field.populateField(expectedValue1);
         Range actualValue = field.getRange();
-        assertTrue(Math.abs(actualValue.getMin().doubleValue()
-                - minValue) < 0.001);
+        assertTrue(Math.abs(actualValue.getMin().doubleValue() - minValue) < 0.001);
         assertEquals(actualValue.isMinIncluded(), expectedValue1.isMinIncluded());
-        assertTrue(Math.abs(actualValue.getMax().doubleValue()
-                - expectedValue1.getMax().doubleValue()) < 0.001);
+        assertTrue(
+                Math.abs(actualValue.getMax().doubleValue() - expectedValue1.getMax().doubleValue())
+                        < 0.001);
         assertEquals(actualValue.isMaxIncluded(), expectedValue1.isMaxIncluded());
 
         Range expectedValue1a = Range.create(113.0, false, 121.0, false);
         field.populateField(expectedValue1a);
         actualValue = field.getRange();
-        assertTrue(Math.abs(actualValue.getMin().doubleValue()
-                - maxValue) < 0.001);
-        assertTrue(Math.abs(actualValue.getMax().doubleValue()
-                - maxValue) < 0.001);
+        assertTrue(Math.abs(actualValue.getMin().doubleValue() - maxValue) < 0.001);
+        assertTrue(Math.abs(actualValue.getMax().doubleValue() - maxValue) < 0.001);
 
         // Should be set to the maximum value
         Range expectedValue2 = Range.create(15.0, false, 31.0, false);
         field.populateField(expectedValue2);
         actualValue = field.getRange();
-        assertTrue(Math.abs(actualValue.getMin().doubleValue()
-                - expectedValue2.getMin().doubleValue()) < 0.001);
+        assertTrue(
+                Math.abs(actualValue.getMin().doubleValue() - expectedValue2.getMin().doubleValue())
+                        < 0.001);
         assertEquals(actualValue.isMinIncluded(), expectedValue2.isMinIncluded());
-        assertTrue(Math.abs(actualValue.getMax().doubleValue()
-                - maxValue) < 0.001);
+        assertTrue(Math.abs(actualValue.getMax().doubleValue() - maxValue) < 0.001);
         assertEquals(actualValue.isMaxIncluded(), expectedValue2.isMaxIncluded());
 
         Range expectedValue2a = Range.create(-13.0, false, -11.0, false);
         field.populateField(expectedValue2a);
         actualValue = field.getRange();
-        assertTrue(Math.abs(actualValue.getMin().doubleValue()
-                - minValue) < 0.001);
-        assertTrue(Math.abs(actualValue.getMax().doubleValue()
-                - minValue) < 0.001);
+        assertTrue(Math.abs(actualValue.getMin().doubleValue() - minValue) < 0.001);
+        assertTrue(Math.abs(actualValue.getMax().doubleValue() - minValue) < 0.001);
+    }
+
+    @Test
+    public void testValueStored() {
+        boolean valueOnly = true;
+
+        class TestFieldConfigRange extends FieldConfigRange {
+            public TestFieldConfigRange(FieldConfigCommonData commonData) {
+                super(commonData, org.jaitools.numeric.Range.class);
+            }
+
+            /*
+             * (non-Javadoc)
+             *
+             * @see com.sldeditor.ui.detail.config.FieldConfigBoundingBox#valueStored()
+             */
+            @Override
+            protected void valueStored() {
+                super.valueStored();
+            }
+        }
+
+        TestFieldConfigRange field =
+                new TestFieldConfigRange(
+                        new FieldConfigCommonData(
+                                Geometry.class, FieldIdEnum.NAME, "label", valueOnly, false));
+
+        class TestUpdateSymbol implements UpdateSymbolInterface {
+            public boolean dataChanged = false;
+
+            @Override
+            public void dataChanged(FieldIdEnum changedField) {
+                dataChanged = true;
+            }
+        };
+        TestUpdateSymbol update = new TestUpdateSymbol();
+
+        int undoListSize = UndoManager.getInstance().getUndoListSize();
+        field.createUI();
+        field.addDataChangedListener(update);
+        assertFalse(update.dataChanged);
+        field.valueStored();
+        assertTrue(update.dataChanged);
+
+        assertEquals(undoListSize + 1, UndoManager.getInstance().getUndoListSize());
+        update.dataChanged = false;
+
+        // now suppress undo events
+        field =
+                new TestFieldConfigRange(
+                        new FieldConfigCommonData(
+                                Geometry.class, FieldIdEnum.NAME, "label", valueOnly, true));
+
+        undoListSize = UndoManager.getInstance().getUndoListSize();
+        field.addDataChangedListener(update);
+        assertFalse(update.dataChanged);
+        field.valueStored();
+        assertTrue(update.dataChanged);
+
+        assertEquals(undoListSize, UndoManager.getInstance().getUndoListSize());
     }
 }

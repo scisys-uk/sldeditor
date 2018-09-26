@@ -19,20 +19,18 @@
 
 package com.sldeditor.rendertransformation.types;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.geotools.filter.AttributeExpressionImpl;
-import org.geotools.filter.FunctionExpressionImpl;
-import org.geotools.filter.LiteralExpressionImpl;
-import org.geotools.filter.MathExpressionImpl;
-import org.opengis.filter.expression.Expression;
-
 import com.sldeditor.common.coordinate.CoordManager;
 import com.sldeditor.ui.detail.config.FieldConfigBase;
 import com.sldeditor.ui.detail.config.FieldConfigCommonData;
 import com.sldeditor.ui.detail.config.symboltype.SymbolTypeConfig;
 import com.sldeditor.ui.widgets.ValueComboBoxData;
+import java.util.Arrays;
+import java.util.List;
+import org.geotools.filter.AttributeExpressionImpl;
+import org.geotools.filter.FunctionExpressionImpl;
+import org.geotools.filter.LiteralExpressionImpl;
+import org.geotools.filter.MathExpressionImpl;
+import org.opengis.filter.expression.Expression;
 
 /**
  * The Class CoordinateReferenceSystemValues.
@@ -50,7 +48,7 @@ public class CoordinateReferenceSystemValues extends BaseValue
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.rendertransformation.types.RenderTransformValueInterface#getType()
      */
     @Override
@@ -60,8 +58,10 @@ public class CoordinateReferenceSystemValues extends BaseValue
 
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.rendertransformation.types.RenderTransformValueInterface#setDefaultValue(java.lang.Object)
+     *
+     * @see
+     * com.sldeditor.rendertransformation.types.RenderTransformValueInterface#setDefaultValue(java.
+     * lang.Object)
      */
     @Override
     public void setDefaultValue(Object defaultValue) {
@@ -70,22 +70,26 @@ public class CoordinateReferenceSystemValues extends BaseValue
 
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.rendertransformation.types.BaseValue#populateSymbolType(com.sldeditor.ui.detail.config.symboltype.SymbolTypeConfig)
+     *
+     * @see
+     * com.sldeditor.rendertransformation.types.BaseValue#populateSymbolType(com.sldeditor.ui.detail
+     * .config.symboltype.SymbolTypeConfig)
      */
     protected void populateSymbolType(SymbolTypeConfig symbolTypeConfig) {
         if (crsValueList == null) {
             crsValueList = CoordManager.getInstance().getCRSList();
         }
 
-        for (ValueComboBoxData valueComboData : crsValueList) {
-            symbolTypeConfig.addOption(valueComboData.getKey(), valueComboData.getText());
+        if (symbolTypeConfig != null) {
+            for (ValueComboBoxData valueComboData : crsValueList) {
+                symbolTypeConfig.addOption(valueComboData.getKey(), valueComboData.getText());
+            }
         }
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.rendertransformation.types.RenderTransformValueInterface#getExpression()
      */
     @Override
@@ -93,13 +97,20 @@ public class CoordinateReferenceSystemValues extends BaseValue
         if (expression != null) {
             return expression;
         }
-        return filterFactory.literal(value);
+
+        if (value != null) {
+            return filterFactory.literal(value);
+        }
+
+        return null;
     }
 
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.rendertransformation.types.RenderTransformValueInterface#setValue(java.lang.Object)
+     *
+     * @see
+     * com.sldeditor.rendertransformation.types.RenderTransformValueInterface#setValue(java.lang.
+     * Object)
      */
     @Override
     public void setValue(Object aValue) {
@@ -124,8 +135,10 @@ public class CoordinateReferenceSystemValues extends BaseValue
 
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.rendertransformation.types.RenderTransformValueInterface#getField(com.sldeditor.ui.detail.config.FieldConfigCommonData)
+     *
+     * @see
+     * com.sldeditor.rendertransformation.types.RenderTransformValueInterface#getField(com.sldeditor
+     * .ui.detail.config.FieldConfigCommonData)
      */
     @Override
     public FieldConfigBase getField(FieldConfigCommonData commonData) {
@@ -134,7 +147,7 @@ public class CoordinateReferenceSystemValues extends BaseValue
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.rendertransformation.types.RenderTransformValueInterface#createInstance()
      */
     @Override

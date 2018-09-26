@@ -24,7 +24,7 @@ import com.sldeditor.common.localisation.Localisation;
 
 /**
  * Class that represents the vendor option versions supported.
- * 
+ *
  * @author Robert Ward (SCISYS)
  */
 public class VersionData implements Comparable<VersionData>, Cloneable {
@@ -35,6 +35,9 @@ public class VersionData implements Comparable<VersionData>, Cloneable {
 
     /** The Constant LATEST. */
     private static final String LATEST = "Latest";
+
+    /** The Constant NOTSET. */
+    private static final String NOTSET = "NotSet";
 
     /** The Constant ALL_VERSIONS. */
     private static final int ALL_VERSIONS = Integer.MAX_VALUE;
@@ -75,16 +78,12 @@ public class VersionData implements Comparable<VersionData>, Cloneable {
     /** The is latest flag. */
     private boolean isLatest = false;
 
-    /**
-     * Default constructor.
-     */
-    public VersionData() {
-
-    }
+    /** Default constructor. */
+    public VersionData() {}
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#clone()
      */
     @Override
@@ -151,7 +150,7 @@ public class VersionData implements Comparable<VersionData>, Cloneable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     @Override
@@ -240,7 +239,7 @@ public class VersionData implements Comparable<VersionData>, Cloneable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override
@@ -258,8 +257,8 @@ public class VersionData implements Comparable<VersionData>, Cloneable {
     }
 
     /**
-     * Checks to see if this object is in the version range.
-     * Returns false if either supplied version is null.
+     * Checks to see if this object is in the version range. Returns false if either supplied
+     * version is null.
      *
      * @param minimumVersion the minimum version
      * @param maximumVersion the maximum version
@@ -269,6 +268,10 @@ public class VersionData implements Comparable<VersionData>, Cloneable {
         if ((minimumVersion == null) || (maximumVersion == null)) {
             return false;
         }
+
+        // if (minimumVersion.isNotSet()) {
+        // return true;
+        // }
 
         boolean inRange = minimumVersion.greaterThan(this) && this.lessThan(maximumVersion);
 
@@ -282,7 +285,9 @@ public class VersionData implements Comparable<VersionData>, Cloneable {
      * @return true, if successful
      */
     private boolean lessThan(VersionData maximumVersion) {
-        if (this.majorNumber < maximumVersion.majorNumber) {
+        if (this.isNotSet()) {
+            return true;
+        } else if (this.majorNumber < maximumVersion.majorNumber) {
             return true;
         } else if (this.majorNumber == maximumVersion.majorNumber) {
             if (this.minorNumber < maximumVersion.minorNumber) {
@@ -307,6 +312,8 @@ public class VersionData implements Comparable<VersionData>, Cloneable {
     private boolean greaterThan(VersionData versionData) {
         if (versionData.isNotSet != this.isNotSet) {
             return this.isNotSet;
+        } else if (this.isNotSet) {
+            return true;
         } else if (versionData.majorNumber > this.majorNumber) {
             return true;
         } else if (versionData.majorNumber == this.majorNumber) {
@@ -354,8 +361,10 @@ public class VersionData implements Comparable<VersionData>, Cloneable {
                     Class<?> classType = Class.forName(components[0]);
                     versionData = VersionData.decode(classType, components[1]);
                 } catch (ClassNotFoundException e) {
-                    ConsoleManager.getInstance().error(VersionData.class,
-                            "Unknown vendor option class : " + components[0]);
+                    ConsoleManager.getInstance()
+                            .error(
+                                    VersionData.class,
+                                    "Unknown vendor option class : " + components[0]);
                 }
             }
         }
@@ -364,7 +373,7 @@ public class VersionData implements Comparable<VersionData>, Cloneable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -382,7 +391,7 @@ public class VersionData implements Comparable<VersionData>, Cloneable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -440,7 +449,9 @@ public class VersionData implements Comparable<VersionData>, Cloneable {
         isNotSet = false;
         this.versionString = versionString;
 
-        if (versionString.compareToIgnoreCase(EARLIEST) == 0) {
+        if (versionString.compareToIgnoreCase(NOTSET) == 0) {
+            this.isNotSet = true;
+        } else if (versionString.compareToIgnoreCase(EARLIEST) == 0) {
             this.majorNumber = Integer.MIN_VALUE;
             this.minorNumber = Integer.MIN_VALUE;
             this.pointNumber = Integer.MIN_VALUE;
@@ -455,8 +466,9 @@ public class VersionData implements Comparable<VersionData>, Cloneable {
         } else {
             snapshot = versionString.endsWith(SNAPSHOT_SUFFIX);
             if (snapshot) {
-                versionString = versionString.substring(0,
-                        versionString.length() - SNAPSHOT_SUFFIX.length());
+                versionString =
+                        versionString.substring(
+                                0, versionString.length() - SNAPSHOT_SUFFIX.length());
             }
 
             String[] versionComponents = versionString.split("\\.");
@@ -475,7 +487,7 @@ public class VersionData implements Comparable<VersionData>, Cloneable {
                 }
 
                 if (versionComponents.length > 3) {
-                    this.subPointNumber = decodeNumber(versionComponents[2]);
+                    this.subPointNumber = decodeNumber(versionComponents[3]);
                 }
             } catch (NumberFormatException e) {
                 return false;

@@ -19,18 +19,6 @@
 
 package com.sldeditor.ui.detail.config;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
-
-import org.geotools.data.DataStore;
-import org.geotools.filter.AttributeExpressionImpl;
-import org.geotools.filter.LiteralExpressionImpl;
-import org.opengis.filter.expression.Expression;
-
 import com.sldeditor.common.undo.UndoActionInterface;
 import com.sldeditor.common.undo.UndoEvent;
 import com.sldeditor.common.undo.UndoInterface;
@@ -42,15 +30,24 @@ import com.sldeditor.datasource.impl.DataSourceFactory;
 import com.sldeditor.datasource.impl.GeometryTypeEnum;
 import com.sldeditor.ui.detail.BasePanel;
 import com.sldeditor.ui.widgets.FieldPanel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import org.geotools.data.DataStore;
+import org.geotools.filter.AttributeExpressionImpl;
+import org.geotools.filter.LiteralExpressionImpl;
+import org.opengis.filter.expression.Expression;
 
 /**
  * The Class FieldConfigDSProperties wraps a drop down GUI component containing data source property
  * names and an optional value/attribute/expression drop down.
- * 
+ *
  * <p>Supports undo/redo functionality.
- * 
+ *
  * <p>Instantiated by {@link com.sldeditor.ui.detail.config.ReadPanelConfig}
- * 
+ *
  * @author Robert Ward (SCISYS)
  */
 public class FieldConfigDSProperties extends FieldConfigBase
@@ -86,44 +83,31 @@ public class FieldConfigDSProperties extends FieldConfigBase
         dataSource.addListener(this);
     }
 
-    /**
-     * Creates the ui.
-     */
+    /** Creates the ui. */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#createUI()
      */
     @Override
     public void createUI() {
 
-        final UndoActionInterface parentObj = this;
-
         int xPos = getXPos();
-        comboBox.setBounds(xPos + BasePanel.WIDGET_X_START, 0,
+        comboBox.setBounds(
+                xPos + BasePanel.WIDGET_X_START,
+                0,
                 isValueOnly() ? BasePanel.WIDGET_EXTENDED_WIDTH : BasePanel.WIDGET_STANDARD_WIDTH,
                 BasePanel.WIDGET_HEIGHT);
 
         FieldPanel fieldPanel = createFieldPanel(xPos, getLabel());
         fieldPanel.add(comboBox);
 
-        comboBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (isAttributeComboBoxPopulated()) {
-                    if (comboBox.getSelectedItem() != null) {
-
-                        String newValueObj = new String((String)comboBox.getSelectedItem());
-
-                        UndoManager.getInstance().addUndoEvent(
-                                new UndoEvent(parentObj, getFieldId(), oldValueObj, newValueObj));
-
-                        oldValueObj = new String(newValueObj);
-
-                        valueUpdated();
+        comboBox.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        valueStored();
                     }
-                }
-            }
-        });
+                });
     }
 
     /**
@@ -133,7 +117,7 @@ public class FieldConfigDSProperties extends FieldConfigBase
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.sldeditor.ui.iface.AttributeButtonSelectionInterface#attributeSelection(java.lang.String)
      */
@@ -151,7 +135,7 @@ public class FieldConfigDSProperties extends FieldConfigBase
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#setEnabled(boolean)
      */
     @Override
@@ -168,7 +152,7 @@ public class FieldConfigDSProperties extends FieldConfigBase
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#generateExpression()
      */
     protected Expression generateExpression() {
@@ -191,7 +175,7 @@ public class FieldConfigDSProperties extends FieldConfigBase
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#isEnabled()
      */
     @Override
@@ -206,12 +190,10 @@ public class FieldConfigDSProperties extends FieldConfigBase
         return false;
     }
 
-    /**
-     * Revert to default value.
-     */
+    /** Revert to default value. */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#revertToDefaultValue()
      */
     @Override
@@ -226,7 +208,7 @@ public class FieldConfigDSProperties extends FieldConfigBase
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#populateExpression(java.lang.Object)
      */
     @Override
@@ -258,9 +240,7 @@ public class FieldConfigDSProperties extends FieldConfigBase
         return (String) comboBox.getSelectedItem();
     }
 
-    /**
-     * Populate attribute combo box.
-     */
+    /** Populate attribute combo box. */
     private void populateAttributeComboBox() {
         if (comboBox != null) {
             setPopulatingComboBox(true);
@@ -307,7 +287,7 @@ public class FieldConfigDSProperties extends FieldConfigBase
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.undo.UndoActionInterface#undoAction(com.sldeditor.undo.UndoInterface)
      */
     @Override
@@ -328,7 +308,7 @@ public class FieldConfigDSProperties extends FieldConfigBase
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.undo.UndoActionInterface#redoAction(com.sldeditor.undo.UndoInterface)
      */
     @Override
@@ -411,14 +391,14 @@ public class FieldConfigDSProperties extends FieldConfigBase
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.sldeditor.datasource.DataSourceUpdatedInterface#dataSourceLoaded(com.sldeditor.datasource
      * .impl.GeometryTypeEnum, boolean)
      */
     @Override
-    public void dataSourceLoaded(GeometryTypeEnum geometryType,
-            boolean isConnectedToDataSourceFlag) {
+    public void dataSourceLoaded(
+            GeometryTypeEnum geometryType, boolean isConnectedToDataSourceFlag) {
         DataSourceInterface dataSource = DataSourceFactory.getDataSource();
         attributeNameList = dataSource.getAllAttributes(false);
 
@@ -427,7 +407,7 @@ public class FieldConfigDSProperties extends FieldConfigBase
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.sldeditor.datasource.DataSourceUpdatedInterface#dataSourceAboutToUnloaded(org.geotools.
      * data.DataStore)
@@ -435,5 +415,24 @@ public class FieldConfigDSProperties extends FieldConfigBase
     @Override
     public void dataSourceAboutToUnloaded(DataStore dataStore) {
         // Do nothing
+    }
+
+    /** Value stored. */
+    protected void valueStored() {
+        if (isAttributeComboBoxPopulated()) {
+            if (comboBox.getSelectedItem() != null) {
+
+                if (!FieldConfigDSProperties.this.isSuppressUndoEvents()) {
+                    String newValueObj = new String((String) comboBox.getSelectedItem());
+
+                    UndoManager.getInstance()
+                            .addUndoEvent(
+                                    new UndoEvent(this, getFieldId(), oldValueObj, newValueObj));
+
+                    oldValueObj = new String(newValueObj);
+                }
+                valueUpdated();
+            }
+        }
     }
 }

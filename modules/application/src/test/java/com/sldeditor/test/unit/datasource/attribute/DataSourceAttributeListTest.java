@@ -19,37 +19,34 @@
 
 package com.sldeditor.test.unit.datasource.attribute;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.sldeditor.datasource.attribute.DataSourceAttributeData;
 import com.sldeditor.datasource.attribute.DataSourceAttributeList;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for DataSourceAttributeList class.
- * 
- * <p>{@link com.sldeditor.datasource.attribute.DataSourceAttributeList}
- * 
- * @author Robert Ward (SCISYS)
  *
+ * <p>{@link com.sldeditor.datasource.attribute.DataSourceAttributeList}
+ *
+ * @author Robert Ward (SCISYS)
  */
 public class DataSourceAttributeListTest {
 
     /**
-     * Test method for
-     * {@link com.sldeditor.datasource.attribute.DataSourceAttributeList#DataSourceAttributeList()}.
+     * Test method for {@link
+     * com.sldeditor.datasource.attribute.DataSourceAttributeList#DataSourceAttributeList()}.
      */
     @Test
     public void testDataSourceAttributeList() {
 
-        List<DataSourceAttributeData> expectedAttributeList = 
+        List<DataSourceAttributeData> expectedAttributeList =
                 new ArrayList<DataSourceAttributeData>();
-        expectedAttributeList
-                .add(new DataSourceAttributeData("field 1", String.class, "test value"));
+        expectedAttributeList.add(
+                new DataSourceAttributeData("field 1", String.class, "test value"));
         expectedAttributeList.add(new DataSourceAttributeData("field 2", Double.class, 42.0));
         expectedAttributeList.add(new DataSourceAttributeData("field 3", Integer.class, 22));
         expectedAttributeList.add(new DataSourceAttributeData("field 4", Long.class, 454));
@@ -59,5 +56,4 @@ public class DataSourceAttributeListTest {
 
         assertEquals(expectedAttributeList, dsaList.getData());
     }
-
 }

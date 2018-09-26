@@ -19,44 +19,41 @@
 
 package com.sldeditor.test.unit.rendertransformation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.sldeditor.rendertransformation.BuiltInProcessFunction;
+import com.sldeditor.rendertransformation.ProcessFunctionParameterValue;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.List;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.filter.ExpressionDOMParser;
 import org.geotools.process.function.ProcessFunction;
 import org.geotools.process.function.ProcessFunctionFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opengis.filter.capability.FunctionName;
 import org.opengis.parameter.Parameter;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.sldeditor.rendertransformation.BuiltInProcessFunction;
-import com.sldeditor.rendertransformation.ProcessFunctionParameterValue;
-
 /**
  * Unit test for BuiltInProcessFunction class.
- * 
- * <p>{@link com.sldeditor.rendertransformation.BuiltInProcessFunction}
- * 
- * @author Robert Ward (SCISYS)
  *
+ * <p>{@link com.sldeditor.rendertransformation.BuiltInProcessFunction}
+ *
+ * @author Robert Ward (SCISYS)
  */
 public class BuiltInProcessFunctionTest {
 
     /**
-     * Test method for
-     * {@link com.sldeditor.rendertransformation.BuiltInProcessFunction#extractParameters(org.opengis.filter.capability.FunctionName, org.geotools.process.function.ProcessFunction)}.
+     * Test method for {@link
+     * com.sldeditor.rendertransformation.BuiltInProcessFunction#extractParameters(org.opengis.filter.capability.FunctionName,
+     * org.geotools.process.function.ProcessFunction)}.
      */
     @Test
     public void testExtractParametersFunctionName() {
@@ -78,45 +75,74 @@ public class BuiltInProcessFunctionTest {
 
                 ProcessFunctionParameterValue actualParameter = valueList.get(index);
 
-                assertTrue(functionName.getName(),
-                        expectedParameter.getName().compareTo(actualParameter.name) == 0);
-                assertEquals(functionName.getName(), expectedParameter.getType(),
-                        actualParameter.type);
-                assertTrue(functionName.getName(), expectedParameter.getType().getSimpleName()
-                        .compareTo(actualParameter.dataType) == 0);
-                assertEquals(functionName.getName(), !expectedParameter.isRequired(),
-                        actualParameter.optional);
-                assertEquals(functionName.getName(), expectedParameter.getMinOccurs(),
-                        actualParameter.minOccurences);
-                assertEquals(functionName.getName(), expectedParameter.getMaxOccurs(),
-                        actualParameter.maxOccurences);
+                assertTrue(
+                        expectedParameter.getName().compareTo(actualParameter.name) == 0,
+                        functionName.getName());
+                assertEquals(
+                        expectedParameter.getType(), actualParameter.type, functionName.getName());
+                assertTrue(
+                        expectedParameter
+                                        .getType()
+                                        .getSimpleName()
+                                        .compareTo(actualParameter.dataType)
+                                == 0,
+                        functionName.getName());
+                assertEquals(
+                        !expectedParameter.isRequired(),
+                        actualParameter.optional,
+                        functionName.getName());
+                assertEquals(
+                        expectedParameter.getMinOccurs(),
+                        actualParameter.minOccurences,
+                        functionName.getName());
+                assertEquals(
+                        expectedParameter.getMaxOccurs(),
+                        actualParameter.maxOccurences,
+                        functionName.getName());
             }
         }
         System.out.println(String.format("Tested %d functions", functionNameList.size()));
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.rendertransformation.BuiltInProcessFunction#extractParameters(org.opengis.filter.capability.FunctionName, org.geotools.process.function.ProcessFunction)}.
+     * Test method for {@link
+     * com.sldeditor.rendertransformation.BuiltInProcessFunction#extractParameters(org.opengis.filter.capability.FunctionName,
+     * org.geotools.process.function.ProcessFunction)}.
      */
     @Test
     public void testExtractParametersProcessFunction() {
         BuiltInProcessFunction obj = new BuiltInProcessFunction();
-        String testData = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>"
-                + "<StyledLayerDescriptor version=\"1.0.0\" xsi:schemaLocation=\"http://www.opengis.net/sld StyledLayerDescriptor.xsd\" xmlns=\"http://www.opengis.net/sld\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
-                + "<ogc:Function name=\"vec:PointStacker\">" + "<ogc:Function name=\"parameter\">"
-                + "  <ogc:Literal>data</ogc:Literal>" + "</ogc:Function>"
-                + "<ogc:Function name=\"parameter\">" + "  <ogc:Literal>cellSize</ogc:Literal>"
-                + "  <ogc:Literal>30</ogc:Literal>" + "</ogc:Function>"
-                + "<ogc:Function name=\"parameter\">" + "  <ogc:Literal>outputBBOX</ogc:Literal>"
-                + "  <ogc:Function name=\"env\">" + "        <ogc:Literal>wms_bbox</ogc:Literal>"
-                + "  </ogc:Function>" + "</ogc:Function>" + "<ogc:Function name=\"parameter\">"
-                + "  <ogc:Literal>outputWidth</ogc:Literal>" + "  <ogc:Function name=\"env\">"
-                + "        <ogc:Literal>wms_width</ogc:Literal>" + "  </ogc:Function>"
-                + "</ogc:Function>" + "<ogc:Function name=\"parameter\">"
-                + " <ogc:Literal>outputHeight</ogc:Literal>" + "  <ogc:Function name=\"env\">"
-                + "        <ogc:Literal>wms_height</ogc:Literal>" + "  </ogc:Function>"
-                + " </ogc:Function>" + "</ogc:Function>" + "</StyledLayerDescriptor>";
+        String testData =
+                "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>"
+                        + "<StyledLayerDescriptor version=\"1.0.0\" xsi:schemaLocation=\"http://www.opengis.net/sld StyledLayerDescriptor.xsd\" xmlns=\"http://www.opengis.net/sld\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
+                        + "<ogc:Function name=\"vec:PointStacker\">"
+                        + "<ogc:Function name=\"parameter\">"
+                        + "  <ogc:Literal>data</ogc:Literal>"
+                        + "</ogc:Function>"
+                        + "<ogc:Function name=\"parameter\">"
+                        + "  <ogc:Literal>cellSize</ogc:Literal>"
+                        + "  <ogc:Literal>30</ogc:Literal>"
+                        + "</ogc:Function>"
+                        + "<ogc:Function name=\"parameter\">"
+                        + "  <ogc:Literal>outputBBOX</ogc:Literal>"
+                        + "  <ogc:Function name=\"env\">"
+                        + "        <ogc:Literal>wms_bbox</ogc:Literal>"
+                        + "  </ogc:Function>"
+                        + "</ogc:Function>"
+                        + "<ogc:Function name=\"parameter\">"
+                        + "  <ogc:Literal>outputWidth</ogc:Literal>"
+                        + "  <ogc:Function name=\"env\">"
+                        + "        <ogc:Literal>wms_width</ogc:Literal>"
+                        + "  </ogc:Function>"
+                        + "</ogc:Function>"
+                        + "<ogc:Function name=\"parameter\">"
+                        + " <ogc:Literal>outputHeight</ogc:Literal>"
+                        + "  <ogc:Function name=\"env\">"
+                        + "        <ogc:Literal>wms_height</ogc:Literal>"
+                        + "  </ogc:Function>"
+                        + " </ogc:Function>"
+                        + "</ogc:Function>"
+                        + "</StyledLayerDescriptor>";
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder;
         ProcessFunction tx = null;
@@ -124,8 +150,8 @@ public class BuiltInProcessFunctionTest {
             builder = factory.newDocumentBuilder();
             InputSource is = new InputSource(new StringReader(testData));
             Document doc = builder.parse(is);
-            ExpressionDOMParser parser = new ExpressionDOMParser(
-                    CommonFactoryFinder.getFilterFactory2(null));
+            ExpressionDOMParser parser =
+                    new ExpressionDOMParser(CommonFactoryFinder.getFilterFactory2(null));
             tx = (ProcessFunction) parser.expression(doc.getDocumentElement().getFirstChild());
         } catch (ParserConfigurationException e) {
             e.printStackTrace();

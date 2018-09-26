@@ -19,25 +19,6 @@
 
 package com.sldeditor.ui.attribute;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-
-import org.geotools.data.DataStore;
-import org.geotools.filter.AttributeExpressionImpl;
-import org.geotools.filter.ConstantExpression;
-import org.geotools.filter.LiteralExpressionImpl;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.NilExpression;
-
 import com.sldeditor.common.undo.UndoActionInterface;
 import com.sldeditor.common.undo.UndoEvent;
 import com.sldeditor.common.undo.UndoInterface;
@@ -50,14 +31,32 @@ import com.sldeditor.ui.detail.BasePanel;
 import com.sldeditor.ui.detail.config.FieldConfigBase;
 import com.sldeditor.ui.iface.AttributeButtonSelectionInterface;
 import com.sldeditor.ui.iface.ExpressionUpdateInterface;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import org.geotools.data.DataStore;
+import org.geotools.filter.AttributeExpressionImpl;
+import org.geotools.filter.ConstantExpression;
+import org.geotools.filter.LiteralExpressionImpl;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.NilExpression;
 
 /**
  * A panel to allow the user to specify whether field's contents is either:
+ *
  * <ul>
- * <li>value</li>
- * <li>attribute</li>
- * <li>expression</li>
+ *   <li>value
+ *   <li>attribute
+ *   <li>expression
  * </ul>
+ *
  * .
  *
  * @author Robert Ward (SCISYS)
@@ -146,7 +145,7 @@ public class AttributeSelection extends JPanel
      *
      * @param expectedDataType the expected data type
      */
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     private void createUI(Class<?> expectedDataType) {
         final UndoActionInterface thisObj = this;
 
@@ -161,23 +160,31 @@ public class AttributeSelection extends JPanel
         dataSourceAttributePanel = createDataSourceAttributePanel(expectedDataType);
 
         attributeChooserComboBox = new JComboBox<String>();
-        attributeChooserComboBox.addActionListener(new ActionListener() {
+        attributeChooserComboBox.addActionListener(
+                new ActionListener() {
 
-            public void actionPerformed(ActionEvent e) {
-                JComboBox<String> cb = (JComboBox<String>) e.getSource();
-                String selected = (String) cb.getSelectedItem();
-                showPanel(selected);
+                    public void actionPerformed(ActionEvent e) {
+                        JComboBox<String> cb = (JComboBox<String>) e.getSource();
+                        String selected = (String) cb.getSelectedItem();
+                        showPanel(selected);
 
-                if ((oldValueObj == null) && cb.getItemCount() > 0) {
-                    oldValueObj = cb.getItemAt(0);
-                }
+                        if (!field.isSuppressUndoEvents()) {
+                            if ((oldValueObj == null) && cb.getItemCount() > 0) {
+                                oldValueObj = cb.getItemAt(0);
+                            }
 
-                UndoManager.getInstance().addUndoEvent(
-                        new UndoEvent(thisObj, "DataSourceAttribute", oldValueObj, selected));
+                            UndoManager.getInstance()
+                                    .addUndoEvent(
+                                            new UndoEvent(
+                                                    thisObj,
+                                                    "DataSourceAttribute",
+                                                    oldValueObj,
+                                                    selected));
+                        }
 
-                updateSymbol();
-            }
-        });
+                        updateSymbol();
+                    }
+                });
         add(attributeChooserComboBox, BorderLayout.WEST);
     }
 
@@ -213,16 +220,15 @@ public class AttributeSelection extends JPanel
      * @return the j panel
      */
     private DataSourceAttributePanel createDataSourceAttributePanel(Class<?> expectedDataType) {
-        DataSourceAttributePanel panel = new DataSourceAttributePanel(this);
+        DataSourceAttributePanel panel =
+                new DataSourceAttributePanel(this, field.isSuppressUndoEvents());
         panel.setDataType(expectedDataType);
 
         outerPanel.add(panel, DataSourceAttributePanel.getPanelName());
         return panel;
     }
 
-    /**
-     * Update symbol.
-     */
+    /** Update symbol. */
     @Override
     public void updateSymbol() {
 
@@ -254,6 +260,11 @@ public class AttributeSelection extends JPanel
         }
     }
 
+    @Override
+    public void parameterAdded() {
+        // Do nothing
+    }
+
     /**
      * Populate.
      *
@@ -263,7 +274,8 @@ public class AttributeSelection extends JPanel
         if (expression != null) {
             populateAttributeComboxBox(expression);
 
-            if ((expression == null) || (expression instanceof NilExpression)
+            if ((expression == null)
+                    || (expression instanceof NilExpression)
                     || (expression instanceof ConstantExpression)
                     || (expression instanceof LiteralExpressionImpl)) {
                 valuePanel.populateExpression(expression);
@@ -314,12 +326,14 @@ public class AttributeSelection extends JPanel
      */
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.datasource.DataSourceUpdatedInterface#dataSourceLoaded(com.sldeditor.datasource.impl.GeometryTypeEnum, boolean)
+     *
+     * @see
+     * com.sldeditor.datasource.DataSourceUpdatedInterface#dataSourceLoaded(com.sldeditor.datasource
+     * .impl.GeometryTypeEnum, boolean)
      */
     @Override
-    public void dataSourceLoaded(GeometryTypeEnum geometryType,
-            boolean isConnectedToDataSourceFlag) {
+    public void dataSourceLoaded(
+            GeometryTypeEnum geometryType, boolean isConnectedToDataSourceFlag) {
         DataSourceInterface dataSource = DataSourceFactory.getDataSource();
 
         dataSourceAttributePanel.dataSourceLoaded(dataSource);
@@ -342,7 +356,7 @@ public class AttributeSelection extends JPanel
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.swing.JComponent#setEnabled(boolean)
      */
     @Override
@@ -400,7 +414,7 @@ public class AttributeSelection extends JPanel
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.undo.UndoActionInterface#undoAction(com.sldeditor.undo.UndoInterface)
      */
     @Override
@@ -417,7 +431,7 @@ public class AttributeSelection extends JPanel
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.undo.UndoActionInterface#redoAction(com.sldeditor.undo.UndoInterface)
      */
     @Override
@@ -429,8 +443,10 @@ public class AttributeSelection extends JPanel
 
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.datasource.DataSourceUpdatedInterface#dataSourceAboutToUnloaded(org.geotools.data.DataStore)
+     *
+     * @see
+     * com.sldeditor.datasource.DataSourceUpdatedInterface#dataSourceAboutToUnloaded(org.geotools.
+     * data.DataStore)
      */
     @Override
     public void dataSourceAboutToUnloaded(DataStore dataStore) {
@@ -445,8 +461,8 @@ public class AttributeSelection extends JPanel
      * @param rasterSymbol the raster symbol
      * @return the attribute selection object
      */
-    public static AttributeSelection createAttributes(Class<?> expectedDataType,
-            FieldConfigBase field, boolean rasterSymbol) {
+    public static AttributeSelection createAttributes(
+            Class<?> expectedDataType, FieldConfigBase field, boolean rasterSymbol) {
         AttributeSelection obj = new AttributeSelection(expectedDataType, field);
         obj.updateAttributeSelection(!rasterSymbol);
 
@@ -458,7 +474,7 @@ public class AttributeSelection extends JPanel
      *
      * @param excludeAttributePanel the exclude attribute panel
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public void updateAttributeSelection(boolean excludeAttributePanel) {
 
         List<String> allowedItemList = new ArrayList<String>();

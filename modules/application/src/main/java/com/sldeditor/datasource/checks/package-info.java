@@ -18,7 +18,8 @@
  */
 
 /**
- * @author Robert Ward (SCISYS)
+ * Package containing classes to determine.
  *
+ * @author Robert Ward (SCISYS)
  */
 package com.sldeditor.datasource.checks;

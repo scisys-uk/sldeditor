@@ -18,7 +18,8 @@
  */
 
 /**
- * @author Robert Ward (SCISYS)
+ * Package containing legend option data.
  *
+ * @author Robert Ward (SCISYS)
  */
 package com.sldeditor.ui.legend.option;

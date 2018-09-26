@@ -19,33 +19,28 @@
 
 package com.sldeditor.common.xml;
 
+import com.sldeditor.common.console.ConsoleManager;
+import com.sldeditor.common.localisation.Localisation;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
-
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventLocator;
 import javax.xml.bind.util.ValidationEventCollector;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
-
 import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
 
-import com.sldeditor.common.console.ConsoleManager;
-import com.sldeditor.common.localisation.Localisation;
-
 /**
  * Reads/writes an XML file using the generated JAXB classes.
- * 
+ *
  * @author Robert Ward (SCISYS)
  */
 public class ParseXML {
@@ -65,8 +60,11 @@ public class ParseXML {
      * @param classToParse the class to parse
      * @return the object
      */
-    public static Object parseFile(String resourceFolder, String resourceName,
-            String schemaResource, Class<?> classToParse) {
+    public static Object parseFile(
+            String resourceFolder,
+            String resourceName,
+            String schemaResource,
+            Class<?> classToParse) {
         String fullResourceName = resourceFolder + resourceName;
 
         logger.debug("Reading : " + fullResourceName);
@@ -76,17 +74,23 @@ public class ParseXML {
             File file = new File(fullResourceName);
 
             if (!file.exists()) {
-                ConsoleManager.getInstance().error(ParseXML.class,
-                        Localisation.getField(ParseXML.class, "ParseXML.failedToFindResource")
-                                + fullResourceName);
+                ConsoleManager.getInstance()
+                        .error(
+                                ParseXML.class,
+                                Localisation.getField(
+                                                ParseXML.class, "ParseXML.failedToFindResource")
+                                        + fullResourceName);
                 return null;
             }
             try {
                 inputStream = new FileInputStream(file);
             } catch (FileNotFoundException e) {
-                ConsoleManager.getInstance().error(ParseXML.class,
-                        Localisation.getField(ParseXML.class, "ParseXML.failedToFindResource")
-                                + fullResourceName);
+                ConsoleManager.getInstance()
+                        .error(
+                                ParseXML.class,
+                                Localisation.getField(
+                                                ParseXML.class, "ParseXML.failedToFindResource")
+                                        + fullResourceName);
                 return null;
             }
         }
@@ -115,15 +119,19 @@ public class ParseXML {
                     String msg = ve.getMessage();
                     ValidationEventLocator vel = ve.getLocator();
 
-                    String message = String.format("%s %s %s %s %s %d %s %d %s",
-                            Localisation.getField(ParseXML.class, "ParseXML.failedToValidate"),
-                            fullResourceName,
-                            Localisation.getField(ParseXML.class, "ParseXML.usingXSD"),
-                            xsdURL.toString(),
-                            Localisation.getField(ParseXML.class, "ParseXML.line"),
-                            vel.getLineNumber(),
-                            Localisation.getField(ParseXML.class, "ParseXML.column"),
-                            vel.getColumnNumber(), msg);
+                    String message =
+                            String.format(
+                                    "%s %s %s %s %s %d %s %d %s",
+                                    Localisation.getField(
+                                            ParseXML.class, "ParseXML.failedToValidate"),
+                                    fullResourceName,
+                                    Localisation.getField(ParseXML.class, "ParseXML.usingXSD"),
+                                    xsdURL.toString(),
+                                    Localisation.getField(ParseXML.class, "ParseXML.line"),
+                                    vel.getLineNumber(),
+                                    Localisation.getField(ParseXML.class, "ParseXML.column"),
+                                    vel.getColumnNumber(),
+                                    msg);
                     ConsoleManager.getInstance().error(ParseXML.class, message);
                 }
             }
@@ -141,40 +149,8 @@ public class ParseXML {
      * @param classToParse the class to parse
      * @return the object
      */
-    public static Object parseUIFile(String resourceString, String schemaResource,
-            Class<?> classToParse) {
+    public static Object parseUIFile(
+            String resourceString, String schemaResource, Class<?> classToParse) {
         return parseFile(UI_RESOURCE_FOLDER, resourceString, schemaResource, classToParse);
-    }
-
-    /**
-     * Write file.
-     *
-     * @param rootFolder the root folder
-     * @param resourceFolder the resource folder
-     * @param resourceName the resource name
-     * @param schemaResource the schema resource
-     * @param objectToWrite the object to write
-     */
-    public static void writeFile(String rootFolder, String resourceFolder, String resourceName,
-            String schemaResource, Object objectToWrite) {
-        if (objectToWrite == null) {
-            ConsoleManager.getInstance().error(ParseXML.class, "No object to write");
-        }
-
-        JAXBContext contextObj;
-        String fullResourceName = rootFolder + resourceFolder + resourceName;
-
-        System.out.println("Writing : " + fullResourceName);
-        try {
-            contextObj = JAXBContext.newInstance(objectToWrite.getClass());
-            Marshaller marshallerObj = contextObj.createMarshaller();
-            marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-            marshallerObj.marshal(objectToWrite, new FileOutputStream(fullResourceName));
-        } catch (JAXBException e) {
-            ConsoleManager.getInstance().exception(ParseXML.class, e);
-        } catch (FileNotFoundException e) {
-            ConsoleManager.getInstance().exception(ParseXML.class, e);
-        }
     }
 }

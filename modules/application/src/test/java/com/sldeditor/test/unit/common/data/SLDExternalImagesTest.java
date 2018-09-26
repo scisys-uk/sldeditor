@@ -19,9 +19,11 @@
 
 package com.sldeditor.test.unit.common.data;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.sldeditor.common.data.SLDExternalImages;
+import com.sldeditor.common.output.impl.SLDWriterImpl;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
@@ -29,11 +31,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.geotools.styling.ExternalGraphic;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Fill;
@@ -48,7 +48,7 @@ import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
 import org.geotools.styling.StyleFactory;
 import org.geotools.styling.StyledLayerDescriptor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opengis.style.GraphicalSymbol;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -56,21 +56,19 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.sldeditor.common.data.SLDExternalImages;
-import com.sldeditor.common.output.impl.SLDWriterImpl;
-
 /**
  * The unit test for SLDExternalImages.
- * 
+ *
  * <p>{@link com.sldeditor.common.data.SLDExternalImages}
- * 
+ *
  * @author Robert Ward (SCISYS)
  */
 public class SLDExternalImagesTest {
 
     /**
-     * Test method for
-     * {@link com.sldeditor.common.data.SLDExternalImages#getExternalImages(java.net.URL, org.geotools.styling.StyledLayerDescriptor)}.
+     * Test method for {@link
+     * com.sldeditor.common.data.SLDExternalImages#getExternalImages(java.net.URL,
+     * org.geotools.styling.StyledLayerDescriptor)}.
      */
     @Test
     public void testGetExternalImagesPolygon() {
@@ -97,8 +95,9 @@ public class SLDExternalImagesTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.common.data.SLDExternalImages#getExternalImages(java.net.URL, org.geotools.styling.StyledLayerDescriptor)}.
+     * Test method for {@link
+     * com.sldeditor.common.data.SLDExternalImages#getExternalImages(java.net.URL,
+     * org.geotools.styling.StyledLayerDescriptor)}.
      */
     @Test
     public void testGetExternalImagesLine() {
@@ -125,8 +124,9 @@ public class SLDExternalImagesTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.common.data.SLDExternalImages#getExternalImages(java.net.URL, org.geotools.styling.StyledLayerDescriptor)}.
+     * Test method for {@link
+     * com.sldeditor.common.data.SLDExternalImages#getExternalImages(java.net.URL,
+     * org.geotools.styling.StyledLayerDescriptor)}.
      */
     @Test
     public void testGetExternalImagesPoint() {
@@ -239,8 +239,9 @@ public class SLDExternalImagesTest {
 
         polygon.setFill(fill);
 
-        Stroke stroke = styleFactory.createStroke(null, null, null, null, null, null, null,
-                graphicFill2, graphicStroke);
+        Stroke stroke =
+                styleFactory.createStroke(
+                        null, null, null, null, null, null, null, graphicFill2, graphicStroke);
         polygon.setStroke(stroke);
 
         return sld;
@@ -297,8 +298,9 @@ public class SLDExternalImagesTest {
         Graphic graphicFill = createGraphic(url, styleFactory);
         Graphic graphicStroke = createGraphic(url, styleFactory);
 
-        Stroke stroke = styleFactory.createStroke(null, null, null, null, null, null, null,
-                graphicFill, graphicStroke);
+        Stroke stroke =
+                styleFactory.createStroke(
+                        null, null, null, null, null, null, null, graphicFill, graphicStroke);
         line.setStroke(stroke);
 
         return sld;

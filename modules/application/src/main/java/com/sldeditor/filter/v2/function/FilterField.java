@@ -19,31 +19,27 @@
 
 package com.sldeditor.filter.v2.function;
 
+import com.sldeditor.common.vendoroption.VendorOptionManager;
+import com.sldeditor.ui.attribute.SubPanelUpdatedInterface;
+import com.sldeditor.ui.iface.ValueComboBoxDataSelectedInterface;
+import com.sldeditor.ui.menucombobox.MenuComboBox;
+import com.sldeditor.ui.widgets.ValueComboBoxData;
+import com.sldeditor.ui.widgets.ValueComboBoxDataGroup;
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
 import javax.swing.JPanel;
-
 import org.opengis.filter.Filter;
-
-import com.sldeditor.common.undo.UndoActionInterface;
-import com.sldeditor.common.undo.UndoEvent;
-import com.sldeditor.common.undo.UndoInterface;
-import com.sldeditor.common.undo.UndoManager;
-import com.sldeditor.ui.attribute.SubPanelUpdatedInterface;
 
 /**
  * Panel to be able to edit FilterField objects.
- * 
+ *
  * @author Robert Ward (SCISYS)
  */
-public class FilterField extends JPanel implements UndoActionInterface {
+public class FilterField extends JPanel implements ValueComboBoxDataSelectedInterface {
 
     /** The Constant FILTER_PANEL. */
     private static final String FILTER_PANEL = "Filter";
@@ -51,18 +47,18 @@ public class FilterField extends JPanel implements UndoActionInterface {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
-    /** The filter combo box. */
-    private JComboBox<String> filterComboBox;
+    /** The menu combo box containing all the filter that can be selected. */
+    private MenuComboBox filterComboBox = null;
 
     /** The filter name map. */
     private Map<String, FilterConfigInterface> filterNameMap =
             new LinkedHashMap<String, FilterConfigInterface>();
 
-    /** The old value obj. */
-    private Object oldValueObj = null;
-
     /** The filter name manager. */
     private FilterNameInterface filterNameMgr = null;
+
+    /** The parent obj. */
+    private SubPanelUpdatedInterface parentObj = null;
 
     /**
      * Gets the panel name.
@@ -80,26 +76,17 @@ public class FilterField extends JPanel implements UndoActionInterface {
      * @param functionNameMgr the function name mgr
      */
     public FilterField(SubPanelUpdatedInterface parentObj, FilterNameInterface functionNameMgr) {
-        final UndoActionInterface thisObj = this;
+        this.parentObj = parentObj;
         this.filterNameMgr = functionNameMgr;
 
-        setLayout(new BorderLayout(5, 0));
+        setLayout(new BorderLayout());
 
-        filterComboBox = new JComboBox<String>();
-        add(filterComboBox, BorderLayout.CENTER);
-        filterComboBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        if (filterComboBox == null) {
+            filterComboBox = new MenuComboBox(this);
 
-                String newValueObj = (String) filterComboBox.getSelectedItem();
-
-                UndoManager.getInstance()
-                        .addUndoEvent(new UndoEvent(thisObj, "Function", oldValueObj, newValueObj));
-
-                if (parentObj != null) {
-                    parentObj.updateSymbol();
-                }
-            }
-        });
+            VendorOptionManager.getInstance().addVendorOptionListener(filterComboBox);
+            add(filterComboBox, BorderLayout.CENTER);
+        }
 
         List<FilterConfigInterface> filterConfigList = filterNameMgr.getFilterConfigList();
         for (FilterConfigInterface filterConfig : filterConfigList) {
@@ -111,20 +98,51 @@ public class FilterField extends JPanel implements UndoActionInterface {
         populateFunctionComboBox();
     }
 
-    /**
-     * Populate function combo box.
-     */
+    /** Populate function combo box. */
     private void populateFunctionComboBox() {
         if (filterComboBox != null) {
-            DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
 
-            model.addElement("");
+            List<ValueComboBoxDataGroup> dataSelectionList =
+                    new ArrayList<ValueComboBoxDataGroup>();
+
+            List<ValueComboBoxData> defaultDataList = new ArrayList<ValueComboBoxData>();
+            defaultDataList.add(
+                    new ValueComboBoxData(
+                            null,
+                            "",
+                            VendorOptionManager.getInstance().getDefaultVendorOptionVersion()));
+            dataSelectionList.add(new ValueComboBoxDataGroup(defaultDataList));
+
+            Map<String, List<ValueComboBoxData>> map =
+                    new HashMap<String, List<ValueComboBoxData>>();
+
+            List<ValueComboBoxData> dataList = null;
 
             for (String name : filterNameMap.keySet()) {
                 FilterConfigInterface filterConfig = filterNameMap.get(name);
-                model.addElement(filterConfig.getFilterConfiguration().getFilterName());
+
+                dataList = map.get(filterConfig.category());
+                if (dataList == null) {
+                    dataList = new ArrayList<ValueComboBoxData>();
+                    map.put(filterConfig.category(), dataList);
+                }
+                String text = filterConfig.getFilterConfiguration().getFilterName();
+                String key = text;
+
+                dataList.add(
+                        new ValueComboBoxData(
+                                key,
+                                text,
+                                VendorOptionManager.getInstance().getDefaultVendorOptionVersion()));
             }
-            filterComboBox.setModel(model);
+
+            for (String category : map.keySet()) {
+                ValueComboBoxDataGroup value =
+                        new ValueComboBoxDataGroup(category, map.get(category), true);
+                dataSelectionList.add(value);
+            }
+
+            filterComboBox.initialiseMenu(dataSelectionList);
         }
     }
 
@@ -154,47 +172,12 @@ public class FilterField extends JPanel implements UndoActionInterface {
      */
     public void setFilter(Filter filter, FilterConfigInterface filterConfig) {
 
-        oldValueObj = filterConfig;
+        String key = null;
 
-        if (filterConfig == null) {
-            filterComboBox.setSelectedItem(null);
-        } else {
-            filterComboBox.setSelectedItem(filterConfig.getFilterConfiguration().getFilterName());
+        if (filterConfig != null) {
+            key = filterConfig.getFilterConfiguration().getFilterName();
         }
-    }
-
-    /**
-     * Undo action.
-     *
-     * @param undoRedoObject the undo redo object
-     */
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.sldeditor.undo.UndoActionInterface#undoAction(com.sldeditor.undo.UndoInterface)
-     */
-    @Override
-    public void undoAction(UndoInterface undoRedoObject) {
-        String oldValueObj = (String) undoRedoObject.getOldValue();
-
-        filterComboBox.setSelectedItem(oldValueObj);
-    }
-
-    /**
-     * Redo action.
-     *
-     * @param undoRedoObject the undo redo object
-     */
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.sldeditor.undo.UndoActionInterface#redoAction(com.sldeditor.undo.UndoInterface)
-     */
-    @Override
-    public void redoAction(UndoInterface undoRedoObject) {
-        String newValueObj = (String) undoRedoObject.getNewValue();
-
-        filterComboBox.setSelectedItem(newValueObj);
+        filterComboBox.setSelectedDataKey(key);
     }
 
     /**
@@ -222,5 +205,15 @@ public class FilterField extends JPanel implements UndoActionInterface {
 
         FilterConfigInterface filterConfig = filterNameMap.get(filterNameString);
         return filterConfig;
+    }
+
+    /* (non-Javadoc)
+     * @see com.sldeditor.ui.iface.ValueComboBoxDataSelectedInterface#optionSelected(com.sldeditor.ui.widgets.ValueComboBoxData)
+     */
+    @Override
+    public void optionSelected(ValueComboBoxData selectedData) {
+        if (parentObj != null) {
+            parentObj.updateSymbol();
+        }
     }
 }

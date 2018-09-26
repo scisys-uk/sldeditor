@@ -19,34 +19,29 @@
 
 package com.sldeditor.filter.v2.function.geometry;
 
-import java.util.List;
-
-import org.geotools.filter.spatial.DisjointImpl;
-import org.opengis.filter.Filter;
-import org.opengis.filter.expression.Expression;
-
 import com.sldeditor.filter.v2.expression.ExpressionTypeEnum;
+import com.sldeditor.filter.v2.function.FilterBase;
 import com.sldeditor.filter.v2.function.FilterConfigInterface;
 import com.sldeditor.filter.v2.function.FilterExtendedInterface;
 import com.sldeditor.filter.v2.function.FilterName;
 import com.sldeditor.filter.v2.function.FilterNameParameter;
-import com.vividsolutions.jts.geom.Geometry;
+import java.util.List;
+import org.geotools.filter.spatial.DisjointImpl;
+import org.locationtech.jts.geom.Geometry;
+import org.opengis.filter.Filter;
+import org.opengis.filter.expression.Expression;
 
 /**
  * The Class Disjoint.
  *
  * @author Robert Ward (SCISYS)
  */
-public class Disjoint implements FilterConfigInterface {
+public class Disjoint extends FilterBase implements FilterConfigInterface {
 
-    /**
-     * The Class DisjointExtended.
-     */
+    /** The Class DisjointExtended. */
     public class DisjointExtended extends DisjointImpl implements FilterExtendedInterface {
 
-        /**
-         * Instantiates a new disjoint extended.
-         */
+        /** Instantiates a new disjoint extended. */
         public DisjointExtended() {
             super(null, null);
         }
@@ -63,16 +58,16 @@ public class Disjoint implements FilterConfigInterface {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see org.geotools.filter.GeometryFilterImpl#toString()
          */
         public String toString() {
-            return "[ " + getExpression1() + " Disjoint " + getExpression2() + " ]";
+            return "[ " + getExpression1() + " disjoint " + getExpression2() + " ]";
         }
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.sldeditor.filter.v2.function.FilterExtendedInterface#getOriginalFilter()
          */
         @Override
@@ -81,10 +76,9 @@ public class Disjoint implements FilterConfigInterface {
         }
     }
 
-    /**
-     * Default constructor.
-     */
-    public Disjoint() {
+    /** Default constructor. */
+    public Disjoint(String category) {
+        super(category);
     }
 
     /**
@@ -97,8 +91,9 @@ public class Disjoint implements FilterConfigInterface {
         FilterName filterName = new FilterName("Disjoint", Boolean.class);
         filterName.addParameter(
                 new FilterNameParameter("property", ExpressionTypeEnum.PROPERTY, Geometry.class));
-        filterName.addParameter(new FilterNameParameter("expression", ExpressionTypeEnum.EXPRESSION,
-                Geometry.class));
+        filterName.addParameter(
+                new FilterNameParameter(
+                        "expression", ExpressionTypeEnum.EXPRESSION, Geometry.class));
 
         return filterName;
     }

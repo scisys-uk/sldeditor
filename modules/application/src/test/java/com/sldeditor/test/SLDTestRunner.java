@@ -19,25 +19,11 @@
 
 package com.sldeditor.test;
 
-import java.awt.event.WindowEvent;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.JFrame;
-
-import org.apache.commons.io.IOUtils;
-import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.filter.LiteralExpressionImpl;
-import org.junit.Assert;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.sldeditor.SLDEditor;
 import com.sldeditor.TreeSelectionData;
@@ -78,12 +64,26 @@ import com.sldeditor.ui.detail.config.base.OptionGroup;
 import com.sldeditor.ui.detail.config.colourmap.EncodeColourMap;
 import com.sldeditor.ui.iface.PopulateDetailsInterface;
 import com.sldeditor.ui.widgets.ValueComboBoxData;
-
-import junit.runner.BaseTestRunner;
+import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JFrame;
+import org.apache.commons.io.IOUtils;
+import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.filter.LiteralExpressionImpl;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.Expression;
 
 /**
  * The Class SLDTestRunner.
- * 
+ *
  * @author Robert Ward (SCISYS)
  */
 public class SLDTestRunner {
@@ -121,11 +121,9 @@ public class SLDTestRunner {
     /** The filter factory. */
     private static FilterFactory ff = CommonFactoryFinder.getFilterFactory();
 
-    /**
-     * Instantiates a new SLD test runner.
-     */
+    /** Instantiates a new SLD test runner. */
     public SLDTestRunner() {
-        BaseTestRunner.setPreference("maxmessage", "-1");
+        //      BaseTestRunner.setPreference("maxmessage", "-1");
 
         System.out.println("Operating system is : " + OSValidator.getOS());
         // Populate the list of fields that are colours
@@ -209,10 +207,11 @@ public class SLDTestRunner {
         // read JSON file data as String
         String fullPath = "/" + folder + "/test/" + testConfig;
 
-        SldEditorTest testSuite = (SldEditorTest) ParseXML.parseFile("", fullPath, SCHEMA_RESOURCE,
-                SldEditorTest.class);
+        SldEditorTest testSuite =
+                (SldEditorTest)
+                        ParseXML.parseFile("", fullPath, SCHEMA_RESOURCE, SldEditorTest.class);
 
-        Assert.assertNotNull("Failed to read test config file : " + fullPath, testSuite);
+        assertNotNull(testSuite, "Failed to read test config file : " + fullPath);
 
         String testsldfile = testSuite.getTestsldfile();
         if (!testsldfile.startsWith("/")) {
@@ -233,15 +232,15 @@ public class SLDTestRunner {
 
         // If in doubt revert to strict SLD
         if (versionDataList.isEmpty()) {
-            versionDataList
-                    .add(VendorOptionManager.getInstance().getDefaultVendorOptionVersionData());
+            versionDataList.add(
+                    VendorOptionManager.getInstance().getDefaultVendorOptionVersionData());
         }
         sldEditor.setVendorOptions(versionDataList);
 
         InputStream inputStream = SLDTestRunner.class.getResourceAsStream(testsldfile);
 
         if (inputStream == null) {
-            Assert.assertNotNull("Failed to find sld test file : " + testsldfile, inputStream);
+            assertNotNull(inputStream, "Failed to find sld test file : " + testsldfile);
         } else {
             File f = null;
             try {
@@ -278,28 +277,30 @@ public class SLDTestRunner {
                 TreeSelectionData selectionData = new TreeSelectionData();
                 selectionData.setLayerIndex(getXMLValue(selectedItem.getLayer()));
                 selectionData.setStyleIndex(getXMLValue(selectedItem.getStyle()));
-                selectionData
-                        .setFeatureTypeStyleIndex(getXMLValue(selectedItem.getFeatureTypeStyle()));
+                selectionData.setFeatureTypeStyleIndex(
+                        getXMLValue(selectedItem.getFeatureTypeStyle()));
                 selectionData.setRuleIndex(getXMLValue(selectedItem.getRule()));
                 selectionData.setSymbolizerIndex(getXMLValue(selectedItem.getSymbolizer()));
-                selectionData
-                        .setSymbolizerDetailIndex(getXMLValue(selectedItem.getSymbolizerDetail()));
+                selectionData.setSymbolizerDetailIndex(
+                        getXMLValue(selectedItem.getSymbolizerDetail()));
                 try {
                     selectionData.setSelectedPanel(Class.forName(selectedItem.getExpectedPanel()));
                 } catch (ClassNotFoundException e1) {
-                    Assert.fail("Unknown class : " + selectedItem.getExpectedPanel());
+                    fail("Unknown class : " + selectedItem.getExpectedPanel());
                 }
 
                 boolean result = sldEditor.selectTreeItem(selectionData);
 
-                Assert.assertTrue("Failed to select tree item", result);
+                assertTrue(result, "Failed to select tree item");
                 PopulateDetailsInterface panel = sldEditor.getSymbolPanel();
 
                 String panelClassName = panel.getClass().getName();
-                Assert.assertEquals(panelClassName, selectedItem.getExpectedPanel());
+                assertEquals(selectedItem.getExpectedPanel(), panelClassName);
 
-                Assert.assertEquals("Check panel data present", panel.isDataPresent(),
-                        selectedItem.isEnabled());
+                assertEquals(
+                        panel.isDataPresent(),
+                        selectedItem.getEnabled(),
+                        "Check panel data present");
 
                 Class<?> panelId = null;
                 try {
@@ -312,58 +313,67 @@ public class SLDTestRunner {
                     for (XMLFieldTest testItem : test.getFieldTests()) {
                         if (testItem != null) {
                             if (testItem.getDisabledOrLiteralStringOrLiteralInt() != null) {
-                                for (Object xmlTestValueObj : testItem
-                                        .getDisabledOrLiteralStringOrLiteralInt()) {
+                                for (Object xmlTestValueObj :
+                                        testItem.getDisabledOrLiteralStringOrLiteralInt()) {
                                     if (xmlTestValueObj instanceof XMLSetMultiOptionGroup) {
                                         XMLSetMultiOptionGroup testValue =
                                                 (XMLSetMultiOptionGroup) xmlTestValueObj;
                                         GroupIdEnum groupId = testValue.getMultiOptionGroupId();
-                                        String outputText = "Checking multioption group : "
-                                                + groupId;
+                                        String outputText =
+                                                "Checking multioption group : " + groupId;
 
                                         System.out.println(outputText);
-                                        Assert.assertNotNull(outputText, groupId);
+                                        assertNotNull(groupId, outputText);
 
-                                        MultiOptionGroup multiOptionGroup = mgr
-                                                .getMultiOptionGroup(panelId, groupId);
+                                        MultiOptionGroup multiOptionGroup =
+                                                mgr.getMultiOptionGroup(panelId, groupId);
 
-                                        Assert.assertNotNull(
-                                                panelId.getName() + "/" + groupId
-                                                        + " multi option group should exist",
-                                                multiOptionGroup);
+                                        assertNotNull(
+                                                multiOptionGroup,
+                                                panelId.getName()
+                                                        + "/"
+                                                        + groupId
+                                                        + " multi option group should exist");
 
                                         multiOptionGroup.setOption(testValue.getOption());
 
-                                        OptionGroup optionGroupSelected = multiOptionGroup
-                                                .getSelectedOptionGroup();
+                                        OptionGroup optionGroupSelected =
+                                                multiOptionGroup.getSelectedOptionGroup();
 
-                                        Assert.assertTrue(groupId + " should be set",
-                                                optionGroupSelected.getId() == testValue
-                                                        .getOption());
+                                        assertTrue(
+                                                optionGroupSelected.getId()
+                                                        == testValue.getOption(),
+                                                groupId + " should be set");
                                     } else if (xmlTestValueObj instanceof XMLSetGroup) {
                                         XMLSetGroup testValue = (XMLSetGroup) xmlTestValueObj;
                                         GroupIdEnum groupId = testValue.getGroupId();
                                         String outputText = "Checking group : " + groupId;
 
                                         System.out.println(outputText);
-                                        Assert.assertNotNull(outputText, groupId);
+                                        assertNotNull(groupId, outputText);
 
-                                        GroupConfigInterface groupConfig = mgr.getGroup(panelId,
-                                                groupId);
+                                        GroupConfigInterface groupConfig =
+                                                mgr.getGroup(panelId, groupId);
 
-                                        Assert.assertNotNull(panelId.getName() + "/" + groupId
-                                                + " group should exist", groupConfig);
+                                        assertNotNull(
+                                                groupConfig,
+                                                panelId.getName()
+                                                        + "/"
+                                                        + groupId
+                                                        + " group should exist");
 
-                                        groupConfig.enable(testValue.isEnable());
+                                        groupConfig.enable(testValue.getEnable());
 
-                                        Assert.assertTrue(groupId + " should be set", groupConfig
-                                                .isPanelEnabled() == testValue.isEnable());
+                                        assertTrue(
+                                                groupConfig.isPanelEnabled()
+                                                        == testValue.getEnable(),
+                                                groupId + " should be set");
                                     } else {
                                         XMLFieldBase testValue = (XMLFieldBase) xmlTestValueObj;
                                         FieldIdEnum fieldId = testValue.getField();
                                         String outputText = "Checking : " + fieldId;
                                         System.out.println(outputText);
-                                        Assert.assertNotNull(outputText, fieldId);
+                                        assertNotNull(fieldId, outputText);
 
                                         try {
                                             Thread.sleep(100);
@@ -372,10 +382,11 @@ public class SLDTestRunner {
                                         }
                                         FieldConfigBase fieldConfig = mgr.getData(panelId, fieldId);
 
-                                        Assert.assertNotNull(
-                                                String.format("Failed to field panel %s field %s",
-                                                        selectedItem.getExpectedPanel(), fieldId),
-                                                fieldConfig);
+                                        assertNotNull(
+                                                fieldConfig,
+                                                String.format(
+                                                        "Failed to field panel %s field %s",
+                                                        selectedItem.getExpectedPanel(), fieldId));
 
                                         if (testValue instanceof XMLSetFieldLiteralBase) {
                                             XMLSetFieldLiteralInterface testInterface =
@@ -383,15 +394,18 @@ public class SLDTestRunner {
                                             testInterface.accept(fieldConfig, fieldId);
 
                                             if (!((XMLSetFieldLiteralBase) testValue)
-                                                    .isIgnoreCheck()) {
+                                                    .getIgnoreCheck()) {
                                                 String sldContentString = sldEditor.getSLDString();
 
-                                                boolean actualResult = testOutput.testValue(
-                                                        sldContentString, selectionData,
-                                                        testValue.getField(), testValue);
+                                                boolean actualResult =
+                                                        testOutput.testValue(
+                                                                sldContentString,
+                                                                selectionData,
+                                                                testValue.getField(),
+                                                                testValue);
 
-                                                Assert.assertTrue(fieldId + " should be set",
-                                                        actualResult);
+                                                assertTrue(
+                                                        actualResult, fieldId + " should be set");
                                             }
                                         } else if (testValue instanceof XMLSetFieldAttribute) {
                                             XMLSetFieldLiteralInterface testInterface =
@@ -400,76 +414,99 @@ public class SLDTestRunner {
 
                                             String sldContentString = sldEditor.getSLDString();
 
-                                            boolean actualResult = testOutput.testAttribute(
-                                                    sldContentString, selectionData,
-                                                    testValue.getField(),
-                                                    (XMLSetFieldAttribute) testValue);
+                                            boolean actualResult =
+                                                    testOutput.testAttribute(
+                                                            sldContentString,
+                                                            selectionData,
+                                                            testValue.getField(),
+                                                            (XMLSetFieldAttribute) testValue);
 
-                                            Assert.assertTrue(fieldId + " should be set",
-                                                    actualResult);
+                                            assertTrue(actualResult, fieldId + " should be set");
                                         } else if (testValue instanceof XMLFieldDisabled) {
-                                            Assert.assertFalse(fieldId + " should be disabled",
-                                                    fieldConfig.isEnabled());
+                                            assertFalse(
+                                                    fieldConfig.isEnabled(),
+                                                    fieldId + " should be disabled");
                                         } else {
-                                            Assert.assertTrue(fieldId + " should be enabled",
-                                                    fieldConfig.isEnabled());
+                                            assertTrue(
+                                                    fieldConfig.isEnabled(),
+                                                    fieldId + " should be enabled");
                                             Expression expression = null;
 
                                             if (fieldConfig.isValueOnly()) {
                                                 String expectedValue = "";
 
                                                 if (testValue instanceof XMLFieldLiteralBase) {
-                                                    Object literalValue = getLiteralValue(
-                                                            (XMLFieldLiteralBase) testValue);
+                                                    Object literalValue =
+                                                            getLiteralValue(
+                                                                    (XMLFieldLiteralBase)
+                                                                            testValue);
                                                     expectedValue = String.valueOf(literalValue);
 
                                                     if (fieldId == FieldIdEnum.TTF_SYMBOL) {
-                                                        expectedValue = processTTFField(
-                                                                expectedValue).toString();
+                                                        expectedValue =
+                                                                processTTFField(expectedValue)
+                                                                        .toString();
                                                     }
 
                                                 } else if (testValue instanceof XMLFieldAttribute) {
-                                                    expectedValue = ((XMLFieldAttribute) testValue)
-                                                            .getAttribute();
-                                                    //CHECKSTYLE:OFF
-                                                } else if (testValue instanceof XMLFieldExpression) {
-                                                    expectedValue = ((XMLFieldExpression) testValue)
-                                                            .getExpression();
-                                                } else if (testValue instanceof XMLColourMapEntries) {
-                                                    expectedValue = EncodeColourMap
-                                                            .encode(((XMLColourMapEntries) testValue)
-                                                                    .getEntry());
-                                                    //CHECKSTYLE:ON
+                                                    expectedValue =
+                                                            ((XMLFieldAttribute) testValue)
+                                                                    .getAttribute();
+                                                    // CHECKSTYLE:OFF
+                                                } else if (testValue
+                                                        instanceof XMLFieldExpression) {
+                                                    expectedValue =
+                                                            ((XMLFieldExpression) testValue)
+                                                                    .getExpression();
+                                                } else if (testValue
+                                                        instanceof XMLColourMapEntries) {
+                                                    expectedValue =
+                                                            EncodeColourMap.encode(
+                                                                    ((XMLColourMapEntries)
+                                                                                    testValue)
+                                                                            .getEntry());
+                                                    // CHECKSTYLE:ON
                                                 } else {
-                                                    Assert.fail(fieldId + " has unsupported type "
-                                                            + testValue.getClass().getName());
+                                                    fail(
+                                                            fieldId
+                                                                    + " has unsupported type "
+                                                                    + testValue
+                                                                            .getClass()
+                                                                            .getName());
                                                 }
 
                                                 String actualValue = fieldConfig.getStringValue();
 
-                                                String msg = String.format(
-                                                        "%s Expected : '%s' Actual : '%s'",
-                                                        outputText, expectedValue, actualValue);
+                                                String msg =
+                                                        String.format(
+                                                                "%s Expected : '%s' Actual : '%s'",
+                                                                outputText,
+                                                                expectedValue,
+                                                                actualValue);
 
                                                 boolean condition;
                                                 if (comparingFilename(fieldId)) {
                                                     File actualFile = new File(actualValue);
                                                     File expectedFile = new File(expectedValue);
 
-                                                    String actualFileString = actualFile
-                                                            .getAbsolutePath();
-                                                    String expectedFileString = expectedFile
-                                                            .getAbsolutePath();
-                                                    expectedFileString = expectedFileString
-                                                            .substring(expectedFileString.length()
-                                                                    - expectedValue.length());
-                                                    condition = actualFileString
-                                                            .endsWith(expectedFileString);
+                                                    String actualFileString =
+                                                            actualFile.getAbsolutePath();
+                                                    String expectedFileString =
+                                                            expectedFile.getAbsolutePath();
+                                                    expectedFileString =
+                                                            expectedFileString.substring(
+                                                                    expectedFileString.length()
+                                                                            - expectedValue
+                                                                                    .length());
+                                                    condition =
+                                                            actualFileString.endsWith(
+                                                                    expectedFileString);
                                                 } else {
-                                                    condition = (expectedValue
-                                                            .compareTo(actualValue) == 0);
+                                                    condition =
+                                                            (expectedValue.compareTo(actualValue)
+                                                                    == 0);
                                                 }
-                                                Assert.assertTrue(msg, condition);
+                                                assertTrue(condition, msg);
                                             } else {
                                                 if (colourFieldsList.contains(fieldId)) {
                                                     FieldConfigColour fieldColour =
@@ -482,54 +519,68 @@ public class SLDTestRunner {
                                                     if (fieldId == FieldIdEnum.SYMBOL_TYPE) {
                                                         String string = expression.toString();
 
-                                                        expression = ff.literal(string
-                                                                .replace(File.separatorChar, '/'));
+                                                        expression =
+                                                                ff.literal(
+                                                                        string.replace(
+                                                                                File.separatorChar,
+                                                                                '/'));
                                                     } else if (fieldId == FieldIdEnum.FONT_FAMILY) {
-                                                        // Handle the case where a font is not 
+                                                        // Handle the case where a font is not
                                                         // available on all operating systems
                                                         String string = expression.toString();
 
-                                                        if (string.compareToIgnoreCase(
-                                                                DEFAULT_FONT) != 0) {
+                                                        if (string.compareToIgnoreCase(DEFAULT_FONT)
+                                                                != 0) {
                                                             expression = ff.literal(getFontForOS());
-                                                            //CHECKSTYLE:OFF
+                                                            // CHECKSTYLE:OFF
                                                             System.out.println(
                                                                     "Updated font family to test for : "
                                                                             + expression
                                                                                     .toString());
-                                                            //CHECKSTYLE:ON
+                                                            // CHECKSTYLE:ON
                                                         }
                                                     } else if (fieldId == FieldIdEnum.TTF_SYMBOL) {
-                                                        expression = processTTFField(
-                                                                expression.toString());
+                                                        expression =
+                                                                processTTFField(
+                                                                        expression.toString());
                                                     }
                                                 }
                                                 if (expression != null) {
                                                     if (testValue instanceof XMLFieldLiteralBase) {
-                                                        Object literalValue = getLiteralValue(
-                                                                (XMLFieldLiteralBase) testValue);
+                                                        Object literalValue =
+                                                                getLiteralValue(
+                                                                        (XMLFieldLiteralBase)
+                                                                                testValue);
 
-                                                        if (literalValue
-                                                                .getClass() == Double.class) {
-                                                            checkLiteralValue(outputText,
+                                                        if (literalValue.getClass()
+                                                                == Double.class) {
+                                                            checkLiteralValue(
+                                                                    outputText,
                                                                     expression,
                                                                     (Double) literalValue);
-                                                        } else if (literalValue
-                                                                .getClass() == Integer.class) {
-                                                            checkLiteralValue(outputText,
+                                                        } else if (literalValue.getClass()
+                                                                == Integer.class) {
+                                                            checkLiteralValue(
+                                                                    outputText,
                                                                     expression,
                                                                     (Integer) literalValue);
-                                                        } else if (literalValue
-                                                                .getClass() == String.class) {
-                                                            //CHECKSTYLE:OFF
-                                                            if (fieldId == FieldIdEnum.FONT_FAMILY) {
-                                                                // Handle the case where a font is not 
-                                                                // available on all operating systems
-                                                                //CHECKSTYLE:ON
-                                                                checkLiteralValue(outputText,
-                                                                        expression, getFontForOS());
+                                                        } else if (literalValue.getClass()
+                                                                == String.class) {
+                                                            // CHECKSTYLE:OFF
+                                                            if (fieldId
+                                                                    == FieldIdEnum.FONT_FAMILY) {
+                                                                // Handle the case where a font is
+                                                                // not
+                                                                // available on all operating
+                                                                // systems
+                                                                // CHECKSTYLE:ON
+                                                                checkLiteralValue(
+                                                                        outputText,
+                                                                        expression,
+                                                                        getFontForOS());
                                                             } else {
-                                                                checkLiteralValue(outputText,
+                                                                checkLiteralValue(
+                                                                        outputText,
                                                                         expression,
                                                                         (String) literalValue);
                                                             }
@@ -537,32 +588,40 @@ public class SLDTestRunner {
                                                     }
                                                 } else {
                                                     String actualValue;
-                                                    String expectedValue = fieldConfig
-                                                            .getStringValue();
+                                                    String expectedValue =
+                                                            fieldConfig.getStringValue();
 
-                                                    Object literalValue = getLiteralValue(
-                                                            (XMLFieldLiteralBase) testValue);
+                                                    Object literalValue =
+                                                            getLiteralValue(
+                                                                    (XMLFieldLiteralBase)
+                                                                            testValue);
 
                                                     if (literalValue.getClass() == Double.class) {
-                                                        actualValue = String
-                                                                .valueOf((Double) literalValue);
-                                                    } else if (literalValue
-                                                            .getClass() == Integer.class) {
-                                                        actualValue = String
-                                                                .valueOf((Integer) literalValue);
-                                                    } else if (literalValue
-                                                            .getClass() == String.class) {
+                                                        actualValue =
+                                                                String.valueOf(
+                                                                        (Double) literalValue);
+                                                    } else if (literalValue.getClass()
+                                                            == Integer.class) {
+                                                        actualValue =
+                                                                String.valueOf(
+                                                                        (Integer) literalValue);
+                                                    } else if (literalValue.getClass()
+                                                            == String.class) {
                                                         actualValue = (String) literalValue;
                                                     } else {
                                                         actualValue = "";
                                                     }
 
-                                                    String msg = String.format(
-                                                            "%s Expected : '%s' Actual : '%s'",
-                                                            outputText, expectedValue, actualValue);
-                                                    boolean condition = (expectedValue
-                                                            .compareTo(actualValue) == 0);
-                                                    Assert.assertTrue(msg, condition);
+                                                    String msg =
+                                                            String.format(
+                                                                    "%s Expected : '%s' Actual : '%s'",
+                                                                    outputText,
+                                                                    expectedValue,
+                                                                    actualValue);
+                                                    boolean condition =
+                                                            (expectedValue.compareTo(actualValue)
+                                                                    == 0);
+                                                    assertTrue(condition, msg);
                                                 }
                                             }
                                         }
@@ -615,7 +674,7 @@ public class SLDTestRunner {
         } else if (testValue instanceof XMLFieldLiteralDouble) {
             return ((XMLFieldLiteralDouble) testValue).getValue();
         } else if (testValue instanceof XMLFieldLiteralBoolean) {
-            return ((XMLFieldLiteralBoolean) testValue).isValue();
+            return ((XMLFieldLiteralBoolean) testValue).getValue();
         }
 
         return null;
@@ -652,13 +711,13 @@ public class SLDTestRunner {
      * @param expectedValue the expected value
      */
     private void checkLiteralValue(String message, Expression expression, double expectedValue) {
-        Assert.assertEquals(expression.getClass(), LiteralExpressionImpl.class);
+        assertEquals(expression.getClass(), LiteralExpressionImpl.class);
         LiteralExpressionImpl literalExpression = (LiteralExpressionImpl) expression;
         Object value = literalExpression.getValue();
-        Assert.assertEquals(message, value.getClass(), Double.class);
+        assertEquals(value.getClass(), Double.class, message);
         Double actualValue = (Double) value;
         String additional = String.format(" Expected '%f' Actual '%f'", expectedValue, actualValue);
-        Assert.assertTrue(message + additional, Math.abs(expectedValue - actualValue) < epsilon);
+        assertTrue(Math.abs(expectedValue - actualValue) < epsilon, message + additional);
     }
 
     /**
@@ -669,13 +728,13 @@ public class SLDTestRunner {
      * @param expectedValue the expected value
      */
     private void checkLiteralValue(String message, Expression expression, int expectedValue) {
-        Assert.assertEquals(expression.getClass(), LiteralExpressionImpl.class);
+        assertEquals(expression.getClass(), LiteralExpressionImpl.class);
         LiteralExpressionImpl literalExpression = (LiteralExpressionImpl) expression;
         Object value = literalExpression.getValue();
-        Assert.assertEquals(message, value.getClass(), Integer.class);
+        assertEquals(value.getClass(), Integer.class, message);
         Integer actualValue = (Integer) value;
         String additional = String.format(" Expected '%d' Actual '%d'", expectedValue, actualValue);
-        Assert.assertTrue(message + additional, (expectedValue == actualValue));
+        assertTrue((expectedValue == actualValue), message + additional);
     }
 
     /**
@@ -686,17 +745,17 @@ public class SLDTestRunner {
      * @param expectedValue the expected value
      */
     private void checkLiteralValue(String message, Expression expression, String expectedValue) {
-        Assert.assertEquals(expression.getClass(), LiteralExpressionImpl.class);
+        assertEquals(expression.getClass(), LiteralExpressionImpl.class);
         LiteralExpressionImpl literalExpression = (LiteralExpressionImpl) expression;
         Object value = literalExpression.getValue();
         String actualValue = null;
         if (value.getClass() == ValueComboBoxData.class) {
             actualValue = ((ValueComboBoxData) value).getKey();
         } else {
-            Assert.assertEquals(message, value.getClass(), String.class);
+            assertEquals(value.getClass(), String.class, message);
             actualValue = (String) value;
         }
         String additional = String.format(" Expected '%s' Actual '%s'", expectedValue, actualValue);
-        Assert.assertTrue(message + additional, (expectedValue.equals(actualValue)));
+        assertTrue(expectedValue.equals(actualValue), message + additional);
     }
 }

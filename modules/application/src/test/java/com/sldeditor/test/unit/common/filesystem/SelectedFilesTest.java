@@ -19,20 +19,18 @@
 
 package com.sldeditor.test.unit.common.filesystem;
 
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.sldeditor.common.SLDDataInterface;
 import com.sldeditor.common.data.SLDData;
 import com.sldeditor.common.filesystem.SelectedFiles;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.jupiter.api.Test;
 
 /**
  * The unit test for SelectedFiles.
- * 
+ *
  * <p>{@link com.sldeditor.common.filesystem.SelectedFiles}
  *
  * @author Robert Ward (SCISYS)

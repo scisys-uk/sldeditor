@@ -19,33 +19,32 @@
 
 package com.sldeditor.filter.v2.function.property;
 
-import java.util.List;
-
-import org.geotools.filter.IsNotEqualToImpl;
-import org.geotools.filter.LiteralExpressionImpl;
-import org.opengis.filter.Filter;
-import org.opengis.filter.expression.Expression;
-
 import com.sldeditor.filter.v2.expression.ExpressionTypeEnum;
+import com.sldeditor.filter.v2.function.FilterBase;
 import com.sldeditor.filter.v2.function.FilterConfigInterface;
 import com.sldeditor.filter.v2.function.FilterExtendedInterface;
 import com.sldeditor.filter.v2.function.FilterName;
 import com.sldeditor.filter.v2.function.FilterNameParameter;
+import java.util.List;
+import org.geotools.filter.IsNotEqualToImpl;
+import org.geotools.filter.LiteralExpressionImpl;
+import org.opengis.filter.Filter;
+import org.opengis.filter.expression.Expression;
 
 /**
  * The Class IsNotEqualTo.
  *
  * @author Robert Ward (SCISYS)
  */
-public class IsNotEqualTo implements FilterConfigInterface {
+public class IsNotEqualTo extends FilterBase implements FilterConfigInterface {
 
     public class IsNotEqualToExtended extends IsNotEqualToImpl implements FilterExtendedInterface {
         public IsNotEqualToExtended() {
             super(null, null);
         }
 
-        public IsNotEqualToExtended(Expression expression1, Expression expression2,
-                boolean matchCase) {
+        public IsNotEqualToExtended(
+                Expression expression1, Expression expression2, boolean matchCase) {
             super(expression1, expression2, matchCase);
         }
 
@@ -55,10 +54,9 @@ public class IsNotEqualTo implements FilterConfigInterface {
         }
     }
 
-    /**
-     * Default constructor.
-     */
-    public IsNotEqualTo() {
+    /** Default constructor. */
+    public IsNotEqualTo(String category) {
+        super(category);
     }
 
     /**
@@ -114,8 +112,11 @@ public class IsNotEqualTo implements FilterConfigInterface {
         } else {
             LiteralExpressionImpl matchCase = (LiteralExpressionImpl) parameterList.get(2);
 
-            filter = new IsNotEqualToExtended(parameterList.get(0), parameterList.get(1),
-                    (Boolean) matchCase.getValue());
+            filter =
+                    new IsNotEqualToExtended(
+                            parameterList.get(0),
+                            parameterList.get(1),
+                            (Boolean) matchCase.getValue());
         }
 
         return filter;

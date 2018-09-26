@@ -18,7 +18,8 @@
  */
 
 /**
- * @author Robert Ward (SCISYS)
+ * Package containing vendor option QGis marker GUI panels.
  *
+ * @author Robert Ward (SCISYS)
  */
 package com.sldeditor.ui.detail.vendor.geoserver.marker.qgis;

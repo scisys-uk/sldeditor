@@ -19,31 +19,33 @@
 
 package com.sldeditor.test.unit.datasource.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
-import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.styling.NamedLayer;
-import org.geotools.styling.Rule;
-import org.geotools.styling.StyledLayerDescriptor;
-import org.junit.Test;
-import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.sldeditor.common.data.SLDUtils;
 import com.sldeditor.common.defaultsymbol.DefaultSymbols;
 import com.sldeditor.datasource.attribute.DataSourceAttributeData;
 import com.sldeditor.datasource.impl.ExtractAttributes;
+import java.util.ArrayList;
+import java.util.List;
+import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.filter.FunctionImpl;
+import org.geotools.filter.function.string.ConcatenateFunction;
+import org.geotools.styling.NamedLayer;
+import org.geotools.styling.Rule;
+import org.geotools.styling.StyledLayerDescriptor;
+import org.junit.jupiter.api.Test;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.Function;
 
 /**
  * Unit test for ExtractAttributes class.
- * 
- * <p>{@link com.sldeditor.datasource.impl.ExtractAttributes}
- * 
- * @author Robert Ward (SCISYS)
  *
+ * <p>{@link com.sldeditor.datasource.impl.ExtractAttributes}
+ *
+ * @author Robert Ward (SCISYS)
  */
 public class ExtractAttributesTest {
 
@@ -51,8 +53,9 @@ public class ExtractAttributesTest {
     private static FilterFactory ff = CommonFactoryFinder.getFilterFactory();
 
     /**
-     * Test method for
-     * {@link com.sldeditor.datasource.impl.ExtractAttributes#addDefaultFields(org.geotools.feature.simple.SimpleFeatureTypeBuilder, java.lang.String)}.
+     * Test method for {@link
+     * com.sldeditor.datasource.impl.ExtractAttributes#addDefaultFields(org.geotools.feature.simple.SimpleFeatureTypeBuilder,
+     * java.lang.String)}.
      */
     @Test
     public void testAddDefaultFields() {
@@ -83,8 +86,10 @@ public class ExtractAttributesTest {
 
     /**
      * Test sld symbol contains non-default geometry field.
-     * 
-     * {@link com.sldeditor.datasource.impl.ExtractAttributes#addDefaultFields(org.geotools.feature.simple.SimpleFeatureTypeBuilder, java.lang.String)}.
+     *
+     * <p>{@link
+     * com.sldeditor.datasource.impl.ExtractAttributes#addDefaultFields(org.geotools.feature.simple.SimpleFeatureTypeBuilder,
+     * java.lang.String)}.
      */
     @Test
     public void testNonStandardGeometryField() {
@@ -109,8 +114,10 @@ public class ExtractAttributesTest {
 
     /**
      * Test sld symbol contains non-default geometry field and non-standard xml namespace.
-     * 
-     * {@link com.sldeditor.datasource.impl.ExtractAttributes#addDefaultFields(org.geotools.feature.simple.SimpleFeatureTypeBuilder, java.lang.String)}.
+     *
+     * <p>{@link
+     * com.sldeditor.datasource.impl.ExtractAttributes#addDefaultFields(org.geotools.feature.simple.SimpleFeatureTypeBuilder,
+     * java.lang.String)}.
      */
     @Test
     public void testNonStandardGeometryNamespace() {
@@ -141,9 +148,7 @@ public class ExtractAttributesTest {
         assertTrue(expectedGeometryFieldName.compareTo(actualGeometryFields.get(0)) == 0);
     }
 
-    /**
-     * Test filter.
-     */
+    /** Test filter. */
     @Test
     public void testFilter() {
         DummyInternalSLDFile2 dummy = new DummyInternalSLDFile2();
@@ -216,8 +221,10 @@ public class ExtractAttributesTest {
         Rule rule = DefaultSymbols.createNewRule();
 
         // Try with something complex
-        Filter filter = ff.and(ff.greater(ff.literal(42), ff.property("int")),
-                ff.less(ff.literal(12), ff.property("abc")));
+        Filter filter =
+                ff.and(
+                        ff.greater(ff.literal(42), ff.property("int")),
+                        ff.less(ff.literal(12), ff.property("abc")));
         rule.setFilter(filter);
         ruleList.clear();
         ruleList.add(rule);
@@ -351,6 +358,73 @@ public class ExtractAttributesTest {
         assertEquals(expectedGeometryFieldName, actualGeometryFields.get(0));
         List<DataSourceAttributeData> actualFieldnameList = extract.getFields();
         assertEquals(0, actualFieldnameList.size());
+    }
+
+    @Test
+    public void testFunctionExpression() {
+        DummyInternalSLDFile2 dummy = new DummyInternalSLDFile2();
+
+        StyledLayerDescriptor sld = createTestSLD(dummy);
+        List<Rule> ruleList = getRuleList(sld);
+
+        ExtractAttributes extract = new ExtractAttributes();
+        Rule rule = DefaultSymbols.createNewRule();
+
+        String expectedEnvVar = "testenvvar";
+        Function function = ff.function("env", ff.property(expectedEnvVar));
+
+        Filter filter = ff.equal(ff.literal("not equal"), function, true);
+        rule.setFilter(filter);
+        ruleList.clear();
+        ruleList.add(rule);
+        extract.extractDefaultFields(sld);
+
+        // Check fields extracted ok
+        List<DataSourceAttributeData> actualFieldnameList = extract.getFields();
+        assertEquals(1, actualFieldnameList.size());
+        DataSourceAttributeData dataSourceField = actualFieldnameList.get(0);
+        assertEquals(String.class, dataSourceField.getType());
+    }
+
+    @Test
+    public void testFunctionImpl() {
+        DummyInternalSLDFile2 dummy = new DummyInternalSLDFile2();
+
+        StyledLayerDescriptor sld = createTestSLD(dummy);
+        List<Rule> ruleList = getRuleList(sld);
+
+        ExtractAttributes extract = new ExtractAttributes();
+        Rule rule = DefaultSymbols.createNewRule();
+
+        String expectedAttribute = "world";
+        FunctionImpl function = new ConcatenateFunction();
+        List<Expression> params = new ArrayList<Expression>();
+        params.add(ff.property(expectedAttribute));
+        params.add(ff.property(expectedAttribute));
+        function.setParameters(params);
+
+        Filter filter = ff.equal(ff.literal("not equal"), function, true);
+        rule.setFilter(filter);
+        ruleList.clear();
+        ruleList.add(rule);
+        extract.extractDefaultFields(sld);
+
+        // Check fields extracted ok
+        List<DataSourceAttributeData> actualFieldnameList = extract.getFields();
+        assertEquals(1, actualFieldnameList.size());
+        DataSourceAttributeData dataSourceField = actualFieldnameList.get(0);
+        assertEquals(String.class, dataSourceField.getType());
+    }
+
+    @Test
+    public void testEmpty() {
+
+        ExtractAttributes extract = new ExtractAttributes();
+        extract.extractDefaultFields(null);
+
+        // Check fields extracted ok
+        assertEquals(0, extract.getFields().size());
+        assertEquals(0, extract.getGeometryFields().size());
     }
 
     /**

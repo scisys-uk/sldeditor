@@ -19,21 +19,6 @@
 
 package com.sldeditor.ui.detail.config;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-
-import javax.swing.JSpinner;
-import javax.swing.SpinnerDateModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.text.DateFormatter;
-
-import org.opengis.filter.expression.Expression;
-
 import com.sldeditor.common.console.ConsoleManager;
 import com.sldeditor.common.undo.UndoActionInterface;
 import com.sldeditor.common.undo.UndoEvent;
@@ -42,19 +27,30 @@ import com.sldeditor.common.undo.UndoManager;
 import com.sldeditor.common.xml.ui.FieldIdEnum;
 import com.sldeditor.ui.detail.BasePanel;
 import com.sldeditor.ui.widgets.FieldPanel;
-
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerDateModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.text.DateFormatter;
 import net.sourceforge.jdatepicker.DateModel;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;
+import org.opengis.filter.expression.Expression;
 
 /**
  * The Class FieldConfigDate wraps a date picker GUI component.
- * 
+ *
  * <p>Supports undo/redo functionality.
- * 
+ *
  * <p>Instantiated by {@link com.sldeditor.ui.detail.config.ReadPanelConfig}
- * 
+ *
  * @author Robert Ward (SCISYS)
  */
 public class FieldConfigDate extends FieldConfigBase implements UndoActionInterface {
@@ -84,6 +80,12 @@ public class FieldConfigDate extends FieldConfigBase implements UndoActionInterf
     private JSpinner.DateEditor timeEditor;
 
     /**
+     * Flag indicating whether class is being populated, prevents multiple undo events being
+     * triggered when setting a date value.
+     */
+    private boolean isPopulating = false;
+
+    /**
      * Instantiates a new field config slider.
      *
      * @param commonData the common data
@@ -92,12 +94,10 @@ public class FieldConfigDate extends FieldConfigBase implements UndoActionInterf
         super(commonData);
     }
 
-    /**
-     * Creates the ui.
-     */
+    /** Creates the ui. */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#createUI()
      */
     @Override
@@ -109,31 +109,39 @@ public class FieldConfigDate extends FieldConfigBase implements UndoActionInterf
 
             JDatePanelImpl datePanel = new JDatePanelImpl(dateModel);
             datePicker = new JDatePickerImpl(datePanel);
-            datePicker.setBounds(xPos + BasePanel.WIDGET_X_START, 0,
-                    BasePanel.WIDGET_STANDARD_WIDTH, BasePanel.WIDGET_HEIGHT);
+            datePicker.setBounds(
+                    xPos + BasePanel.WIDGET_X_START,
+                    0,
+                    BasePanel.WIDGET_STANDARD_WIDTH,
+                    BasePanel.WIDGET_HEIGHT);
             fieldPanel.add(datePicker);
 
-            dateModel.addChangeListener(new ChangeListener() {
+            dateModel.addChangeListener(
+                    new ChangeListener() {
 
-                @Override
-                public void stateChanged(ChangeEvent e) {
-                    valueUpdated();
-                }
-            });
+                        @Override
+                        public void stateChanged(ChangeEvent e) {
+                            valueStored();
+                        }
+                    });
 
             // Time picker
             SpinnerDateModel model = new SpinnerDateModel();
             Calendar calendar = Calendar.getInstance();
             model.setValue(calendar.getTime());
             timePicker = new JSpinner(model);
-            timePicker.setBounds(datePicker.getX() + datePicker.getWidth() + 10, 0,
-                    BasePanel.WIDGET_STANDARD_WIDTH, BasePanel.WIDGET_HEIGHT);
-            timePicker.addChangeListener(new ChangeListener() {
-                @Override
-                public void stateChanged(ChangeEvent e) {
-                    valueUpdated();
-                }
-            });
+            timePicker.setBounds(
+                    datePicker.getX() + datePicker.getWidth() + 10,
+                    0,
+                    BasePanel.WIDGET_STANDARD_WIDTH,
+                    BasePanel.WIDGET_HEIGHT);
+            timePicker.addChangeListener(
+                    new ChangeListener() {
+                        @Override
+                        public void stateChanged(ChangeEvent e) {
+                            valueStored();
+                        }
+                    });
             fieldPanel.add(timePicker);
             timeEditor = new JSpinner.DateEditor(timePicker, "HH:mm:ss");
             timePicker.setEditor(timeEditor);
@@ -148,6 +156,19 @@ public class FieldConfigDate extends FieldConfigBase implements UndoActionInterf
         }
     }
 
+    /** Value stored. */
+    protected void valueStored() {
+        if (!isSuppressUndoEvents() && !isPopulating) {
+            Date newValueObj = getDate();
+
+            UndoManager.getInstance()
+                    .addUndoEvent(new UndoEvent(this, getFieldId(), oldValueObj, newValueObj));
+
+            oldValueObj = newValueObj;
+        }
+        valueUpdated();
+    }
+
     /**
      * Attribute selection.
      *
@@ -155,7 +176,7 @@ public class FieldConfigDate extends FieldConfigBase implements UndoActionInterf
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.sldeditor.ui.iface.AttributeButtonSelectionInterface#attributeSelection(java.lang.String)
      */
@@ -171,7 +192,7 @@ public class FieldConfigDate extends FieldConfigBase implements UndoActionInterf
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#setEnabled(boolean)
      */
     @Override
@@ -188,7 +209,7 @@ public class FieldConfigDate extends FieldConfigBase implements UndoActionInterf
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#generateExpression()
      */
     @Override
@@ -208,7 +229,7 @@ public class FieldConfigDate extends FieldConfigBase implements UndoActionInterf
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#isEnabled()
      */
     @Override
@@ -223,12 +244,10 @@ public class FieldConfigDate extends FieldConfigBase implements UndoActionInterf
         return false;
     }
 
-    /**
-     * Revert to default value.
-     */
+    /** Revert to default value. */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#revertToDefaultValue()
      */
     @Override
@@ -245,7 +264,7 @@ public class FieldConfigDate extends FieldConfigBase implements UndoActionInterf
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#populateExpression(java.lang.Object)
      */
     @Override
@@ -290,6 +309,10 @@ public class FieldConfigDate extends FieldConfigBase implements UndoActionInterf
         }
         DateModel<?> model = datePicker.getModel();
         Date selectedDate = (Date) model.getValue();
+
+        if (selectedDate == null) {
+            return null;
+        }
 
         Date time = (Date) timePicker.getValue();
 
@@ -366,12 +389,16 @@ public class FieldConfigDate extends FieldConfigBase implements UndoActionInterf
     @Override
     public void populateField(Date value) {
         if ((dateModel != null) && (timePicker != null) && (value != null)) {
+            isPopulating = true;
             dateModel.setValue(value);
             timePicker.setValue(value);
-            UndoManager.getInstance()
-                    .addUndoEvent(new UndoEvent(this, getFieldId(), oldValueObj, value));
-            oldValueObj = value;
-            valueUpdated();
+            if (!isSuppressUndoEvents()) {
+                UndoManager.getInstance()
+                        .addUndoEvent(new UndoEvent(this, getFieldId(), oldValueObj, value));
+                oldValueObj = value;
+            }
+
+            isPopulating = false;
         }
     }
 

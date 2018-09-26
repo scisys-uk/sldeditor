@@ -19,33 +19,28 @@
 
 package com.sldeditor.filter.v2.function.logic;
 
-import java.util.List;
-
-import org.geotools.filter.NotImpl;
-import org.opengis.filter.Filter;
-import org.opengis.filter.expression.Expression;
-
 import com.sldeditor.filter.v2.expression.ExpressionTypeEnum;
+import com.sldeditor.filter.v2.function.FilterBase;
 import com.sldeditor.filter.v2.function.FilterConfigInterface;
 import com.sldeditor.filter.v2.function.FilterExtendedInterface;
 import com.sldeditor.filter.v2.function.FilterName;
 import com.sldeditor.filter.v2.function.FilterNameParameter;
+import java.util.List;
+import org.geotools.filter.NotImpl;
+import org.opengis.filter.Filter;
+import org.opengis.filter.expression.Expression;
 
 /**
  * The Class Not.
  *
  * @author Robert Ward (SCISYS)
  */
-public class Not implements FilterConfigInterface {
+public class Not extends FilterBase implements FilterConfigInterface {
 
-    /**
-     * The Class NotExtended.
-     */
+    /** The Class NotExtended. */
     public class NotExtended extends NotImpl implements FilterExtendedInterface {
 
-        /**
-         * Instantiates a new not extended.
-         */
+        /** Instantiates a new not extended. */
         @SuppressWarnings("deprecation")
         public NotExtended() {
             super();
@@ -62,7 +57,7 @@ public class Not implements FilterConfigInterface {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.sldeditor.filter.v2.function.FilterExtendedInterface#getOriginalFilter()
          */
         @Override
@@ -71,10 +66,9 @@ public class Not implements FilterConfigInterface {
         }
     }
 
-    /**
-     * Default constructor.
-     */
-    public Not() {
+    /** Default constructor. */
+    public Not(String category) {
+        super(category);
     }
 
     /**
@@ -110,7 +104,6 @@ public class Not implements FilterConfigInterface {
     public Filter createFilter() {
         return new NotExtended();
     }
-
 
     /**
      * Creates the filter.

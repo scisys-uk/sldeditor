@@ -18,7 +18,8 @@
  */
 
 /**
- * @author Robert Ward (SCISYS)
+ * Package containing file dialog to save the legend image.
  *
+ * @author Robert Ward (SCISYS)
  */
 package com.sldeditor.ui.legend.filechooser;

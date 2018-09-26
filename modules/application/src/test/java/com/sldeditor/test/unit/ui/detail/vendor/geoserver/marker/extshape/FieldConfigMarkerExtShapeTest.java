@@ -19,17 +19,19 @@
 
 package com.sldeditor.test.unit.ui.detail.vendor.geoserver.marker.extshape;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
-
+import com.sldeditor.common.vendoroption.minversion.VendorOptionPresent;
 import com.sldeditor.common.xml.ui.FieldIdEnum;
 import com.sldeditor.ui.detail.config.FieldConfigCommonData;
 import com.sldeditor.ui.detail.vendor.geoserver.marker.extshape.FieldConfigMarkerExtShape;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.jupiter.api.Test;
 
 /**
  * The unit test for FieldConfigMarkerExtShape.
- * 
+ *
  * <p>{@link com.sldeditor.ui.detail.vendor.geoserver.marker.extshape.FieldConfigMarkerExtShape}
  *
  * @author Robert Ward (SCISYS)
@@ -37,18 +39,28 @@ import com.sldeditor.ui.detail.vendor.geoserver.marker.extshape.FieldConfigMarke
 public class FieldConfigMarkerExtShapeTest {
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.vendor.geoserver.marker.extshape.FieldConfigMarkerExtShape#FieldConfigMarkerExtShape(com.sldeditor.ui.detail.config.FieldConfigCommonData, com.sldeditor.ui.detail.ColourFieldConfig, com.sldeditor.ui.detail.ColourFieldConfig, com.sldeditor.common.xml.ui.FieldIdEnum)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.vendor.geoserver.marker.extshape.FieldConfigMarkerExtShape#FieldConfigMarkerExtShape(com.sldeditor.ui.detail.config.FieldConfigCommonData,
+     * com.sldeditor.ui.detail.ColourFieldConfig, com.sldeditor.ui.detail.ColourFieldConfig,
+     * com.sldeditor.common.xml.ui.FieldIdEnum)}.
      */
     @Test
     public void testFieldConfigMarkerShape() {
         // Value only, no attribute/expression dropdown
         boolean valueOnly = true;
-        FieldConfigMarkerExtShape field = new FieldConfigMarkerExtShape(
-                new FieldConfigCommonData(String.class, FieldIdEnum.NAME, "test label", valueOnly),
-                null, null, null);
+        FieldConfigMarkerExtShape field =
+                new FieldConfigMarkerExtShape(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.NAME, "test label", valueOnly, false),
+                        null,
+                        null,
+                        null);
 
         assertNotNull(field);
-    }
 
+        field.getMinimumVersion(null, null, null);
+
+        List<VendorOptionPresent> vendorOptionsPresentList = new ArrayList<VendorOptionPresent>();
+        field.getMinimumVersion(null, "", vendorOptionsPresentList);
+    }
 }

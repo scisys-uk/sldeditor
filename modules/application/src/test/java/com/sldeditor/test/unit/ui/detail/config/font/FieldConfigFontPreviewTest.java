@@ -19,26 +19,27 @@
 
 package com.sldeditor.test.unit.ui.detail.config.font;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.awt.GraphicsEnvironment;
-
-import org.geotools.styling.Font;
-import org.geotools.styling.StyleBuilder;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.sldeditor.common.xml.ui.FieldIdEnum;
 import com.sldeditor.ui.detail.config.FieldConfigBase;
 import com.sldeditor.ui.detail.config.FieldConfigCommonData;
 import com.sldeditor.ui.detail.config.FieldConfigPopulate;
 import com.sldeditor.ui.detail.config.font.FieldConfigFontPreview;
+import java.awt.GraphicsEnvironment;
+import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.styling.Font;
+import org.geotools.styling.StyleBuilder;
+import org.junit.jupiter.api.Test;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.Expression;
 
 /**
  * The unit test for FieldConfigFontPreview.
- * 
+ *
  * <p>{@link com.sldeditor.ui.detail.config.font.FieldConfigFontPreview}
  *
  * @author Robert Ward (SCISYS)
@@ -46,21 +47,23 @@ import com.sldeditor.ui.detail.config.font.FieldConfigFontPreview;
 public class FieldConfigFontPreviewTest {
 
     /** The font families. */
-    private String[] fontFamilies = GraphicsEnvironment.getLocalGraphicsEnvironment()
-            .getAvailableFontFamilyNames();
+    private String[] fontFamilies =
+            GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.font.FieldConfigFontPreview#internal_setEnabled(boolean)}.
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.font.FieldConfigFontPreview#isEnabled()}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.font.FieldConfigFontPreview#internal_setEnabled(boolean)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.font.FieldConfigFontPreview#isEnabled()}.
      */
     @Test
     public void testSetEnabled() {
         // Value only, no attribute/expression dropdown
         boolean valueOnly = true;
-        FieldConfigFontPreview field = new FieldConfigFontPreview(
-                new FieldConfigCommonData(String.class, FieldIdEnum.NAME, "test label", valueOnly));
+        FieldConfigFontPreview field =
+                new FieldConfigFontPreview(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.NAME, "test label", valueOnly, false));
 
         // Text field will not have been created
         boolean expectedValue = true;
@@ -80,8 +83,10 @@ public class FieldConfigFontPreviewTest {
 
         // Has attribute/expression dropdown
         valueOnly = false;
-        FieldConfigFontPreview field2 = new FieldConfigFontPreview(
-                new FieldConfigCommonData(String.class, FieldIdEnum.NAME, "test label", valueOnly));
+        FieldConfigFontPreview field2 =
+                new FieldConfigFontPreview(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.NAME, "test label", valueOnly, false));
 
         // Text field will not have been created
         expectedValue = true;
@@ -101,14 +106,16 @@ public class FieldConfigFontPreviewTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.font.FieldConfigFontPreview#setVisible(boolean)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.font.FieldConfigFontPreview#setVisible(boolean)}.
      */
     @Test
     public void testSetVisible() {
         boolean valueOnly = true;
-        FieldConfigFontPreview field = new FieldConfigFontPreview(
-                new FieldConfigCommonData(String.class, FieldIdEnum.NAME, "test label", valueOnly));
+        FieldConfigFontPreview field =
+                new FieldConfigFontPreview(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.NAME, "test label", valueOnly, false));
 
         boolean expectedValue = true;
         field.setVisible(expectedValue);
@@ -119,22 +126,24 @@ public class FieldConfigFontPreviewTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.font.FieldConfigFontPreview#generateExpression()}. Test
-     * method for
-     * {@link com.sldeditor.ui.detail.config.font.FieldConfigFontPreview#populateExpression(java.lang.Object, org.opengis.filter.expression.Expression)}.
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.font.FieldConfigFontPreview#populateField(org.geotools.styling.Font)}.
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.font.FieldConfigFontPreview#setTestValue(com.sldeditor.ui.detail.config.FieldId, java.lang.String)}.
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.font.FieldConfigFontPreview#getStringValue()}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.font.FieldConfigFontPreview#generateExpression()}. Test method
+     * for {@link
+     * com.sldeditor.ui.detail.config.font.FieldConfigFontPreview#populateExpression(java.lang.Object,
+     * org.opengis.filter.expression.Expression)}. Test method for {@link
+     * com.sldeditor.ui.detail.config.font.FieldConfigFontPreview#populateField(org.geotools.styling.Font)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.font.FieldConfigFontPreview#setTestValue(com.sldeditor.ui.detail.config.FieldId,
+     * java.lang.String)}. Test method for {@link
+     * com.sldeditor.ui.detail.config.font.FieldConfigFontPreview#getStringValue()}.
      */
     @Test
     public void testGenerateExpression() {
         boolean valueOnly = true;
-        FieldConfigFontPreview field = new FieldConfigFontPreview(
-                new FieldConfigCommonData(String.class, FieldIdEnum.NAME, "test label", valueOnly));
+        FieldConfigFontPreview field =
+                new FieldConfigFontPreview(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.NAME, "test label", valueOnly, false));
 
         field.setTestValue(FieldIdEnum.UNKNOWN, (String) null);
         field.populateField((String) null);
@@ -143,6 +152,7 @@ public class FieldConfigFontPreviewTest {
 
         String expectedValue = fontFamilies[0];
         field.createUI();
+        field.populateField((Font) null);
         field.populateField(expectedValue);
         String actualValue = field.getStringValue();
         assertNotNull(actualValue);
@@ -168,19 +178,37 @@ public class FieldConfigFontPreviewTest {
         Font f4 = styleBuilder.createFont(expectedValue, false, false, 24.0);
         field.populateField(f4);
         assertNotNull(field.getStringValue());
+
+        FilterFactory ff = CommonFactoryFinder.getFilterFactory();
+        Font f5 = styleBuilder.createFont(expectedValue, false, false, 24.0);
+        f5.setWeight(null);
+        field.populateField(f5);
+        assertEquals(field.getStringValue(), "");
+
+        Font f6 = styleBuilder.createFont(expectedValue, false, false, 24.0);
+        f6.setSize(ff.literal("24"));
+        field.populateField(f6);
+        assertNotNull(field.getStringValue());
+
+        Font f7 = styleBuilder.createFont(expectedValue, false, false, 24.0);
+        f7.setSize(ff.property("property"));
+        field.populateField(f7);
+        assertNotNull(field.getStringValue());
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.font.FieldConfigFontPreview#revertToDefaultValue()}.
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.font.FieldConfigFontPreview#setDefaultValue(java.lang.String)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.font.FieldConfigFontPreview#revertToDefaultValue()}. Test
+     * method for {@link
+     * com.sldeditor.ui.detail.config.font.FieldConfigFontPreview#setDefaultValue(java.lang.String)}.
      */
     @Test
     public void testRevertToDefaultValue() {
         boolean valueOnly = true;
-        FieldConfigFontPreview field = new FieldConfigFontPreview(
-                new FieldConfigCommonData(String.class, FieldIdEnum.NAME, "test label", valueOnly));
+        FieldConfigFontPreview field =
+                new FieldConfigFontPreview(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.NAME, "test label", valueOnly, false));
 
         field.revertToDefaultValue();
         String actualValue = field.getStringValue();
@@ -196,8 +224,8 @@ public class FieldConfigFontPreviewTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.font.FieldConfigFontPreview#createCopy(com.sldeditor.ui.detail.config.FieldConfigBase)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.font.FieldConfigFontPreview#createCopy(com.sldeditor.ui.detail.config.FieldConfigBase)}.
      */
     @Test
     public void testCreateCopy() {
@@ -212,10 +240,20 @@ public class FieldConfigFontPreviewTest {
             public FieldConfigPopulate callCreateCopy(FieldConfigBase fieldConfigBase) {
                 return createCopy(fieldConfigBase);
             }
+
+            /* (non-Javadoc)
+             * @see com.sldeditor.ui.detail.config.font.FieldConfigFontPreview#generateExpression()
+             */
+            @Override
+            protected Expression generateExpression() {
+                return super.generateExpression();
+            }
         }
 
-        TestFieldConfigFontPreview field = new TestFieldConfigFontPreview(
-                new FieldConfigCommonData(String.class, FieldIdEnum.NAME, "test label", valueOnly));
+        TestFieldConfigFontPreview field =
+                new TestFieldConfigFontPreview(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.NAME, "test label", valueOnly, false));
         FieldConfigFontPreview copy = (FieldConfigFontPreview) field.callCreateCopy(null);
         assertNull(copy);
 
@@ -223,36 +261,42 @@ public class FieldConfigFontPreviewTest {
         assertEquals(field.getFieldId(), copy.getFieldId());
         assertTrue(field.getLabel().compareTo(copy.getLabel()) == 0);
         assertEquals(field.isValueOnly(), copy.isValueOnly());
+
+        // Increase code coverage
+        assertNull(field.generateExpression());
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.font.FieldConfigFontPreview#attributeSelection(java.lang.String)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.font.FieldConfigFontPreview#attributeSelection(java.lang.String)}.
      */
     @Test
     public void testAttributeSelection() {
         boolean valueOnly = true;
-        FieldConfigFontPreview field = new FieldConfigFontPreview(
-                new FieldConfigCommonData(String.class, FieldIdEnum.NAME, "test label", valueOnly));
+        FieldConfigFontPreview field =
+                new FieldConfigFontPreview(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.NAME, "test label", valueOnly, false));
 
         field.attributeSelection("field");
         // Does nothing
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.font.FieldConfigFontPreview#undoAction(com.sldeditor.common.undo.UndoInterface)}.
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.font.FieldConfigFontPreview#redoAction(com.sldeditor.common.undo.UndoInterface)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.font.FieldConfigFontPreview#undoAction(com.sldeditor.common.undo.UndoInterface)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.font.FieldConfigFontPreview#redoAction(com.sldeditor.common.undo.UndoInterface)}.
      */
     @Test
     public void testUndoAction() {
-        FieldConfigFontPreview field = new FieldConfigFontPreview(
-                new FieldConfigCommonData(String.class, FieldIdEnum.NAME, "test label", false));
+        FieldConfigFontPreview field =
+                new FieldConfigFontPreview(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.NAME, "test label", false, false));
         field.undoAction(null);
         field.redoAction(null);
 
         // Does nothing
     }
-
 }

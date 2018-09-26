@@ -19,17 +19,16 @@
 
 package com.sldeditor.test.unit.ui.legend.option;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.sldeditor.ui.legend.option.LegendOptionData;
 import com.sldeditor.ui.legend.option.LegendOptionDataUpdateInterface;
 import com.sldeditor.ui.legend.option.LegendOptionPanel;
+import org.junit.jupiter.api.Test;
 
 /**
  * The unit test for LegendOptionPanel.
- * 
+ *
  * <p>{@link com.sldeditor.ui.legend.option.LegendOptionPanel}
  *
  * @author Robert Ward (SCISYS)
@@ -43,13 +42,12 @@ public class LegendOptionPanelTest {
     public void testLegendOptionPanel() {
         LegendOptionPanel testObj = new LegendOptionPanel();
 
-        testObj.addListener(new LegendOptionDataUpdateInterface() {
+        testObj.addListener(
+                new LegendOptionDataUpdateInterface() {
 
-            @Override
-            public void updateLegendOptionData(LegendOptionData data) {
-
-            }
-        });
+                    @Override
+                    public void updateLegendOptionData(LegendOptionData data) {}
+                });
         LegendOptionData newOptionData = new LegendOptionData();
         testObj.updateData(newOptionData);
 
@@ -57,5 +55,4 @@ public class LegendOptionPanelTest {
 
         assertEquals(actualData, newOptionData);
     }
-
 }

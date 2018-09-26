@@ -19,21 +19,11 @@
 
 package com.sldeditor.test.unit.ui.tree;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.net.URL;
-import java.util.List;
-
-import org.geotools.styling.StyledLayerDescriptor;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.sldeditor.TreeSelectionData;
 import com.sldeditor.common.data.SLDData;
@@ -59,10 +49,19 @@ import com.sldeditor.ui.iface.PopulateDetailsInterface;
 import com.sldeditor.ui.tree.SLDTree;
 import com.sldeditor.ui.tree.SLDTreeTools;
 import com.sldeditor.ui.tree.UpdateTreeStructureInterface;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.URL;
+import java.util.List;
+import org.geotools.styling.StyledLayerDescriptor;
+import org.junit.jupiter.api.Test;
 
 /**
  * The unit test for SLDTree.
- * 
+ *
  * <p>{@link com.sldeditor.ui.tree.SLDTree}
  *
  * @author Robert Ward (SCISYS)
@@ -109,8 +108,8 @@ public class SLDTreeTest {
 
     /**
      * Test method for {@link com.sldeditor.ui.tree.SLDTree#SLDTree(java.util.List)} using values.
-     * Test method for
-     * {@link com.sldeditor.ui.tree.SLDTree#addSymbolSelectedListener(com.sldeditor.ui.iface.SymbolizerSelectedInterface)}.
+     * Test method for {@link
+     * com.sldeditor.ui.tree.SLDTree#addSymbolSelectedListener(com.sldeditor.ui.iface.SymbolizerSelectedInterface)}.
      * Test method for {@link com.sldeditor.ui.tree.SLDTree#selectFirstSymbol()}. Test method for
      * {@link com.sldeditor.ui.tree.SLDTree#selectTreeItem(com.sldeditor.TreeSelectionData)}. Test
      * method for {@link com.sldeditor.ui.tree.SLDTree#getSelectedSymbolPanel()}. Test method for
@@ -132,122 +131,127 @@ public class SLDTreeTest {
 
         SelectedSymbol.getInstance().setSld(sld);
 
-        SymbolizerDetailsPanel symbolizerSelectedPanel = new SymbolizerDetailsPanel(null, null);
-        tree1.addSymbolSelectedListener(symbolizerSelectedPanel);
-        tree1.populateSLD();
+        try {
+            SymbolizerDetailsPanel symbolizerSelectedPanel = new SymbolizerDetailsPanel(null, null);
+            tree1.addSymbolSelectedListener(symbolizerSelectedPanel);
+            tree1.populateSLD();
 
-        // Nothing selected at this stage
-        tree1.leafSelected();
-        PopulateDetailsInterface panel = tree1.getSelectedSymbolPanel();
-        assertNull(panel);
+            // Nothing selected at this stage
+            tree1.leafSelected();
+            PopulateDetailsInterface panel = tree1.getSelectedSymbolPanel();
+            assertNull(panel);
 
-        // Select top level node
-        tree1.selectFirstSymbol();
+            // Select top level node
+            tree1.selectFirstSymbol();
 
-        tree1.leafSelected();
+            tree1.leafSelected();
 
-        panel = tree1.getSelectedSymbolPanel();
-        assertEquals(EmptyPanel.class, panel.getClass());
+            panel = tree1.getSelectedSymbolPanel();
+            assertEquals(EmptyPanel.class, panel.getClass());
 
-        // Select layer
-        TreeSelectionData selectedTreeData = new TreeSelectionData();
-        selectedTreeData.setLayerIndex(0);
-        assertTrue(tree1.selectTreeItem(selectedTreeData));
-        panel = tree1.getSelectedSymbolPanel();
-        assertEquals(NamedLayerDetails.class, panel.getClass());
+            // Select layer
+            TreeSelectionData selectedTreeData = new TreeSelectionData();
+            selectedTreeData.setLayerIndex(0);
+            assertTrue(tree1.selectTreeItem(selectedTreeData));
+            panel = tree1.getSelectedSymbolPanel();
+            assertEquals(NamedLayerDetails.class, panel.getClass());
 
-        // Select style
-        selectedTreeData.setStyleIndex(0);
-        assertTrue(tree1.selectTreeItem(selectedTreeData));
-        panel = tree1.getSelectedSymbolPanel();
-        assertEquals(StyleDetails.class, panel.getClass());
+            // Select style
+            selectedTreeData.setStyleIndex(0);
+            assertTrue(tree1.selectTreeItem(selectedTreeData));
+            panel = tree1.getSelectedSymbolPanel();
+            assertEquals(StyleDetails.class, panel.getClass());
 
-        // Select feature type style
-        selectedTreeData.setFeatureTypeStyleIndex(0);
-        assertTrue(tree1.selectTreeItem(selectedTreeData));
-        panel = tree1.getSelectedSymbolPanel();
-        assertEquals(FeatureTypeStyleDetails.class, panel.getClass());
+            // Select feature type style
+            selectedTreeData.setFeatureTypeStyleIndex(0);
+            assertTrue(tree1.selectTreeItem(selectedTreeData));
+            panel = tree1.getSelectedSymbolPanel();
+            assertEquals(FeatureTypeStyleDetails.class, panel.getClass());
 
-        // Select rule
-        selectedTreeData.setRuleIndex(0);
-        assertTrue(tree1.selectTreeItem(selectedTreeData));
-        panel = tree1.getSelectedSymbolPanel();
-        assertEquals(RuleDetails.class, panel.getClass());
+            // Select rule
+            selectedTreeData.setRuleIndex(0);
+            assertTrue(tree1.selectTreeItem(selectedTreeData));
+            panel = tree1.getSelectedSymbolPanel();
+            assertEquals(RuleDetails.class, panel.getClass());
 
-        // Select polygon symbolizer
-        selectedTreeData.setSelectedPanel(PolygonSymbolizerDetails.class);
-        selectedTreeData.setSymbolizerIndex(0);
-        assertTrue(tree1.selectTreeItem(selectedTreeData));
-        panel = tree1.getSelectedSymbolPanel();
-        assertEquals(PolygonSymbolizerDetails.class, panel.getClass());
+            // Select polygon symbolizer
+            selectedTreeData.setSelectedPanel(PolygonSymbolizerDetails.class);
+            selectedTreeData.setSymbolizerIndex(0);
+            assertTrue(tree1.selectTreeItem(selectedTreeData));
+            panel = tree1.getSelectedSymbolPanel();
+            assertEquals(PolygonSymbolizerDetails.class, panel.getClass());
 
-        // Select line symbolizer
-        selectedTreeData.setSelectedPanel(LineSymbolizerDetails.class);
-        selectedTreeData.setRuleIndex(1);
-        assertTrue(tree1.selectTreeItem(selectedTreeData));
-        panel = tree1.getSelectedSymbolPanel();
-        assertEquals(LineSymbolizerDetails.class, panel.getClass());
+            // Select line symbolizer
+            selectedTreeData.setSelectedPanel(LineSymbolizerDetails.class);
+            selectedTreeData.setRuleIndex(1);
+            assertTrue(tree1.selectTreeItem(selectedTreeData));
+            panel = tree1.getSelectedSymbolPanel();
+            assertEquals(LineSymbolizerDetails.class, panel.getClass());
 
-        // Select point symbolizer
-        selectedTreeData.setSelectedPanel(PointSymbolizerDetails.class);
-        selectedTreeData.setRuleIndex(2);
-        assertTrue(tree1.selectTreeItem(selectedTreeData));
-        panel = tree1.getSelectedSymbolPanel();
-        assertEquals(PointSymbolizerDetails.class, panel.getClass());
+            // Select point symbolizer
+            selectedTreeData.setSelectedPanel(PointSymbolizerDetails.class);
+            selectedTreeData.setRuleIndex(2);
+            assertTrue(tree1.selectTreeItem(selectedTreeData));
+            panel = tree1.getSelectedSymbolPanel();
+            assertEquals(PointSymbolizerDetails.class, panel.getClass());
 
-        // Select text symbolizer
-        selectedTreeData.setSelectedPanel(TextSymbolizerDetails.class);
-        selectedTreeData.setSymbolizerIndex(1);
-        assertTrue(tree1.selectTreeItem(selectedTreeData));
-        panel = tree1.getSelectedSymbolPanel();
-        assertEquals(TextSymbolizerDetails.class, panel.getClass());
+            // Select text symbolizer
+            selectedTreeData.setSelectedPanel(TextSymbolizerDetails.class);
+            selectedTreeData.setSymbolizerIndex(1);
+            assertTrue(tree1.selectTreeItem(selectedTreeData));
+            panel = tree1.getSelectedSymbolPanel();
+            assertEquals(TextSymbolizerDetails.class, panel.getClass());
 
-        // Select raster symbolizer
-        selectedTreeData.setSelectedPanel(RasterSymbolizerDetails.class);
-        selectedTreeData.setSymbolizerIndex(2);
-        assertTrue(tree1.selectTreeItem(selectedTreeData));
-        panel = tree1.getSelectedSymbolPanel();
-        assertEquals(RasterSymbolizerDetails.class, panel.getClass());
+            // Select raster symbolizer
+            selectedTreeData.setSelectedPanel(RasterSymbolizerDetails.class);
+            selectedTreeData.setSymbolizerIndex(2);
+            assertTrue(tree1.selectTreeItem(selectedTreeData));
+            panel = tree1.getSelectedSymbolPanel();
+            assertEquals(RasterSymbolizerDetails.class, panel.getClass());
 
-        // Select polygon symbolizer / fill
-        selectedTreeData.setSelectedPanel(PolygonFillDetails.class);
-        selectedTreeData.setSymbolizerIndex(0);
-        selectedTreeData.setSymbolizerDetailIndex(0);
-        selectedTreeData.setRuleIndex(0);
-        assertTrue(tree1.selectTreeItem(selectedTreeData));
-        panel = tree1.getSelectedSymbolPanel();
-        assertEquals(PolygonFillDetails.class, panel.getClass());
+            // Select polygon symbolizer / fill
+            selectedTreeData.setSelectedPanel(PolygonFillDetails.class);
+            selectedTreeData.setSymbolizerIndex(0);
+            selectedTreeData.setSymbolizerDetailIndex(0);
+            selectedTreeData.setRuleIndex(0);
+            assertTrue(tree1.selectTreeItem(selectedTreeData));
+            panel = tree1.getSelectedSymbolPanel();
+            assertEquals(PolygonFillDetails.class, panel.getClass());
 
-        // Select polygon symbolizer / stroke
-        selectedTreeData.setSelectedPanel(StrokeDetails.class);
-        selectedTreeData.setSymbolizerDetailIndex(1);
-        assertTrue(tree1.selectTreeItem(selectedTreeData));
-        panel = tree1.getSelectedSymbolPanel();
-        assertEquals(StrokeDetails.class, panel.getClass());
+            // Select polygon symbolizer / stroke
+            selectedTreeData.setSelectedPanel(StrokeDetails.class);
+            selectedTreeData.setSymbolizerDetailIndex(1);
+            assertTrue(tree1.selectTreeItem(selectedTreeData));
+            panel = tree1.getSelectedSymbolPanel();
+            assertEquals(StrokeDetails.class, panel.getClass());
 
-        // Select point symbolizer / fill
-        selectedTreeData.setSelectedPanel(PointFillDetails.class);
-        selectedTreeData.setRuleIndex(2);
-        selectedTreeData.setSymbolizerIndex(0);
-        selectedTreeData.setSymbolizerDetailIndex(0);
-        assertTrue(tree1.selectTreeItem(selectedTreeData));
-        panel = tree1.getSelectedSymbolPanel();
-        assertEquals(PointFillDetails.class, panel.getClass());
+            // Select point symbolizer / fill
+            selectedTreeData.setSelectedPanel(PointFillDetails.class);
+            selectedTreeData.setRuleIndex(2);
+            selectedTreeData.setSymbolizerIndex(0);
+            selectedTreeData.setSymbolizerDetailIndex(0);
+            assertTrue(tree1.selectTreeItem(selectedTreeData));
+            panel = tree1.getSelectedSymbolPanel();
+            assertEquals(PointFillDetails.class, panel.getClass());
 
-        // Select line symbolizer / stroke
-        selectedTreeData.setSelectedPanel(StrokeDetails.class);
-        selectedTreeData.setRuleIndex(1);
-        selectedTreeData.setSymbolizerIndex(0);
-        selectedTreeData.setSymbolizerDetailIndex(0);
-        assertTrue(tree1.selectTreeItem(selectedTreeData));
-        panel = tree1.getSelectedSymbolPanel();
-        assertEquals(StrokeDetails.class, panel.getClass());
+            // Select line symbolizer / stroke
+            selectedTreeData.setSelectedPanel(StrokeDetails.class);
+            selectedTreeData.setRuleIndex(1);
+            selectedTreeData.setSymbolizerIndex(0);
+            selectedTreeData.setSymbolizerDetailIndex(0);
+            assertTrue(tree1.selectTreeItem(selectedTreeData));
+            panel = tree1.getSelectedSymbolPanel();
+            assertEquals(StrokeDetails.class, panel.getClass());
 
-        // Error cases
-        selectedTreeData.setSymbolizerDetailIndex(-2);
-        assertFalse(tree1.selectTreeItem(selectedTreeData));
-        selectedTreeData.setSymbolizerDetailIndex(1);
-        assertFalse(tree1.selectTreeItem(selectedTreeData));
+            // Error cases
+            selectedTreeData.setSymbolizerDetailIndex(-2);
+            assertFalse(tree1.selectTreeItem(selectedTreeData));
+            selectedTreeData.setSymbolizerDetailIndex(1);
+            assertFalse(tree1.selectTreeItem(selectedTreeData));
+        } catch (Exception e) {
+            e.printStackTrace();
+            assertTrue(false);
+        }
     }
 
     /**
@@ -266,7 +270,7 @@ public class SLDTreeTest {
             e1.printStackTrace();
         }
 
-        org.junit.Assert.assertNotNull("Failed to read test file : " + fileName, br);
+        assertNotNull(br, "Failed to read test file : " + fileName);
 
         try {
             String line = br.readLine();
@@ -289,9 +293,7 @@ public class SLDTreeTest {
         return sb.toString();
     }
 
-    /**
-     * Test method for {@link com.sldeditor.ui.tree.SLDTree#populateSLD()}.
-     */
+    /** Test method for {@link com.sldeditor.ui.tree.SLDTree#populateSLD()}. */
     @Test
     public void testPopulateSLD() {
         List<RenderSymbolInterface> renderList = null;
@@ -301,8 +303,8 @@ public class SLDTreeTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.tree.SLDTree#valueChanged(javax.swing.event.TreeSelectionEvent)}.
+     * Test method for {@link
+     * com.sldeditor.ui.tree.SLDTree#valueChanged(javax.swing.event.TreeSelectionEvent)}.
      */
     @Test
     public void testValueChanged() {
@@ -311,9 +313,7 @@ public class SLDTreeTest {
         tree1.valueChanged(null);
     }
 
-    /**
-     * Test method for {@link com.sldeditor.ui.tree.SLDTree#textUpdated()}.
-     */
+    /** Test method for {@link com.sldeditor.ui.tree.SLDTree#textUpdated()}. */
     @Test
     public void testTextUpdated() {
         SLDTree tree1 = new SLDTree(null, null);
@@ -321,8 +321,8 @@ public class SLDTreeTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.tree.SLDTree#updateNode(java.lang.Object, java.lang.Object)}.
+     * Test method for {@link com.sldeditor.ui.tree.SLDTree#updateNode(java.lang.Object,
+     * java.lang.Object)}.
      */
     @Test
     public void testUpdateNode() {
@@ -331,8 +331,9 @@ public class SLDTreeTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.tree.SLDTree#dataSourceLoaded(com.sldeditor.datasource.impl.GeometryTypeEnum, boolean)}.
+     * Test method for {@link
+     * com.sldeditor.ui.tree.SLDTree#dataSourceLoaded(com.sldeditor.datasource.impl.GeometryTypeEnum,
+     * boolean)}.
      */
     @Test
     public void testDataSourceLoaded() {
@@ -341,8 +342,8 @@ public class SLDTreeTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.tree.SLDTree#undoAction(com.sldeditor.common.undo.UndoInterface)}.
+     * Test method for {@link
+     * com.sldeditor.ui.tree.SLDTree#undoAction(com.sldeditor.common.undo.UndoInterface)}.
      */
     @Test
     public void testUndoAction() {
@@ -353,8 +354,8 @@ public class SLDTreeTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.tree.SLDTree#redoAction(com.sldeditor.common.undo.UndoInterface)}.
+     * Test method for {@link
+     * com.sldeditor.ui.tree.SLDTree#redoAction(com.sldeditor.common.undo.UndoInterface)}.
      */
     @Test
     public void testRedoAction() {
@@ -362,5 +363,4 @@ public class SLDTreeTest {
 
         tree1.redoAction(null);
     }
-
 }

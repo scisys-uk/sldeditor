@@ -19,16 +19,15 @@
 
 package com.sldeditor.test.unit.tool;
 
-import static org.junit.Assert.fail;
-
-import java.io.File;
-import java.io.IOException;
-
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.sldeditor.common.utils.ExternalFilenames;
 import com.sldeditor.tool.GenerateFilename;
+import java.io.File;
+import java.io.IOException;
+import org.junit.jupiter.api.Test;
 
 /**
  * The Class GenerateFilenameTest.
@@ -38,8 +37,8 @@ import com.sldeditor.tool.GenerateFilename;
 public class GenerateFilenameTest {
 
     /**
-     * Test method for
-     * {@link com.sldeditor.tool.GenerateFilename#findUniqueName(java.lang.String, java.lang.String, java.lang.String)}.
+     * Test method for {@link com.sldeditor.tool.GenerateFilename#findUniqueName(java.lang.String,
+     * java.lang.String, java.lang.String)}.
      */
     @Test
     public void testFindUniqueName() {
@@ -49,21 +48,19 @@ public class GenerateFilenameTest {
         try {
             f = File.createTempFile("test", fileExtension);
         } catch (IOException e) {
-            e.printStackTrace();
-            fail();
+            fail(e.getStackTrace().toString());
         }
 
         String filename = ExternalFilenames.removeSuffix(f.getName());
 
         String destinationFolder = f.getParent();
-        File actualResult = GenerateFilename.findUniqueName(destinationFolder, filename,
-                fileExtension);
+        File actualResult =
+                GenerateFilename.findUniqueName(destinationFolder, filename, fileExtension);
 
-        Assert.assertNotEquals(actualResult.getAbsolutePath(), f.getAbsolutePath());
+        assertNotEquals(actualResult.getAbsolutePath(), f.getAbsolutePath());
         String actualFilename = actualResult.getName();
         int counter = 1;
         String expectedFilename = String.format("%s%d%s", filename, counter, fileExtension);
-        Assert.assertEquals(actualFilename, expectedFilename);
+        assertEquals(actualFilename, expectedFilename);
     }
-
 }

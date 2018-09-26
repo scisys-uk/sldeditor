@@ -19,11 +19,11 @@
 
 package com.sldeditor.filter.v2.expression;
 
+import com.sldeditor.common.localisation.Localisation;
+import com.sldeditor.filter.v2.envvar.EnvironmentManagerInterface;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.swing.tree.DefaultMutableTreeNode;
-
 import org.geotools.filter.AttributeExpressionImpl;
 import org.geotools.filter.FunctionExpression;
 import org.geotools.filter.FunctionExpressionImpl;
@@ -37,10 +37,8 @@ import org.geotools.filter.expression.SubtractImpl;
 import org.geotools.filter.function.EnvFunction;
 import org.opengis.filter.capability.FunctionName;
 import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.Function;
 import org.opengis.parameter.Parameter;
-
-import com.sldeditor.common.localisation.Localisation;
-import com.sldeditor.filter.v2.envvar.EnvironmentManagerInterface;
 
 /**
  * The Class ExpressionNode.
@@ -70,15 +68,31 @@ public class ExpressionNode extends DefaultMutableTreeNode {
     /** The expression type. */
     private ExpressionTypeEnum expressionType = ExpressionTypeEnum.EXPRESSION;
 
+    /** The optional parameter. */
+    private boolean optionalParam = false;
+
+    /** The optional parameter used. */
+    private boolean optionalParamUsed = false;
+
+    /** The expression node parameter. */
+    private Parameter<?> expressionNodeParameter = null;
+
+    /** The Constant UNLIMITED_STRING_SIZE. */
+    public static final int UNLIMITED_STRING_SIZE = -1;
+
+    /** The maximum string size value (initialised to unlimited). */
+    private int maxStringSize = UNLIMITED_STRING_SIZE;
+
+    /** The regular expression string flag. */
+    private boolean regExpString = false;
+
     /** The math expression map. */
     private static Map<Class<?>, String> mathExpressionMap = new HashMap<Class<?>, String>();
 
-    /** The env mgr. */
+    /** The environment manager. */
     private static EnvironmentManagerInterface envMgr = null;
 
-    /**
-     * Instantiates a new expression node.
-     */
+    /** Instantiates a new expression node. */
     public ExpressionNode() {
         setDisplayString();
     }
@@ -93,10 +107,8 @@ public class ExpressionNode extends DefaultMutableTreeNode {
         return displayString;
     }
 
-    /**
-     * Sets the display string.
-     */
-    private void setDisplayString() {
+    /** Sets the display string. */
+    public void setDisplayString() {
         StringBuilder sb = new StringBuilder();
 
         if (name != null) {
@@ -106,29 +118,45 @@ public class ExpressionNode extends DefaultMutableTreeNode {
 
         if (expression == null) {
             if (expressionType == ExpressionTypeEnum.LITERAL) {
-                sb.append(Localisation.getString(ExpressionPanelv2.class,
-                        "ExpressionPanelv2.literalNotSet"));
+                sb.append(
+                        Localisation.getString(
+                                ExpressionPanelv2.class, "ExpressionPanelv2.literalNotSet"));
             } else if (expressionType == ExpressionTypeEnum.PROPERTY) {
-                sb.append(Localisation.getString(ExpressionPanelv2.class,
-                        "ExpressionPanelv2.propertyNotSet"));
+                sb.append(
+                        Localisation.getString(
+                                ExpressionPanelv2.class, "ExpressionPanelv2.propertyNotSet"));
             } else {
-                sb.append(Localisation.getString(ExpressionPanelv2.class,
-                        "ExpressionPanelv2.expressionNotSet"));
+                if (optionalParam) {
+                    sb.append(
+                            Localisation.getString(
+                                    ExpressionPanelv2.class, "ExpressionPanelv2.optional"));
+
+                } else {
+                    sb.append(
+                            Localisation.getString(
+                                    ExpressionPanelv2.class, "ExpressionPanelv2.expressionNotSet"));
+                }
             }
         }
 
         if (expression instanceof LiteralExpressionImpl) {
-            sb.append(Localisation.getField(ExpressionPanelv2.class, "ExpressionPanelv2.literal")
-                    + " ");
+            sb.append(
+                    Localisation.getField(ExpressionPanelv2.class, "ExpressionPanelv2.literal")
+                            + " ");
             sb.append(expression.toString());
         } else if (expression instanceof AttributeExpressionImpl) {
-            sb.append(String.format("%s : [%s]",
-                    Localisation.getString(ExpressionPanelv2.class, "ExpressionPanelv2.attribute"),
-                    expression.toString()));
+            sb.append(
+                    String.format(
+                            "%s : [%s]",
+                            Localisation.getString(
+                                    ExpressionPanelv2.class, "ExpressionPanelv2.attribute"),
+                            expression.toString()));
         } else if (expression instanceof FunctionExpressionImpl) {
-            sb.append(expression.toString());
+            sb.append(FunctionExpressionUtils.toString(expression));
         } else if (expression instanceof FunctionImpl) {
             sb.append(expression.toString());
+        } else if (expression instanceof Function) {
+            sb.append(FunctionInterfaceUtils.toString(expression));
         } else if (expression instanceof MathExpressionImpl) {
             if (mathExpressionMap.isEmpty()) {
                 mathExpressionMap.put(AddImpl.class, "+");
@@ -218,14 +246,21 @@ public class ExpressionNode extends DefaultMutableTreeNode {
                 argCount *= -1;
             }
 
-            for (int index = 0; index < argCount; index++) {
+            for (int index = 0;
+                    index < Math.max(functionExpression.getParameters().size(), argCount);
+                    index++) {
                 ExpressionNode childNode = new ExpressionNode();
-                Parameter<?> parameter = functionName.getArguments().get(index);
-                childNode.setType(parameter.getType());
-                childNode.setName(parameter.getName());
+
+                // If function has a variable number of arguments pick the last one
+                int argumentIndex = Math.min(index, Math.max(0, argCount - 1));
+
+                Parameter<?> parameter = functionName.getArguments().get(argumentIndex);
+                childNode.setParameter(parameter);
 
                 if (index < functionExpression.getParameters().size()) {
                     childNode.setExpression(functionExpression.getParameters().get(index));
+                } else {
+                    childNode.setExpression(null);
                 }
                 this.insert(childNode, this.getChildCount());
             }
@@ -248,11 +283,52 @@ public class ExpressionNode extends DefaultMutableTreeNode {
                 }
                 this.insert(childNode, this.getChildCount());
             }
+        } else if (this.expression instanceof Function) {
+            Function functionExpression = (Function) this.expression;
+            FunctionName functionName = functionExpression.getFunctionName();
+
+            TypeManager.getInstance().setDataType(functionName.getReturn().getType());
+
+            int overallIndex = 0;
+            for (Parameter<?> param : functionName.getArguments()) {
+                if (param.getMinOccurs() == 0) {
+                    ExpressionNode childNode = new ExpressionNode();
+                    childNode.setParameter(param);
+                    childNode.setOptional();
+
+                    if (overallIndex < functionExpression.getParameters().size()) {
+                        childNode.setExpression(
+                                functionExpression.getParameters().get(overallIndex));
+                        childNode.setOptionalParamUsed(true);
+                    } else {
+                        childNode.setExpression(null);
+                    }
+                    overallIndex++;
+                    this.insert(childNode, this.getChildCount());
+                } else {
+                    for (int index = 0; index < param.getMinOccurs(); index++) {
+                        ExpressionNode childNode = new ExpressionNode();
+                        childNode.setParameter(param);
+
+                        if (index < functionExpression.getParameters().size()) {
+                            if (overallIndex < functionExpression.getParameters().size()) {
+                                childNode.setExpression(
+                                        functionExpression.getParameters().get(overallIndex));
+                            } else {
+                                childNode.setExpression(null);
+                            }
+                        }
+
+                        overallIndex++;
+                        this.insert(childNode, this.getChildCount());
+                    }
+                }
+            }
         } else if (expression instanceof MathExpressionImpl) {
             MathExpressionImpl mathsExpression = (MathExpressionImpl) expression;
 
-            String expressionText = Localisation.getString(ExpressionPanelv2.class,
-                    "ExpressionPanelv2.expression");
+            String expressionText =
+                    Localisation.getString(ExpressionPanelv2.class, "ExpressionPanelv2.expression");
             ExpressionNode childNode1 = new ExpressionNode();
             childNode1.setType(Number.class);
             childNode1.setName(expressionText + " 1");
@@ -275,6 +351,33 @@ public class ExpressionNode extends DefaultMutableTreeNode {
                 TypeManager.getInstance().setDataType(literal.getValue().getClass());
             }
         }
+    }
+
+    /** Marks the parameter as optional. */
+    private void setOptional() {
+        optionalParam = true;
+    }
+
+    /**
+     * Sets the data from a parameter.
+     *
+     * @param parameter the new parameter
+     */
+    public void setParameter(Parameter<?> parameter) {
+        expressionNodeParameter = parameter;
+        if (parameter != null) {
+            setType(parameter.getType());
+            setName(parameter.getName());
+        }
+    }
+
+    /**
+     * Gets the parameter.
+     *
+     * @return the parameter
+     */
+    public Parameter<?> getParameter() {
+        return expressionNodeParameter;
     }
 
     /**
@@ -332,5 +435,68 @@ public class ExpressionNode extends DefaultMutableTreeNode {
      */
     public static void setEnvMgr(EnvironmentManagerInterface envMgr) {
         ExpressionNode.envMgr = envMgr;
+    }
+
+    /**
+     * Checks if is optional param.
+     *
+     * @return the optionalParam
+     */
+    public boolean isOptionalParam() {
+        return optionalParam;
+    }
+
+    /**
+     * Checks if is optional param used.
+     *
+     * @return the optionalParamUsed
+     */
+    public boolean isOptionalParamUsed() {
+        return optionalParamUsed;
+    }
+
+    /**
+     * Sets the optional param used.
+     *
+     * @param optionalParamUsed the optionalParamUsed to set
+     */
+    public void setOptionalParamUsed(boolean optionalParamUsed) {
+        this.optionalParamUsed = optionalParamUsed;
+    }
+
+    /**
+     * Gets the max string size.
+     *
+     * @return the maxStringSize
+     */
+    public int getMaxStringSize() {
+        return maxStringSize;
+    }
+
+    /**
+     * Sets the max characters.
+     *
+     * @param maxStringSize the maximum string size to set
+     */
+    public void setMaxStringSize(int maxStringSize) {
+        this.maxStringSize = maxStringSize;
+    }
+
+    /**
+     * Returns is regular expression string flag.
+     *
+     * @return the regExpString
+     */
+    public boolean isRegExpString() {
+        return regExpString;
+    }
+
+    /**
+     * Sets the regular expression string flag.
+     *
+     * @param regExpString the regExpString to set
+     */
+    public void setRegExpString(boolean regExpString) {
+        this.regExpString = regExpString;
     }
 }

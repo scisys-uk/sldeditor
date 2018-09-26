@@ -19,34 +19,29 @@
 
 package com.sldeditor.filter.v2.function.property;
 
-import java.util.List;
-
-import org.geotools.filter.IsGreaterThanImpl;
-import org.opengis.filter.Filter;
-import org.opengis.filter.expression.Expression;
-
 import com.sldeditor.filter.v2.expression.ExpressionTypeEnum;
+import com.sldeditor.filter.v2.function.FilterBase;
 import com.sldeditor.filter.v2.function.FilterConfigInterface;
 import com.sldeditor.filter.v2.function.FilterExtendedInterface;
 import com.sldeditor.filter.v2.function.FilterName;
 import com.sldeditor.filter.v2.function.FilterNameParameter;
+import java.util.List;
+import org.geotools.filter.IsGreaterThanImpl;
+import org.opengis.filter.Filter;
+import org.opengis.filter.expression.Expression;
 
 /**
  * The Class IsGreaterThan.
  *
  * @author Robert Ward (SCISYS)
  */
-public class IsGreaterThan implements FilterConfigInterface {
+public class IsGreaterThan extends FilterBase implements FilterConfigInterface {
 
-    /**
-     * The Class IsGreaterThanExtended.
-     */
+    /** The Class IsGreaterThanExtended. */
     public class IsGreaterThanExtended extends IsGreaterThanImpl
             implements FilterExtendedInterface {
 
-        /**
-         * Instantiates a new checks if is greater than extended.
-         */
+        /** Instantiates a new checks if is greater than extended. */
         public IsGreaterThanExtended() {
             super(null, null);
         }
@@ -63,7 +58,7 @@ public class IsGreaterThan implements FilterConfigInterface {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.sldeditor.filter.v2.function.FilterExtendedInterface#getOriginalFilter()
          */
         @Override
@@ -72,10 +67,9 @@ public class IsGreaterThan implements FilterConfigInterface {
         }
     }
 
-    /**
-     * Default constructor.
-     */
-    public IsGreaterThan() {
+    /** Default constructor. */
+    public IsGreaterThan(String category) {
+        super(category);
     }
 
     /**
@@ -124,7 +118,7 @@ public class IsGreaterThan implements FilterConfigInterface {
     public Filter createFilter(List<Expression> parameterList) {
         IsGreaterThanImpl filter = null;
 
-        if ((parameterList == null) || (parameterList.size() < 3)) {
+        if ((parameterList == null) || (parameterList.size() < 2) || (parameterList.size() > 3)) {
             filter = new IsGreaterThanExtended();
         } else {
             filter = new IsGreaterThanExtended(parameterList.get(0), parameterList.get(1));

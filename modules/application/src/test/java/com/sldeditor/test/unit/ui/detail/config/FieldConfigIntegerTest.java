@@ -19,12 +19,10 @@
 
 package com.sldeditor.test.unit.ui.detail.config;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.sldeditor.common.undo.UndoEvent;
 import com.sldeditor.common.undo.UndoManager;
@@ -33,10 +31,12 @@ import com.sldeditor.ui.detail.config.FieldConfigBase;
 import com.sldeditor.ui.detail.config.FieldConfigCommonData;
 import com.sldeditor.ui.detail.config.FieldConfigInteger;
 import com.sldeditor.ui.detail.config.FieldConfigPopulate;
+import com.sldeditor.ui.iface.UpdateSymbolInterface;
+import org.junit.jupiter.api.Test;
 
 /**
  * The unit test for FieldConfigInteger.
- * 
+ *
  * <p>{@link com.sldeditor.ui.detail.config.FieldConfigInteger}
  *
  * @author Robert Ward (SCISYS)
@@ -44,17 +44,19 @@ import com.sldeditor.ui.detail.config.FieldConfigPopulate;
 public class FieldConfigIntegerTest {
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigInteger#internal_setEnabled(boolean)}. Test
-     * method for {@link com.sldeditor.ui.detail.config.FieldConfigInteger#isEnabled()}. Test method
-     * for {@link com.sldeditor.ui.detail.config.FieldConfigInteger#createUI(javax.swing.Box)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigInteger#internal_setEnabled(boolean)}. Test method
+     * for {@link com.sldeditor.ui.detail.config.FieldConfigInteger#isEnabled()}. Test method for
+     * {@link com.sldeditor.ui.detail.config.FieldConfigInteger#createUI(javax.swing.Box)}.
      */
     @Test
     public void testSetEnabled() {
         // Value only, no attribute/expression dropdown
         boolean valueOnly = true;
-        FieldConfigInteger field = new FieldConfigInteger(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        FieldConfigInteger field =
+                new FieldConfigInteger(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
 
         // Text field will not have been created
         boolean expectedValue = true;
@@ -73,8 +75,10 @@ public class FieldConfigIntegerTest {
 
         // Has attribute/expression dropdown
         valueOnly = false;
-        FieldConfigInteger field2 = new FieldConfigInteger(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        FieldConfigInteger field2 =
+                new FieldConfigInteger(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
 
         // Text field will not have been created
         expectedValue = true;
@@ -94,14 +98,16 @@ public class FieldConfigIntegerTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigInteger#setVisible(boolean)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigInteger#setVisible(boolean)}.
      */
     @Test
     public void testSetVisible() {
         boolean valueOnly = true;
-        FieldConfigInteger field = new FieldConfigInteger(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        FieldConfigInteger field =
+                new FieldConfigInteger(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
 
         boolean expectedValue = true;
         field.setVisible(expectedValue);
@@ -113,21 +119,22 @@ public class FieldConfigIntegerTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigInteger#generateExpression()}. Test method
-     * for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigInteger#populateExpression(java.lang.Object, org.opengis.filter.expression.Expression)}.
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigInteger#setTestValue(com.sldeditor.ui.detail.config.FieldId, int)}.
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigInteger#populateField(java.lang.Integer)}.
-     * Test method for {@link com.sldeditor.ui.detail.config.FieldConfigInteger#getIntValue()}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigInteger#generateExpression()}. Test method for
+     * {@link com.sldeditor.ui.detail.config.FieldConfigInteger#populateExpression(java.lang.Object,
+     * org.opengis.filter.expression.Expression)}. Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigInteger#setTestValue(com.sldeditor.ui.detail.config.FieldId,
+     * int)}. Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigInteger#populateField(java.lang.Integer)}. Test
+     * method for {@link com.sldeditor.ui.detail.config.FieldConfigInteger#getIntValue()}.
      */
     @Test
     public void testGenerateExpression() {
         boolean valueOnly = true;
-        FieldConfigInteger field = new FieldConfigInteger(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        FieldConfigInteger field =
+                new FieldConfigInteger(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
 
         int expectedValue = 1;
         field.populateField(expectedValue);
@@ -168,18 +175,29 @@ public class FieldConfigIntegerTest {
         field.populateExpression(expectedValue3e);
         int intValue = Double.valueOf(expectedValue3e).intValue();
         assertEquals(intValue, field.getIntValue());
+
+        Float expectedValue3f = Float.valueOf(6987.0f);
+        field.populateExpression(expectedValue3f);
+        intValue = expectedValue3f.intValue();
+        assertEquals(intValue, field.getIntValue());
+
+        String expectedValue3g = "Completely not valid at all";
+        field.populateExpression(expectedValue3g);
+        assertEquals(0, field.getIntValue());
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigInteger#revertToDefaultValue()}. Test method
-     * for {@link com.sldeditor.ui.detail.config.FieldConfigInteger#setDefaultValue(int)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigInteger#revertToDefaultValue()}. Test method for
+     * {@link com.sldeditor.ui.detail.config.FieldConfigInteger#setDefaultValue(int)}.
      */
     @Test
     public void testRevertToDefaultValue() {
         boolean valueOnly = true;
-        FieldConfigInteger field = new FieldConfigInteger(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        FieldConfigInteger field =
+                new FieldConfigInteger(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
 
         field.revertToDefaultValue();
         assertEquals(0, field.getIntValue());
@@ -193,8 +211,8 @@ public class FieldConfigIntegerTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigInteger#createCopy(com.sldeditor.ui.detail.config.FieldConfigBase)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigInteger#createCopy(com.sldeditor.ui.detail.config.FieldConfigBase)}.
      */
     @Test
     public void testCreateCopy() {
@@ -210,8 +228,10 @@ public class FieldConfigIntegerTest {
             }
         }
 
-        TestFieldConfigInteger field = new TestFieldConfigInteger(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        TestFieldConfigInteger field =
+                new TestFieldConfigInteger(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
         FieldConfigInteger copy = (FieldConfigInteger) field.callCreateCopy(null);
         assertNull(copy);
 
@@ -222,14 +242,16 @@ public class FieldConfigIntegerTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigInteger#attributeSelection(java.lang.String)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigInteger#attributeSelection(java.lang.String)}.
      */
     @Test
     public void testAttributeSelection() {
         boolean valueOnly = true;
-        FieldConfigInteger field = new FieldConfigInteger(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        FieldConfigInteger field =
+                new FieldConfigInteger(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
         field.attributeSelection(null);
 
         field.createUI();
@@ -241,16 +263,18 @@ public class FieldConfigIntegerTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigInteger#undoAction(com.sldeditor.common.undo.UndoInterface)}.
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigInteger#redoAction(com.sldeditor.common.undo.UndoInterface)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigInteger#undoAction(com.sldeditor.common.undo.UndoInterface)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigInteger#redoAction(com.sldeditor.common.undo.UndoInterface)}.
      */
     @Test
     public void testUndoAction() {
         boolean valueOnly = true;
-        FieldConfigInteger field = new FieldConfigInteger(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        FieldConfigInteger field =
+                new FieldConfigInteger(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
         field.undoAction(null);
         field.redoAction(null);
 
@@ -276,14 +300,16 @@ public class FieldConfigIntegerTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigInteger#testSetConfig(double, double, double)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigInteger#testSetConfig(double, double, double)}.
      */
     @Test
     public void testSetConfig() {
         boolean valueOnly = true;
-        FieldConfigInteger field = new FieldConfigInteger(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        FieldConfigInteger field =
+                new FieldConfigInteger(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
 
         field.createUI();
         int minValue = 10;
@@ -301,5 +327,64 @@ public class FieldConfigIntegerTest {
         int expectedValue2 = 41;
         field.populateField(expectedValue2);
         assertEquals(maxValue, field.getIntValue());
+    }
+
+    @Test
+    public void testValueStored() {
+        boolean valueOnly = true;
+
+        class TestFieldConfigInteger extends FieldConfigInteger {
+            public TestFieldConfigInteger(FieldConfigCommonData commonData) {
+                super(commonData);
+            }
+
+            /* (non-Javadoc)
+             * @see com.sldeditor.ui.detail.config.FieldConfigInteger#valueStored(double, double)
+             */
+            @Override
+            protected void valueStored(double oldValue, double newValue) {
+                super.valueStored(oldValue, newValue);
+            }
+        }
+
+        TestFieldConfigInteger field =
+                new TestFieldConfigInteger(
+                        new FieldConfigCommonData(
+                                Double.class, FieldIdEnum.NAME, "label", valueOnly, false));
+
+        class TestUpdateSymbol implements UpdateSymbolInterface {
+            public boolean dataChanged = false;
+
+            @Override
+            public void dataChanged(FieldIdEnum changedField) {
+                dataChanged = true;
+            }
+        };
+        TestUpdateSymbol update = new TestUpdateSymbol();
+
+        int undoListSize = UndoManager.getInstance().getUndoListSize();
+        field.createUI();
+        field.addDataChangedListener(update);
+        assertFalse(update.dataChanged);
+        field.valueStored(1.0, 2.1);
+        assertTrue(update.dataChanged);
+
+        assertEquals(undoListSize + 1, UndoManager.getInstance().getUndoListSize());
+        update.dataChanged = false;
+
+        // now suppress undo events
+        field =
+                new TestFieldConfigInteger(
+                        new FieldConfigCommonData(
+                                Double.class, FieldIdEnum.NAME, "label", valueOnly, true));
+
+        undoListSize = UndoManager.getInstance().getUndoListSize();
+        field.createUI();
+        field.addDataChangedListener(update);
+        assertFalse(update.dataChanged);
+        field.valueStored(3.0, 2.1);
+        assertTrue(update.dataChanged);
+
+        assertEquals(undoListSize, UndoManager.getInstance().getUndoListSize());
     }
 }

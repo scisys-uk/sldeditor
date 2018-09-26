@@ -19,18 +19,17 @@
 
 package com.sldeditor.test.unit.datasource.extension.filesystem.node;
 
-import static org.junit.Assert.assertFalse;
-
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import com.sldeditor.datasource.extension.filesystem.node.FSTree;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for FSTree.
- * 
- * <p>{@link com.sldeditor.datasource.extension.filesystem.node.FSTree}
- * @author Robert Ward (SCISYS)
  *
+ * <p>{@link com.sldeditor.datasource.extension.filesystem.node.FSTree}
+ *
+ * @author Robert Ward (SCISYS)
  */
 public class FSTreeTest {
 
@@ -40,8 +39,7 @@ public class FSTreeTest {
     @Test
     public void testFSTree() {
         FSTree tree = new FSTree();
-        
+
         assertFalse(tree.isDragging());
     }
-
 }

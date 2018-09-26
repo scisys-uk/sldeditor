@@ -23,7 +23,7 @@ import java.io.Serializable;
 
 /**
  * The Class StyleWrapper identifies a SLD file on GeoServer using the workspace and style name.
- * 
+ *
  * @author Robert Ward (SCISYS)
  */
 public class StyleWrapper implements Comparable<StyleWrapper>, Serializable, Cloneable {
@@ -48,11 +48,8 @@ public class StyleWrapper implements Comparable<StyleWrapper>, Serializable, Clo
         this.style = style;
     }
 
-    /**
-     * Instantiates a new style wrapper.
-     */
-    public StyleWrapper() {
-    }
+    /** Instantiates a new style wrapper. */
+    public StyleWrapper() {}
 
     /**
      * Instantiates a new style wrapper.
@@ -108,7 +105,7 @@ public class StyleWrapper implements Comparable<StyleWrapper>, Serializable, Clo
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     @Override
@@ -139,7 +136,7 @@ public class StyleWrapper implements Comparable<StyleWrapper>, Serializable, Clo
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override
@@ -148,5 +145,35 @@ public class StyleWrapper implements Comparable<StyleWrapper>, Serializable, Clo
             return style;
         }
         return String.format("%s/%s", workspace, style);
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((style == null) ? 0 : style.hashCode());
+        result = prime * result + ((workspace == null) ? 0 : workspace.hashCode());
+        return result;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        StyleWrapper other = (StyleWrapper) obj;
+        if (style == null) {
+            if (other.style != null) return false;
+        } else if (!style.equals(other.style)) return false;
+        if (workspace == null) {
+            if (other.workspace != null) return false;
+        } else if (!workspace.equals(other.workspace)) return false;
+        return true;
     }
 }

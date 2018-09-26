@@ -18,8 +18,8 @@
  */
 
 /**
- * @author Robert Ward (SCISYS)
+ * Package handling the feature type style sort by functionality.
  *
+ * @author Robert Ward (SCISYS)
  */
-
 package com.sldeditor.ui.detail.config.sortby;

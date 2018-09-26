@@ -19,34 +19,29 @@
 
 package com.sldeditor.filter.v2.function.temporal;
 
-import java.util.Date;
-import java.util.List;
-
-import org.geotools.filter.temporal.DuringImpl;
-import org.opengis.filter.Filter;
-import org.opengis.filter.expression.Expression;
-
 import com.sldeditor.filter.v2.expression.ExpressionTypeEnum;
+import com.sldeditor.filter.v2.function.FilterBase;
 import com.sldeditor.filter.v2.function.FilterConfigInterface;
 import com.sldeditor.filter.v2.function.FilterExtendedInterface;
 import com.sldeditor.filter.v2.function.FilterName;
 import com.sldeditor.filter.v2.function.FilterNameParameter;
+import java.util.Date;
+import java.util.List;
+import org.geotools.filter.temporal.DuringImpl;
+import org.opengis.filter.Filter;
+import org.opengis.filter.expression.Expression;
 
 /**
  * The Class During.
  *
  * @author Robert Ward (SCISYS)
  */
-public class During implements FilterConfigInterface {
+public class During extends FilterBase implements FilterConfigInterface {
 
-    /**
-     * The Class DuringExtended.
-     */
+    /** The Class DuringExtended. */
     public class DuringExtended extends DuringImpl implements FilterExtendedInterface {
 
-        /**
-         * Instantiates a new during extended.
-         */
+        /** Instantiates a new during extended. */
         public DuringExtended() {
             super(null, null);
         }
@@ -63,7 +58,7 @@ public class During implements FilterConfigInterface {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.lang.Object#toString()
          */
         public String toString() {
@@ -72,7 +67,7 @@ public class During implements FilterConfigInterface {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.sldeditor.filter.v2.function.FilterExtendedInterface#getOriginalFilter()
          */
         @Override
@@ -81,10 +76,9 @@ public class During implements FilterConfigInterface {
         }
     }
 
-    /**
-     * Default constructor.
-     */
-    public During() {
+    /** Default constructor. */
+    public During(String category) {
+        super(category);
     }
 
     /**

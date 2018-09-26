@@ -19,23 +19,10 @@
 
 package com.sldeditor.test.unit.ui.detail.config;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import org.geotools.coverage.grid.io.AbstractGridCoverage2DReader;
-import org.geotools.data.FeatureSource;
-import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.styling.UserLayer;
-import org.junit.Test;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.PropertyDescriptor;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.sldeditor.common.DataSourcePropertiesInterface;
 import com.sldeditor.common.undo.UndoEvent;
@@ -54,19 +41,30 @@ import com.sldeditor.ui.detail.config.FieldConfigBase;
 import com.sldeditor.ui.detail.config.FieldConfigCommonData;
 import com.sldeditor.ui.detail.config.FieldConfigDSProperties;
 import com.sldeditor.ui.detail.config.FieldConfigPopulate;
+import com.sldeditor.ui.iface.UpdateSymbolInterface;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import org.geotools.coverage.grid.io.AbstractGridCoverage2DReader;
+import org.geotools.data.FeatureSource;
+import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.styling.UserLayer;
+import org.junit.jupiter.api.Test;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.PropertyDescriptor;
 
 /**
  * The unit test for FieldConfigDSProperties.
- * 
+ *
  * <p>{@link com.sldeditor.ui.detail.config.FieldConfigDSProperties}
  *
  * @author Robert Ward (SCISYS)
  */
 public class FieldConfigDSPropertiesTest {
 
-    /**
-     * The Class TestDataSourceImpl.
-     */
+    /** The Class TestDataSourceImpl. */
     public class TestDataSource implements DataSourceInterface {
 
         private static final String GEOMETRY_FIELD = "Geometry_1";
@@ -92,16 +90,14 @@ public class FieldConfigDSPropertiesTest {
          * @param editorFile the editor file
          */
         @Override
-        public void connect(String typeName, SLDEditorFileInterface editorFile,
-                List<CheckAttributeInterface> checkList) {
-        }
+        public void connect(
+                String typeName,
+                SLDEditorFileInterface editorFile,
+                List<CheckAttributeInterface> checkList) {}
 
-        /**
-         * Reset.
-         */
+        /** Reset. */
         @Override
-        public void reset() {
-        }
+        public void reset() {}
 
         /**
          * Gets the feature source.
@@ -141,8 +137,7 @@ public class FieldConfigDSPropertiesTest {
          * @param attributeData the attribute data
          */
         @Override
-        public void readAttributes(DataSourceAttributeListInterface attributeData) {
-        }
+        public void readAttributes(DataSourceAttributeListInterface attributeData) {}
 
         /**
          * Gets the data connector properties.
@@ -170,8 +165,7 @@ public class FieldConfigDSPropertiesTest {
          * @param attributeData the attribute data
          */
         @Override
-        public void updateFields(DataSourceAttributeListInterface attributeData) {
-        }
+        public void updateFields(DataSourceAttributeListInterface attributeData) {}
 
         /**
          * Adds the field.
@@ -179,8 +173,7 @@ public class FieldConfigDSPropertiesTest {
          * @param dataSourceField the data source field
          */
         @Override
-        public void addField(DataSourceAttributeData dataSourceField) {
-        }
+        public void addField(DataSourceAttributeData dataSourceField) {}
 
         /**
          * Sets the data source creation.
@@ -189,10 +182,10 @@ public class FieldConfigDSPropertiesTest {
          * @param externalDataSource the external data source
          */
         @Override
-        public void setDataSourceCreation(CreateDataSourceInterface internalDataSource,
+        public void setDataSourceCreation(
+                CreateDataSourceInterface internalDataSource,
                 CreateDataSourceInterface externalDataSource,
-                CreateDataSourceInterface inlineDataSource) {
-        }
+                CreateDataSourceInterface inlineDataSource) {}
 
         /**
          * Gets the property descriptor list.
@@ -204,9 +197,7 @@ public class FieldConfigDSPropertiesTest {
             return null;
         }
 
-        /**
-         * Notify data source loaded.
-         */
+        /** Notify data source loaded. */
         public void notifyDataSourceLoaded() {
             for (DataSourceUpdatedInterface listener : listenerList) {
                 listener.dataSourceLoaded(getGeometryType(), false);
@@ -219,8 +210,7 @@ public class FieldConfigDSPropertiesTest {
          * @param listener the listener
          */
         @Override
-        public void removeListener(DataSourceUpdatedInterface listener) {
-        }
+        public void removeListener(DataSourceUpdatedInterface listener) {}
 
         @Override
         public AbstractGridCoverage2DReader getGridCoverageReader() {
@@ -237,29 +227,28 @@ public class FieldConfigDSPropertiesTest {
         }
 
         @Override
-        //CHECKSTYLE:OFF
-        public Map<UserLayer, FeatureSource<SimpleFeatureType, SimpleFeature>> getUserLayerFeatureSource() {
-            //CHECKSTYLE:ON
+        // CHECKSTYLE:OFF
+        public Map<UserLayer, FeatureSource<SimpleFeatureType, SimpleFeature>>
+                getUserLayerFeatureSource() {
+            // CHECKSTYLE:ON
             return null;
         }
 
         @Override
-        public void updateUserLayers() {
-        }
+        public void updateUserLayers() {}
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.sldeditor.datasource.DataSourceInterface#updateFieldType(java.lang.String,
          * java.lang.Class)
          */
         @Override
-        public void updateFieldType(String fieldName, Class<?> dataType) {
-        }
+        public void updateFieldType(String fieldName, Class<?> dataType) {}
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.sldeditor.datasource.DataSourceInterface#getGeometryFieldName()
          */
         @Override
@@ -287,16 +276,22 @@ public class FieldConfigDSPropertiesTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigDSProperties#internal_setEnabled(boolean)}. Test
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigDSProperties#internal_setEnabled(boolean)}. Test
      * method for {@link com.sldeditor.ui.detail.config.FieldConfigDSProperties#isEnabled()}.
      */
     @Test
     public void testSetEnabled() {
+        TestDataSource testDataSource = new TestDataSource();
+        @SuppressWarnings("unused")
+        DataSourceInterface dataSource = DataSourceFactory.createDataSource(testDataSource);
+
         // Value only, no attribute/expression dropdown
         boolean valueOnly = true;
-        FieldConfigDSProperties field = new FieldConfigDSProperties(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        FieldConfigDSProperties field =
+                new FieldConfigDSProperties(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
 
         // Text field will not have been created
         boolean expectedValue = true;
@@ -306,6 +301,7 @@ public class FieldConfigDSPropertiesTest {
 
         // Create text field
         field.createUI();
+        field.dataSourceLoaded(GeometryTypeEnum.POLYGON, false);
         assertEquals(expectedValue, field.isEnabled());
 
         expectedValue = false;
@@ -315,8 +311,10 @@ public class FieldConfigDSPropertiesTest {
 
         // Has attribute/expression dropdown
         valueOnly = false;
-        FieldConfigDSProperties field2 = new FieldConfigDSProperties(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        FieldConfigDSProperties field2 =
+                new FieldConfigDSProperties(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
 
         // Text field will not have been created
         expectedValue = true;
@@ -325,6 +323,7 @@ public class FieldConfigDSPropertiesTest {
 
         // Create text field
         field2.createUI();
+        field2.dataSourceLoaded(GeometryTypeEnum.POLYGON, false);
 
         assertEquals(expectedValue, field2.isEnabled());
 
@@ -333,16 +332,21 @@ public class FieldConfigDSPropertiesTest {
 
         // Actual value is coming from the attribute panel, not the text field
         assertEquals(expectedValue, field2.isEnabled());
+
+        DataSourceFactory.reset();
     }
 
     /**
-     * Test method for {@link com.sldeditor.ui.detail.config.FieldConfigDSProperties#setVisible(boolean)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigDSProperties#setVisible(boolean)}.
      */
     @Test
     public void testSetVisible() {
         boolean valueOnly = true;
-        FieldConfigDSProperties field = new FieldConfigDSProperties(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        FieldConfigDSProperties field =
+                new FieldConfigDSProperties(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
 
         boolean expectedValue = true;
         field.setVisible(expectedValue);
@@ -354,15 +358,17 @@ public class FieldConfigDSPropertiesTest {
     }
 
     /**
-     * Test method for {@link com.sldeditor.ui.detail.config.FieldConfigDSProperties#generateExpression()}.
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigDSProperties#populateExpression(java.lang.Object, org.opengis.filter.expression.Expression)}.
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigDSProperties#populateField(java.lang.String)}. Test
-     * method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigDSProperties#setTestValue(com.sldeditor.ui.detail.config.FieldId, java.lang.String)}.
-     * Test method for {@link com.sldeditor.ui.detail.config.FieldConfigDSProperties#getEnumValue()}. Test
-     * method for {@link com.sldeditor.ui.detail.config.FieldConfigDSProperties#getStringValue()}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigDSProperties#generateExpression()}. Test method for
+     * {@link
+     * com.sldeditor.ui.detail.config.FieldConfigDSProperties#populateExpression(java.lang.Object,
+     * org.opengis.filter.expression.Expression)}. Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigDSProperties#populateField(java.lang.String)}. Test
+     * method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigDSProperties#setTestValue(com.sldeditor.ui.detail.config.FieldId,
+     * java.lang.String)}. Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigDSProperties#getEnumValue()}. Test method for
+     * {@link com.sldeditor.ui.detail.config.FieldConfigDSProperties#getStringValue()}.
      */
     @Test
     public void testGenerateExpression() {
@@ -372,8 +378,10 @@ public class FieldConfigDSPropertiesTest {
         DataSourceInterface dataSource = DataSourceFactory.createDataSource(testDataSource);
 
         boolean valueOnly = true;
-        FieldConfigDSProperties field = new FieldConfigDSProperties(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        FieldConfigDSProperties field =
+                new FieldConfigDSProperties(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
         field.undoAction(null);
         field.redoAction(null);
 
@@ -408,29 +416,50 @@ public class FieldConfigDSPropertiesTest {
         actualValueString = field.getStringValue();
         assertTrue(expectedValue4.compareTo(actualValueString) == 0);
 
+        field.attributeSelection(null);
+        field.attributeSelection("String_1");
+
         DataSourceFactory.reset();
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigDSProperties#revertToDefaultValue()}. Test method
-     * for {@link com.sldeditor.ui.detail.config.FieldConfigDSProperties#addConfig(java.util.List)}. Test
-     * method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigDSProperties#setDefaultValue(java.lang.String)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigDSProperties#revertToDefaultValue()}. Test method
+     * for {@link com.sldeditor.ui.detail.config.FieldConfigDSProperties#addConfig(java.util.List)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigDSProperties#setDefaultValue(java.lang.String)}.
      */
     @Test
     public void testRevertToDefaultValue() {
+
+        TestDataSource testDataSource = new TestDataSource();
+        @SuppressWarnings("unused")
+        DataSourceInterface dataSource = DataSourceFactory.createDataSource(testDataSource);
+
         boolean valueOnly = true;
-        FieldConfigDSProperties field = new FieldConfigDSProperties(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        FieldConfigDSProperties field =
+                new FieldConfigDSProperties(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
+
+        field.createUI();
+        field.dataSourceLoaded(GeometryTypeEnum.POLYGON, false);
 
         field.revertToDefaultValue();
-        assertNull(field.getStringValue());
+        assertEquals("", field.getStringValue());
+
+        String defaultValue = "Integer_1";
+        field.setDefaultValue(defaultValue);
+
+        field.revertToDefaultValue();
+        assertEquals(defaultValue, field.getStringValue());
+
+        DataSourceFactory.reset();
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigDSProperties#createCopy(com.sldeditor.ui.detail.config.FieldConfigBase)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigDSProperties#createCopy(com.sldeditor.ui.detail.config.FieldConfigBase)}.
      */
     @Test
     public void testCreateCopy() {
@@ -446,8 +475,10 @@ public class FieldConfigDSPropertiesTest {
             }
         }
 
-        TestFieldConfigDSProperties field = new TestFieldConfigDSProperties(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        TestFieldConfigDSProperties field =
+                new TestFieldConfigDSProperties(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
         FieldConfigDSProperties copy = (FieldConfigDSProperties) field.callCreateCopy(null);
         assertNull(copy);
 
@@ -458,10 +489,10 @@ public class FieldConfigDSPropertiesTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigDSProperties#undoAction(com.sldeditor.common.undo.UndoInterface)}.
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigDSProperties#redoAction(com.sldeditor.common.undo.UndoInterface)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigDSProperties#undoAction(com.sldeditor.common.undo.UndoInterface)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigDSProperties#redoAction(com.sldeditor.common.undo.UndoInterface)}.
      */
     @Test
     public void testUndoAction() {
@@ -470,8 +501,10 @@ public class FieldConfigDSPropertiesTest {
         @SuppressWarnings("unused")
         DataSourceInterface dataSource = DataSourceFactory.createDataSource(testDataSource);
 
-        FieldConfigDSProperties field = new FieldConfigDSProperties(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        FieldConfigDSProperties field =
+                new FieldConfigDSProperties(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
         field.dataSourceLoaded(GeometryTypeEnum.POLYGON, false);
         assertNull(field.getStringValue());
 
@@ -502,4 +535,72 @@ public class FieldConfigDSPropertiesTest {
         DataSourceFactory.reset();
     }
 
+    @Test
+    public void testValueStored() {
+        TestDataSource testDataSource = new TestDataSource();
+        @SuppressWarnings("unused")
+        DataSourceInterface dataSource = DataSourceFactory.createDataSource(testDataSource);
+
+        boolean valueOnly = true;
+
+        class TestFFieldConfigDSProperties extends FieldConfigDSProperties {
+            public TestFFieldConfigDSProperties(FieldConfigCommonData commonData) {
+                super(commonData);
+            }
+
+            /* (non-Javadoc)
+             * @see com.sldeditor.ui.detail.config.FieldConfigDSProperties#valueStored()
+             */
+            @Override
+            protected void valueStored() {
+                super.valueStored();
+            }
+        }
+
+        TestFFieldConfigDSProperties field =
+                new TestFFieldConfigDSProperties(
+                        new FieldConfigCommonData(
+                                Double.class, FieldIdEnum.NAME, "label", valueOnly, false));
+
+        class TestUpdateSymbol implements UpdateSymbolInterface {
+            public boolean dataChanged = false;
+
+            @Override
+            public void dataChanged(FieldIdEnum changedField) {
+                dataChanged = true;
+            }
+        };
+        TestUpdateSymbol update = new TestUpdateSymbol();
+
+        int undoListSize = UndoManager.getInstance().getUndoListSize();
+        field.createUI();
+        field.dataSourceLoaded(GeometryTypeEnum.POLYGON, false);
+        field.addDataChangedListener(update);
+        assertFalse(update.dataChanged);
+        field.valueStored();
+        assertFalse(update.dataChanged);
+        field.populateField("Integer_1");
+        assertTrue(update.dataChanged);
+
+        assertEquals(undoListSize + 1, UndoManager.getInstance().getUndoListSize());
+        update.dataChanged = false;
+
+        // now suppress undo events
+        field =
+                new TestFFieldConfigDSProperties(
+                        new FieldConfigCommonData(
+                                Double.class, FieldIdEnum.NAME, "label", valueOnly, true));
+
+        undoListSize = UndoManager.getInstance().getUndoListSize();
+        field.createUI();
+        field.dataSourceLoaded(GeometryTypeEnum.POLYGON, false);
+        field.addDataChangedListener(update);
+        assertFalse(update.dataChanged);
+        field.populateField("Integer_1");
+        assertTrue(update.dataChanged);
+
+        assertEquals(undoListSize, UndoManager.getInstance().getUndoListSize());
+
+        DataSourceFactory.reset();
+    }
 }

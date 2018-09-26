@@ -19,19 +19,17 @@
 
 package com.sldeditor.rendertransformation.types;
 
+import com.sldeditor.ui.detail.config.FieldConfigBase;
+import com.sldeditor.ui.detail.config.FieldConfigCommonData;
+import com.sldeditor.ui.detail.config.symboltype.SymbolTypeConfig;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.geotools.filter.AttributeExpressionImpl;
 import org.geotools.filter.FunctionExpressionImpl;
 import org.geotools.filter.LiteralExpressionImpl;
 import org.geotools.filter.MathExpressionImpl;
 import org.opengis.filter.expression.Expression;
-
-import com.sldeditor.ui.detail.config.FieldConfigBase;
-import com.sldeditor.ui.detail.config.FieldConfigCommonData;
-import com.sldeditor.ui.detail.config.symboltype.SymbolTypeConfig;
 
 /**
  * The Class EnumValues.
@@ -71,8 +69,10 @@ public class EnumValues extends BaseValue implements RenderTransformValueInterfa
 
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.rendertransformation.types.RenderTransformValueInterface#setDefaultValue(java.lang.Object)
+     *
+     * @see
+     * com.sldeditor.rendertransformation.types.RenderTransformValueInterface#setDefaultValue(java.
+     * lang.Object)
      */
     @Override
     public void setDefaultValue(Object defaultValue) {
@@ -81,34 +81,41 @@ public class EnumValues extends BaseValue implements RenderTransformValueInterfa
 
     /**
      * Populate.
-     * 
+     *
      * @param enumList the enum list
      */
     public void populate(List<?> enumList) {
 
-        for (Object enumValue : enumList) {
-            if (enumValue != null) {
-                String stringValue = enumValue.toString();
+        if (enumList != null) {
+            for (Object enumValue : enumList) {
+                if (enumValue != null) {
+                    String stringValue = enumValue.toString();
 
-                enumValueList.add(stringValue);
+                    enumValueList.add(stringValue);
+                }
             }
         }
     }
 
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.rendertransformation.types.BaseValue#populateSymbolType(com.sldeditor.ui.detail.config.symboltype.SymbolTypeConfig)
+     *
+     * @see
+     * com.sldeditor.rendertransformation.types.BaseValue#populateSymbolType(com.sldeditor.ui.detail
+     * .config.symboltype.SymbolTypeConfig)
      */
     protected void populateSymbolType(SymbolTypeConfig symbolTypeConfig) {
-        for (String enumValue : enumValueList) {
-            symbolTypeConfig.addOption(enumValue, enumValue);
+        if (symbolTypeConfig != null) {
+            symbolTypeConfig.addOption(" ", "");
+            for (String enumValue : enumValueList) {
+                symbolTypeConfig.addOption(enumValue, enumValue);
+            }
         }
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.rendertransformation.types.RenderTransformValueInterface#getExpression()
      */
     @Override
@@ -116,35 +123,44 @@ public class EnumValues extends BaseValue implements RenderTransformValueInterfa
         if (expression != null) {
             return expression;
         }
-        return filterFactory.literal(value);
+
+        if (value != null) {
+            return filterFactory.literal(value);
+        }
+
+        return null;
     }
 
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.rendertransformation.types.RenderTransformValueInterface#setValue(java.lang.Object)
+     *
+     * @see
+     * com.sldeditor.rendertransformation.types.RenderTransformValueInterface#setValue(java.lang.
+     * Object)
      */
     @Override
     public void setValue(Object aValue) {
         this.value = null;
         this.expression = null;
 
-        if (aValue instanceof LiteralExpressionImpl) {
-            value = ((Expression) aValue).toString();
-        } else if ((aValue instanceof AttributeExpressionImpl)
-                || (aValue instanceof FunctionExpressionImpl)
-                || (aValue instanceof MathExpressionImpl)) {
-            this.expression = (Expression) aValue;
-        } else {
-            if (aValue instanceof String) {
-                value = ((String) aValue);
+        if (aValue != null) {
+            if (aValue instanceof LiteralExpressionImpl) {
+                value = ((Expression) aValue).toString();
+            } else if ((aValue instanceof AttributeExpressionImpl)
+                    || (aValue instanceof FunctionExpressionImpl)
+                    || (aValue instanceof MathExpressionImpl)) {
+                this.expression = (Expression) aValue;
+            } else {
+                if (aValue instanceof String) {
+                    value = ((String) aValue);
+                }
             }
         }
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.rendertransformation.types.RenderTransformValueInterface#getType()
      */
     @Override
@@ -154,8 +170,10 @@ public class EnumValues extends BaseValue implements RenderTransformValueInterfa
 
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.rendertransformation.types.RenderTransformValueInterface#getField(com.sldeditor.ui.detail.config.FieldConfigCommonData)
+     *
+     * @see
+     * com.sldeditor.rendertransformation.types.RenderTransformValueInterface#getField(com.sldeditor
+     * .ui.detail.config.FieldConfigCommonData)
      */
     @Override
     public FieldConfigBase getField(FieldConfigCommonData commonData) {
@@ -164,7 +182,7 @@ public class EnumValues extends BaseValue implements RenderTransformValueInterfa
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.rendertransformation.types.RenderTransformValueInterface#createInstance()
      */
     @Override

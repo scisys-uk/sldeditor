@@ -19,13 +19,6 @@
 
 package com.sldeditor.ui.detail.config;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JCheckBox;
-
-import org.opengis.filter.expression.Expression;
-
 import com.sldeditor.common.undo.UndoActionInterface;
 import com.sldeditor.common.undo.UndoEvent;
 import com.sldeditor.common.undo.UndoInterface;
@@ -33,16 +26,19 @@ import com.sldeditor.common.undo.UndoManager;
 import com.sldeditor.common.xml.ui.FieldIdEnum;
 import com.sldeditor.ui.detail.BasePanel;
 import com.sldeditor.ui.widgets.FieldPanel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JCheckBox;
+import org.opengis.filter.expression.Expression;
 
 /**
- * The Class FieldConfigBoolean wraps a check box GUI component and an 
- * optional value/attribute/expression drop down,
- * ({@link com.sldeditor.ui.attribute.AttributeSelection})
- * 
+ * The Class FieldConfigBoolean wraps a check box GUI component and an optional
+ * value/attribute/expression drop down, ({@link com.sldeditor.ui.attribute.AttributeSelection})
+ *
  * <p>Supports undo/redo functionality.
- * 
+ *
  * <p>Instantiated by {@link com.sldeditor.ui.detail.config.ReadPanelConfig}
- * 
+ *
  * @author Robert Ward (SCISYS)
  */
 public class FieldConfigBoolean extends FieldConfigBase implements UndoActionInterface {
@@ -65,38 +61,32 @@ public class FieldConfigBoolean extends FieldConfigBase implements UndoActionInt
         super(commonData);
     }
 
-    /**
-     * Creates the ui.
-     */
+    /** Creates the ui. */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#createUI()
      */
     @Override
     public void createUI() {
         if (checkBox == null) {
-            final UndoActionInterface parentObj = this;
-
             int xPos = getXPos();
             FieldPanel fieldPanel = createFieldPanel(xPos, getLabel());
 
             checkBox = new JCheckBox("");
-            checkBox.setBounds(xPos + BasePanel.WIDGET_X_START, 0, BasePanel.WIDGET_STANDARD_WIDTH,
+            checkBox.setBounds(
+                    xPos + BasePanel.WIDGET_X_START,
+                    0,
+                    BasePanel.WIDGET_STANDARD_WIDTH,
                     BasePanel.WIDGET_HEIGHT);
             fieldPanel.add(checkBox);
-            checkBox.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    boolean isSelected = checkBox.isSelected();
-                    Boolean oldValueObj = Boolean.valueOf(!isSelected);
-                    Boolean newValueObj = Boolean.valueOf(isSelected);
+            checkBox.addActionListener(
+                    new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
 
-                    UndoManager.getInstance().addUndoEvent(
-                            new UndoEvent(parentObj, getFieldId(), oldValueObj, newValueObj));
-
-                    valueUpdated();
-                }
-            });
+                            checkBoxSelected();
+                        }
+                    });
 
             if (!isValueOnly()) {
                 setAttributeSelectionPanel(
@@ -112,8 +102,9 @@ public class FieldConfigBoolean extends FieldConfigBase implements UndoActionInt
      */
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.ui.iface.AttributeButtonSelectionInterface#attributeSelection(java.lang.String)
+     *
+     * @see
+     * com.sldeditor.ui.iface.AttributeButtonSelectionInterface#attributeSelection(java.lang.String)
      */
     @Override
     public void attributeSelection(String field) {
@@ -127,7 +118,7 @@ public class FieldConfigBoolean extends FieldConfigBase implements UndoActionInt
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#setEnabled(boolean)
      */
     @Override
@@ -144,7 +135,7 @@ public class FieldConfigBoolean extends FieldConfigBase implements UndoActionInt
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#generateExpression()
      */
     @Override
@@ -159,7 +150,7 @@ public class FieldConfigBoolean extends FieldConfigBase implements UndoActionInt
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#isEnabled()
      */
     @Override
@@ -174,12 +165,10 @@ public class FieldConfigBoolean extends FieldConfigBase implements UndoActionInt
         return false;
     }
 
-    /**
-     * Revert to default value.
-     */
+    /** Revert to default value. */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#revertToDefaultValue()
      */
     @Override
@@ -196,7 +185,7 @@ public class FieldConfigBoolean extends FieldConfigBase implements UndoActionInt
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#populateExpression(java.lang.Object)
      */
     @Override
@@ -297,9 +286,10 @@ public class FieldConfigBoolean extends FieldConfigBase implements UndoActionInt
         if ((value != null) && (this.checkBox != null)) {
             checkBox.setSelected(value);
 
-            UndoManager.getInstance()
-                    .addUndoEvent(new UndoEvent(this, getFieldId(), oldValueObj, value));
-
+            if (!FieldConfigBoolean.this.isSuppressUndoEvents()) {
+                UndoManager.getInstance()
+                        .addUndoEvent(new UndoEvent(this, getFieldId(), oldValueObj, value));
+            }
             oldValueObj = value;
         }
     }
@@ -330,5 +320,18 @@ public class FieldConfigBoolean extends FieldConfigBase implements UndoActionInt
         if (checkBox != null) {
             checkBox.setVisible(visible);
         }
+    }
+
+    /** Check box selected. */
+    protected void checkBoxSelected() {
+        if (!FieldConfigBoolean.this.isSuppressUndoEvents()) {
+            boolean isSelected = checkBox.isSelected();
+            Boolean oldValueObj = Boolean.valueOf(!isSelected);
+            Boolean newValueObj = Boolean.valueOf(isSelected);
+
+            UndoManager.getInstance()
+                    .addUndoEvent(new UndoEvent(this, getFieldId(), oldValueObj, newValueObj));
+        }
+        valueUpdated();
     }
 }

@@ -19,16 +19,6 @@
 
 package com.sldeditor.ui.detail.config.transform;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-
-import org.geotools.process.function.ProcessFunction;
-import org.opengis.filter.expression.Expression;
-
 import com.sldeditor.common.connection.GeoServerConnectionManager;
 import com.sldeditor.common.undo.UndoActionInterface;
 import com.sldeditor.common.undo.UndoEvent;
@@ -40,16 +30,22 @@ import com.sldeditor.ui.detail.BasePanel;
 import com.sldeditor.ui.detail.config.FieldConfigBase;
 import com.sldeditor.ui.detail.config.FieldConfigCommonData;
 import com.sldeditor.ui.widgets.FieldPanel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import org.geotools.process.function.ProcessFunction;
+import org.opengis.filter.expression.Expression;
 
 /**
- * The Class FieldConfigTransformation wraps a text field GUI component and 
- * an optional value/attribute/expression drop down,
- * ({@link com.sldeditor.ui.attribute.AttributeSelection})
- * 
+ * The Class FieldConfigTransformation wraps a text field GUI component and an optional
+ * value/attribute/expression drop down, ({@link com.sldeditor.ui.attribute.AttributeSelection})
+ *
  * <p>Supports undo/redo functionality.
- * 
+ *
  * <p>Instantiated by {@link com.sldeditor.ui.detail.config.ReadPanelConfig}
- * 
+ *
  * @author Robert Ward (SCISYS)
  */
 public class FieldConfigTransformation extends FieldConfigBase implements UndoActionInterface {
@@ -82,27 +78,23 @@ public class FieldConfigTransformation extends FieldConfigBase implements UndoAc
      * @param editButtonText the edit button text
      * @param clearButtonText the clear button text
      */
-    public FieldConfigTransformation(FieldConfigCommonData commonData, String editButtonText,
-            String clearButtonText) {
+    public FieldConfigTransformation(
+            FieldConfigCommonData commonData, String editButtonText, String clearButtonText) {
         super(commonData);
 
         this.editButtonText = editButtonText;
         this.clearButtonText = clearButtonText;
     }
 
-    /**
-     * Creates the ui.
-     */
+    /** Creates the ui. */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#createUI()
      */
     @Override
     public void createUI() {
         if (textField == null) {
-            final UndoActionInterface parentObj = this;
-
             int xPos = getXPos();
 
             int width = BasePanel.FIELD_PANEL_WIDTH - xPos - 20;
@@ -115,34 +107,28 @@ public class FieldConfigTransformation extends FieldConfigBase implements UndoAc
             scroll.setBounds(xPos, BasePanel.WIDGET_HEIGHT, width, height);
             scroll.setAutoscrolls(true);
 
-            FieldPanel fieldPanel = createFieldPanel(xPos, BasePanel.WIDGET_HEIGHT * NO_OF_ROWS,
-                    getLabel());
+            FieldPanel fieldPanel =
+                    createFieldPanel(xPos, BasePanel.WIDGET_HEIGHT * NO_OF_ROWS, getLabel());
             fieldPanel.add(scroll);
 
             //
             // Edit button
             //
             final JButton buttonEdit = new JButton(editButtonText);
-            buttonEdit.addActionListener(new ActionListener() {
+            buttonEdit.addActionListener(
+                    new ActionListener() {
 
-                public void actionPerformed(ActionEvent e) {
-                    ProcessFunction expression = showTransformationDialog(processFunction);
+                        public void actionPerformed(ActionEvent e) {
+                            ProcessFunction expression = showTransformationDialog(processFunction);
 
-                    if (expression != null) {
-                        ProcessFunction newValueObj = processFunction;
-                        processFunction = expression;
+                            transformationDialogResult(expression);
+                        }
+                    });
 
-                        textField.setText(ParameterFunctionUtils.getString(processFunction));
-
-                        UndoManager.getInstance().addUndoEvent(
-                                new UndoEvent(parentObj, getFieldId(), oldValueObj, newValueObj));
-
-                        valueUpdated();
-                    }
-                }
-            });
-
-            buttonEdit.setBounds(xPos + BasePanel.WIDGET_X_START, 0, BasePanel.WIDGET_BUTTON_WIDTH,
+            buttonEdit.setBounds(
+                    xPos + BasePanel.WIDGET_X_START,
+                    0,
+                    BasePanel.WIDGET_BUTTON_WIDTH,
                     BasePanel.WIDGET_HEIGHT);
             fieldPanel.add(buttonEdit);
 
@@ -150,22 +136,19 @@ public class FieldConfigTransformation extends FieldConfigBase implements UndoAc
             // Clear button
             //
             final JButton buttonClear = new JButton(clearButtonText);
-            buttonClear.addActionListener(new ActionListener() {
+            buttonClear.addActionListener(
+                    new ActionListener() {
 
-                public void actionPerformed(ActionEvent e) {
-                    processFunction = null;
+                        public void actionPerformed(ActionEvent e) {
+                            clearButtonPressed();
+                        }
+                    });
 
-                    textField.setText("");
-
-                    UndoManager.getInstance().addUndoEvent(
-                            new UndoEvent(parentObj, getFieldId(), oldValueObj, null));
-
-                    valueUpdated();
-                }
-            });
-
-            buttonClear.setBounds((int) buttonEdit.getBounds().getMaxX() + 5, 0,
-                    BasePanel.WIDGET_BUTTON_WIDTH, BasePanel.WIDGET_HEIGHT);
+            buttonClear.setBounds(
+                    (int) buttonEdit.getBounds().getMaxX() + 5,
+                    0,
+                    BasePanel.WIDGET_BUTTON_WIDTH,
+                    BasePanel.WIDGET_HEIGHT);
             fieldPanel.add(buttonClear);
         }
     }
@@ -178,8 +161,8 @@ public class FieldConfigTransformation extends FieldConfigBase implements UndoAc
      */
     private ProcessFunction showTransformationDialog(ProcessFunction existingProcessFunction) {
         ProcessFunction processFunction = null;
-        RenderTransformationDialog dlg = new RenderTransformationDialog(
-                GeoServerConnectionManager.getInstance());
+        RenderTransformationDialog dlg =
+                new RenderTransformationDialog(GeoServerConnectionManager.getInstance());
 
         if (dlg.showDialog(existingProcessFunction)) {
             processFunction = dlg.getTransformationProcessFunction();
@@ -195,8 +178,9 @@ public class FieldConfigTransformation extends FieldConfigBase implements UndoAc
      */
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.ui.iface.AttributeButtonSelectionInterface#attributeSelection(java.lang.String)
+     *
+     * @see
+     * com.sldeditor.ui.iface.AttributeButtonSelectionInterface#attributeSelection(java.lang.String)
      */
     @Override
     public void attributeSelection(String field) {
@@ -210,7 +194,7 @@ public class FieldConfigTransformation extends FieldConfigBase implements UndoAc
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#setEnabled(boolean)
      */
     @Override
@@ -227,7 +211,7 @@ public class FieldConfigTransformation extends FieldConfigBase implements UndoAc
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#generateExpression()
      */
     @Override
@@ -242,7 +226,7 @@ public class FieldConfigTransformation extends FieldConfigBase implements UndoAc
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#isEnabled()
      */
     @Override
@@ -258,12 +242,10 @@ public class FieldConfigTransformation extends FieldConfigBase implements UndoAc
         return false;
     }
 
-    /**
-     * Revert to default value.
-     */
+    /** Revert to default value. */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#revertToDefaultValue()
      */
     @Override
@@ -278,7 +260,7 @@ public class FieldConfigTransformation extends FieldConfigBase implements UndoAc
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#populateExpression(java.lang.Object)
      */
     @Override
@@ -299,16 +281,7 @@ public class FieldConfigTransformation extends FieldConfigBase implements UndoAc
     public void populateField(ProcessFunction value) {
         processFunction = value;
 
-        if (textField != null) {
-            textField.setText(ParameterFunctionUtils.getString(processFunction));
-
-            UndoManager.getInstance()
-                    .addUndoEvent(new UndoEvent(this, getFieldId(), oldValueObj, value));
-
-            oldValueObj = value;
-
-            valueUpdated();
-        }
+        populateField(ParameterFunctionUtils.getString(processFunction));
     }
 
     /**
@@ -321,10 +294,12 @@ public class FieldConfigTransformation extends FieldConfigBase implements UndoAc
         if (textField != null) {
             textField.setText(value);
 
-            UndoManager.getInstance()
-                    .addUndoEvent(new UndoEvent(this, getFieldId(), oldValueObj, value));
+            if (!FieldConfigTransformation.this.isSuppressUndoEvents()) {
+                UndoManager.getInstance()
+                        .addUndoEvent(new UndoEvent(this, getFieldId(), oldValueObj, value));
 
-            oldValueObj = value;
+                oldValueObj = value;
+            }
 
             valueUpdated();
         }
@@ -410,8 +385,11 @@ public class FieldConfigTransformation extends FieldConfigBase implements UndoAc
         FieldConfigTransformation copy = null;
 
         if (fieldConfigBase != null) {
-            copy = new FieldConfigTransformation(fieldConfigBase.getCommonData(),
-                    this.editButtonText, this.clearButtonText);
+            copy =
+                    new FieldConfigTransformation(
+                            fieldConfigBase.getCommonData(),
+                            this.editButtonText,
+                            this.clearButtonText);
         }
         return copy;
     }
@@ -436,5 +414,33 @@ public class FieldConfigTransformation extends FieldConfigBase implements UndoAc
     @Override
     public ProcessFunction getProcessFunction() {
         return processFunction;
+    }
+
+    /**
+     * Transformation dialog result.
+     *
+     * @param expression the expression
+     */
+    protected void transformationDialogResult(ProcessFunction expression) {
+        if (expression != null) {
+            populateField(expression);
+        }
+    }
+
+    /** Clear button pressed. */
+    protected void clearButtonPressed() {
+        processFunction = null;
+
+        if (textField != null) {
+            textField.setText("");
+        }
+
+        if (!isSuppressUndoEvents()) {
+            UndoManager.getInstance()
+                    .addUndoEvent(new UndoEvent(this, getFieldId(), oldValueObj, null));
+
+            oldValueObj = null;
+        }
+        valueUpdated();
     }
 }

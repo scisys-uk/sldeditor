@@ -19,17 +19,9 @@
 
 package com.sldeditor.test.unit.filter.v2.function.property;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.filter.BinaryComparisonAbstract;
-import org.junit.Test;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.sldeditor.filter.v2.function.FilterConfigInterface;
 import com.sldeditor.filter.v2.function.property.IsBetween;
@@ -39,85 +31,91 @@ import com.sldeditor.filter.v2.function.property.IsGreaterThanEqualTo;
 import com.sldeditor.filter.v2.function.property.IsLessThan;
 import com.sldeditor.filter.v2.function.property.IsLessThanEqualTo;
 import com.sldeditor.filter.v2.function.property.IsNotEqualTo;
+import java.util.ArrayList;
+import java.util.List;
+import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.filter.BinaryComparisonAbstract;
+import org.junit.jupiter.api.Test;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.Expression;
 
 /**
- * Unit test for the following classes:
- * {@link com.sldeditor.filter.v2.function.property.IsBetween}.
- * {@link com.sldeditor.filter.v2.function.property.IsEqualTo}.
- * {@link com.sldeditor.filter.v2.function.property.IsGreaterThan}.
- * {@link com.sldeditor.filter.v2.function.property.IsGreaterThanEqualTo}.
- * {@link com.sldeditor.filter.v2.function.property.IsLessThan}.
- * {@link com.sldeditor.filter.v2.function.property.IsLessThanEqualTo}.
- * {@link com.sldeditor.filter.v2.function.property.IsNotEqualTo}.
- * 
- * @author Robert Ward (SCISYS)
+ * Unit test for the following classes: {@link com.sldeditor.filter.v2.function.property.IsBetween}.
+ * {@link com.sldeditor.filter.v2.function.property.IsEqualTo}. {@link
+ * com.sldeditor.filter.v2.function.property.IsGreaterThan}. {@link
+ * com.sldeditor.filter.v2.function.property.IsGreaterThanEqualTo}. {@link
+ * com.sldeditor.filter.v2.function.property.IsLessThan}. {@link
+ * com.sldeditor.filter.v2.function.property.IsLessThanEqualTo}. {@link
+ * com.sldeditor.filter.v2.function.property.IsNotEqualTo}.
  *
+ * @author Robert Ward (SCISYS)
  */
 public class PropertyTests {
 
+    private String category = "Test category";
     private FilterFactory ff = CommonFactoryFinder.getFilterFactory();
 
     /**
-     * Unit test for the following class:
-     * {@link com.sldeditor.filter.v2.function.property.IsEqualTo}.
+     * Unit test for the following class: {@link
+     * com.sldeditor.filter.v2.function.property.IsEqualTo}.
      */
     @Test
     public void testIsEqualTo() {
-        testClass(new IsEqualTo());
+        testClass(new IsEqualTo(category));
     }
 
     /**
-     * Unit test for the following class:
-     * {@link com.sldeditor.filter.v2.function.property.IsGreaterThan}.
+     * Unit test for the following class: {@link
+     * com.sldeditor.filter.v2.function.property.IsGreaterThan}.
      */
     @Test
     public void testIsGreaterThan() {
-        testClass(new IsGreaterThan());
+        testClass(new IsGreaterThan(category));
     }
 
     /**
-     * Unit test for the following class:
-     * {@link com.sldeditor.filter.v2.function.property.IsGreaterThanEqualTo}.
+     * Unit test for the following class: {@link
+     * com.sldeditor.filter.v2.function.property.IsGreaterThanEqualTo}.
      */
     @Test
     public void testIsGreaterThanEqualTo() {
-        testClass(new IsGreaterThanEqualTo());
+        testClass(new IsGreaterThanEqualTo(category));
     }
 
     /**
-     * Unit test for the following class:
-     * {@link com.sldeditor.filter.v2.function.property.IsLessThan}.
+     * Unit test for the following class: {@link
+     * com.sldeditor.filter.v2.function.property.IsLessThan}.
      */
     @Test
     public void testIsLessThan() {
-        testClass(new IsLessThan());
+        testClass(new IsLessThan(category));
     }
 
     /**
-     * Unit test for the following class:
-     * {@link com.sldeditor.filter.v2.function.property.IsLessThanEqualTo}.
+     * Unit test for the following class: {@link
+     * com.sldeditor.filter.v2.function.property.IsLessThanEqualTo}.
      */
     @Test
     public void testIsLessThanEqualTo() {
-        testClass(new IsLessThanEqualTo());
+        testClass(new IsLessThanEqualTo(category));
     }
 
     /**
-     * Unit test for the following class:
-     * {@link com.sldeditor.filter.v2.function.property.IsNotEqualTo}.
+     * Unit test for the following class: {@link
+     * com.sldeditor.filter.v2.function.property.IsNotEqualTo}.
      */
     @Test
     public void testIsNotEqualTo() {
-        testClass(new IsNotEqualTo());
+        testClass(new IsNotEqualTo(category));
     }
 
     /**
-     * Unit test for the following class:
-     * {@link com.sldeditor.filter.v2.function.property.IsBetween}.
+     * Unit test for the following class: {@link
+     * com.sldeditor.filter.v2.function.property.IsBetween}.
      */
     @Test
     public void testIsBetween() {
-        testClass(new IsBetween());
+        testClass(new IsBetween(category));
     }
 
     /**
@@ -130,7 +128,8 @@ public class PropertyTests {
         assertNotNull(objUnderTest.createFilter());
         assertNull(objUnderTest.createLogicFilter(null));
 
-        BinaryComparisonAbstract filter = (BinaryComparisonAbstract)objUnderTest.createFilter(null);
+        BinaryComparisonAbstract filter =
+                (BinaryComparisonAbstract) objUnderTest.createFilter(null);
         assertNull(filter.getExpression1());
         assertNull(filter.getExpression2());
 
@@ -146,6 +145,7 @@ public class PropertyTests {
         filter = (BinaryComparisonAbstract) objUnderTest.createFilter(parameterList);
         assertNotNull(filter.getExpression1());
         assertNotNull(filter.getExpression2());
+        assertTrue(objUnderTest.category().compareTo(category) == 0);
 
         System.out.println(filter.toString());
     }

@@ -19,28 +19,24 @@
 
 package com.sldeditor.test.unit.common.vendoroption;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.sldeditor.common.vendoroption.VersionData;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for VersionData.
- * 
- * <p>{@link com.sldeditor.common.vendoroption.VersionData}
- * 
- * @author Robert Ward (SCISYS)
  *
+ * <p>{@link com.sldeditor.common.vendoroption.VersionData}
+ *
+ * @author Robert Ward (SCISYS)
  */
 public class VersionDataTest {
 
-    /**
-     * Test method for {@link com.sldeditor.common.vendoroption.VersionData#clone()}.
-     */
+    /** Test method for {@link com.sldeditor.common.vendoroption.VersionData#clone()}. */
     @Test
     public void testClone() {
         VersionData versionData1 = VersionData.decode(getClass(), "1.2.3");
@@ -49,8 +45,9 @@ public class VersionDataTest {
     }
 
     /**
-     * Test method for {@link com.sldeditor.common.vendoroption.VersionData#decode(java.lang.Class, java.lang.String)}.
-     * Test method for {@link com.sldeditor.common.vendoroption.VersionData#getVersionString()}.
+     * Test method for {@link com.sldeditor.common.vendoroption.VersionData#decode(java.lang.Class,
+     * java.lang.String)}. Test method for {@link
+     * com.sldeditor.common.vendoroption.VersionData#getVersionString()}.
      */
     @Test
     public void testDecode() {
@@ -92,25 +89,35 @@ public class VersionDataTest {
         String expectedVersionString9 = "1.2.3-SNAPSHOT";
         VersionData versionData9 = VersionData.decode(getClass(), expectedVersionString9);
         assertEquals(expectedVersionString9, versionData9.getVersionString());
+
+        String expectedVersionString10 = "NotSet";
+        VersionData versionData10 = VersionData.decode(getClass(), expectedVersionString10);
+        assertEquals(expectedVersionString10, versionData10.getVersionString());
     }
 
     /**
-     * Test method for {@link com.sldeditor.common.vendoroption.VersionData#compareTo(com.sldeditor.common.vendoroption.VersionData)}.
-     * Test method for {@link com.sldeditor.common.vendoroption.VersionData#equals(java.lang.Object)}.
+     * Test method for {@link
+     * com.sldeditor.common.vendoroption.VersionData#compareTo(com.sldeditor.common.vendoroption.VersionData)}.
+     * Test method for {@link
+     * com.sldeditor.common.vendoroption.VersionData#equals(java.lang.Object)}.
      */
+    @SuppressWarnings("unlikely-arg-type")
     @Test
     public void testCompareTo() {
         VersionData versionData1 = VersionData.decode(getClass(), "1.2.3");
         VersionData versionData2 = VersionData.decode(getClass(), "1.2.3");
         VersionData versionData3 = VersionData.decode(getClass(), "1.2");
-        //CHECKSTYLE:OFF
+        // CHECKSTYLE:OFF
         VersionData versionData4 = VersionData.decode(getClass(), "8.2.3");
         VersionData versionData5 = VersionData.decode(getClass(), "8.2.2");
         VersionData versionData6 = VersionData.decode(getClass(), "8.2.4");
         VersionData versionData7 = VersionData.decode(getClass(), "8.1.2");
         VersionData versionData8 = VersionData.decode(getClass(), "8.3.4");
         VersionData versionData9 = VersionData.decode(getClass(), "8.3.4-SNAPSHOT");
-        //CHECKSTYLE:ON
+        VersionData versionData10 = VersionData.decode(getClass(), "8.3.4.1");
+        VersionData versionData11 = VersionData.decode(getClass(), "8.3.4.2");
+        VersionData versionData12 = VersionData.decode(null, "8.3.4.2");
+        // CHECKSTYLE:ON
 
         assertTrue(versionData1.compareTo(versionData2) == 0);
         assertTrue(versionData1.equals(versionData2));
@@ -128,6 +135,9 @@ public class VersionDataTest {
         assertFalse(versionData4.equals(versionData7));
         assertTrue(versionData4.compareTo(versionData8) != 0);
         assertFalse(versionData4.equals(versionData8));
+        assertTrue(versionData10.compareTo(versionData11) != 0);
+        assertFalse(versionData10.equals(versionData11));
+        assertFalse(versionData12.equals(versionData11));
 
         assertFalse(versionData4.equals(null));
         assertFalse(versionData4.equals(new String()));
@@ -135,13 +145,14 @@ public class VersionDataTest {
         assertTrue(versionData1.hashCode() == versionData2.hashCode());
         assertFalse(versionData1.hashCode() == versionData4.hashCode());
 
-        // SNAPSHOT versions come before non-SNAPSHOT versions if the numbes are the same
+        // SNAPSHOT versions come before non-SNAPSHOT versions if the numbers are the same
         assertTrue(versionData8.compareTo(versionData9) == 1);
         assertFalse(versionData8.equals(versionData9));
     }
 
     /**
-     * Test method for {@link com.sldeditor.common.vendoroption.VersionData#getEarliestVersion(java.lang.Class)}.
+     * Test method for {@link
+     * com.sldeditor.common.vendoroption.VersionData#getEarliestVersion(java.lang.Class)}.
      */
     @Test
     public void testGetEarliestVersion() {
@@ -150,7 +161,8 @@ public class VersionDataTest {
     }
 
     /**
-     * Test method for {@link com.sldeditor.common.vendoroption.VersionData#getLatestVersion(java.lang.Class)}.
+     * Test method for {@link
+     * com.sldeditor.common.vendoroption.VersionData#getLatestVersion(java.lang.Class)}.
      */
     @Test
     public void testGetLatestVersion() {
@@ -159,8 +171,9 @@ public class VersionDataTest {
     }
 
     /**
-     * Test method for {@link com.sldeditor.common.vendoroption.VersionData#getNotSetVersion(java.lang.Class)}.
-     * Test method for {@link com.sldeditor.common.vendoroption.VersionData#isNotSet()}.
+     * Test method for {@link
+     * com.sldeditor.common.vendoroption.VersionData#getNotSetVersion(java.lang.Class)}. Test method
+     * for {@link com.sldeditor.common.vendoroption.VersionData#isNotSet()}.
      */
     @Test
     public void testGetNotSetVersion() {
@@ -171,9 +184,7 @@ public class VersionDataTest {
         assertTrue(notSet.isNotSet());
     }
 
-    /**
-     * Test method for {@link com.sldeditor.common.vendoroption.VersionData#toString()}.
-     */
+    /** Test method for {@link com.sldeditor.common.vendoroption.VersionData#toString()}. */
     @Test
     public void testToString() {
         String expectedVersionString = "1.2.3";
@@ -182,7 +193,9 @@ public class VersionDataTest {
     }
 
     /**
-     * Test method for {@link com.sldeditor.common.vendoroption.VersionData#inRange(com.sldeditor.common.vendoroption.VersionData, com.sldeditor.common.vendoroption.VersionData)}.
+     * Test method for {@link
+     * com.sldeditor.common.vendoroption.VersionData#inRange(com.sldeditor.common.vendoroption.VersionData,
+     * com.sldeditor.common.vendoroption.VersionData)}.
      */
     @Test
     public void testInRange() {
@@ -192,12 +205,12 @@ public class VersionDataTest {
         VersionData versionData1 = VersionData.decode(getClass(), "1.2");
         VersionData versionData2 = VersionData.decode(getClass(), "2.4.0");
         VersionData versionData3 = VersionData.decode(getClass(), "2.4.1");
-        //CHECKSTYLE:OFF
+        // CHECKSTYLE:OFF
         VersionData versionData4 = VersionData.decode(getClass(), "2.5.1");
         VersionData versionData5 = VersionData.decode(getClass(), "2.8.3");
         VersionData versionData6 = VersionData.decode(getClass(), "2.8.4");
         VersionData versionData7 = VersionData.getNotSetVersion(getClass());
-        //CHECKSTYLE:ON
+        // CHECKSTYLE:ON
 
         assertFalse(versionData1.inRange(versionDataMin, versionDataMax));
         assertFalse(versionData2.inRange(versionDataMin, versionDataMax));
@@ -214,7 +227,8 @@ public class VersionDataTest {
 
     /**
      * Test method for {@link com.sldeditor.common.vendoroption.VersionData#getEncodedString()}.
-     * Test method for {@link com.sldeditor.common.vendoroption.VersionData#getDecodedString(java.lang.String)}.
+     * Test method for {@link
+     * com.sldeditor.common.vendoroption.VersionData#getDecodedString(java.lang.String)}.
      */
     @Test
     public void testEncodedString() {
@@ -233,5 +247,4 @@ public class VersionDataTest {
         VersionData versionData3Decoded = VersionData.getDecodedString(encodeString3);
         assertEquals(versionData3, versionData3Decoded);
     }
-
 }

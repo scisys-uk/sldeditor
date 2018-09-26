@@ -19,34 +19,29 @@
 
 package com.sldeditor.filter.v2.function.misc;
 
-import java.util.List;
-
-import org.geotools.filter.LikeFilterImpl;
-import org.geotools.filter.LiteralExpressionImpl;
-import org.opengis.filter.Filter;
-import org.opengis.filter.expression.Expression;
-
 import com.sldeditor.filter.v2.expression.ExpressionTypeEnum;
+import com.sldeditor.filter.v2.function.FilterBase;
 import com.sldeditor.filter.v2.function.FilterConfigInterface;
 import com.sldeditor.filter.v2.function.FilterExtendedInterface;
 import com.sldeditor.filter.v2.function.FilterName;
 import com.sldeditor.filter.v2.function.FilterNameParameter;
+import java.util.List;
+import org.geotools.filter.LikeFilterImpl;
+import org.geotools.filter.LiteralExpressionImpl;
+import org.opengis.filter.Filter;
+import org.opengis.filter.expression.Expression;
 
 /**
  * The Class IsLike.
  *
  * @author Robert Ward (SCISYS)
  */
-public class IsLike implements FilterConfigInterface {
+public class IsLike extends FilterBase implements FilterConfigInterface {
 
-    /**
-     * The Class IsLikeExtended.
-     */
+    /** The Class IsLikeExtended. */
     public class IsLikeExtended extends LikeFilterImpl implements FilterExtendedInterface {
 
-        /**
-         * Instantiates a new checks if is like extended.
-         */
+        /** Instantiates a new checks if is like extended. */
         public IsLikeExtended() {
             super(null);
         }
@@ -61,24 +56,29 @@ public class IsLike implements FilterConfigInterface {
          * @param escape the escape
          * @param matchCase the match case
          */
-        public IsLikeExtended(Expression expr, String pattern, String wildcardMulti,
-                String wildcardSingle, String escape, boolean matchCase) {
+        public IsLikeExtended(
+                Expression expr,
+                String pattern,
+                String wildcardMulti,
+                String wildcardSingle,
+                String escape,
+                boolean matchCase) {
             super(expr, pattern, wildcardMulti, wildcardSingle, escape);
             setMatchCase(matchCase);
         }
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see org.geotools.filter.LikeFilterImpl#toString()
          */
         public String toString() {
-            return "[ Like " + getExpression() + " ]";
+            return String.format("[ %s is like %s ]", getExpression().toString(), getLiteral());
         }
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.sldeditor.filter.v2.function.FilterExtendedInterface#getOriginalFilter()
          */
         @Override
@@ -87,10 +87,9 @@ public class IsLike implements FilterConfigInterface {
         }
     }
 
-    /**
-     * Default constructor.
-     */
-    public IsLike() {
+    /** Default constructor. */
+    public IsLike(String category) {
+        super(category);
     }
 
     /**
@@ -107,8 +106,9 @@ public class IsLike implements FilterConfigInterface {
                 new FilterNameParameter("pattern", ExpressionTypeEnum.LITERAL, String.class));
         filterName.addParameter(
                 new FilterNameParameter("wildcardMulti", ExpressionTypeEnum.LITERAL, String.class));
-        filterName.addParameter(new FilterNameParameter("wildcardSingle",
-                ExpressionTypeEnum.LITERAL, String.class));
+        filterName.addParameter(
+                new FilterNameParameter(
+                        "wildcardSingle", ExpressionTypeEnum.LITERAL, String.class));
         filterName.addParameter(
                 new FilterNameParameter("escape", ExpressionTypeEnum.LITERAL, String.class));
         filterName.addParameter(
@@ -156,9 +156,14 @@ public class IsLike implements FilterConfigInterface {
             LiteralExpressionImpl escape = (LiteralExpressionImpl) parameterList.get(4);
             LiteralExpressionImpl matchCase = (LiteralExpressionImpl) parameterList.get(5);
 
-            filter = new IsLikeExtended(parameterList.get(0), (String) pattern.getValue(),
-                    (String) wildcardMulti.getValue(), (String) wildcardSingle.getValue(),
-                    (String) escape.getValue(), (Boolean) matchCase.getValue());
+            filter =
+                    new IsLikeExtended(
+                            parameterList.get(0),
+                            (String) pattern.getValue(),
+                            (String) wildcardMulti.getValue(),
+                            (String) wildcardSingle.getValue(),
+                            (String) escape.getValue(),
+                            (Boolean) matchCase.getValue());
         }
 
         return filter;

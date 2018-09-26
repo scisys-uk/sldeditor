@@ -19,19 +19,17 @@
 
 package com.sldeditor.test.unit.ui.legend.option;
 
-import static org.junit.Assert.assertEquals;
-
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
-
-import org.geotools.styling.StyleBuilder;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.sldeditor.ui.legend.option.FontUtils;
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
+import org.geotools.styling.StyleBuilder;
+import org.junit.jupiter.api.Test;
 
 /**
  * The unit test for FontUtils.
- * 
+ *
  * <p>{@link com.sldeditor.ui.legend.option.FontUtils}
  *
  * @author Robert Ward (SCISYS)
@@ -39,7 +37,8 @@ import com.sldeditor.ui.legend.option.FontUtils;
 public class FontUtilsTest {
 
     /**
-     * Test method for {@link com.sldeditor.ui.legend.option.FontUtils#getFont(org.geotools.styling.Font)}.
+     * Test method for {@link
+     * com.sldeditor.ui.legend.option.FontUtils#getFont(org.geotools.styling.Font)}.
      */
     @Test
     public void testGetFont() {
@@ -80,5 +79,4 @@ public class FontUtilsTest {
         actualJavaFont = FontUtils.getFont(geoToolsFonts);
         assertEquals(actualJavaFont, javaFont);
     }
-
 }

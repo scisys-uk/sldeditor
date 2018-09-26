@@ -19,15 +19,6 @@
 
 package com.sldeditor.tool.geoserverconnection;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-
 import com.sldeditor.common.NodeInterface;
 import com.sldeditor.common.SLDDataInterface;
 import com.sldeditor.common.data.GeoServerConnection;
@@ -36,13 +27,19 @@ import com.sldeditor.datasource.extension.filesystem.node.geoserver.GeoServerNod
 import com.sldeditor.tool.ToolButton;
 import com.sldeditor.tool.ToolInterface;
 import com.sldeditor.tool.ToolPanel;
-
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JPanel;
 
 /**
  * Tool that manages the GeoServer connections (connect/disconnect).
- * 
+ *
  * @author Robert Ward (SCISYS)
  */
 public class GeoServerConnectionTool implements ToolInterface {
@@ -51,10 +48,10 @@ public class GeoServerConnectionTool implements ToolInterface {
     private static final int PANEL_WIDTH = 110;
 
     /** The connect button. */
-    private JButton connectButton;
+    protected JButton connectButton;
 
     /** The disconnect button. */
-    private JButton disconnectButton;
+    protected JButton disconnectButton;
 
     /** The panel. */
     private JPanel panel;
@@ -78,58 +75,53 @@ public class GeoServerConnectionTool implements ToolInterface {
         createUI();
     }
 
-    /**
-     * Creates the ui.
-     */
+    /** Creates the ui. */
     private void createUI() {
         panel = new JPanel();
         FlowLayout flowLayout = (FlowLayout) panel.getLayout();
         flowLayout.setVgap(0);
         flowLayout.setHgap(0);
-        panel.setBorder(BorderFactory.createTitledBorder(Localisation
-                .getString(GeoServerConnectionTool.class, "GeoServerConnectionTool.title")));
+        panel.setBorder(
+                BorderFactory.createTitledBorder(
+                        Localisation.getString(
+                                GeoServerConnectionTool.class, "GeoServerConnectionTool.title")));
 
         //
         // Connect button
         //
-        connectButton = new ToolButton(Localisation.getString(GeoServerConnectionTool.class,
-                "GeoServerConnectionTool.connect"), "tool/connect.png");
+        connectButton =
+                new ToolButton(
+                        Localisation.getString(
+                                GeoServerConnectionTool.class, "GeoServerConnectionTool.connect"),
+                        "tool/connect.png");
         connectButton.setEnabled(true);
-        connectButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (geoServerConnectState != null) {
-                    connectButton.setEnabled(false);
-                    disconnectButton.setEnabled(false);
-                    geoServerConnectState.connect(connectionList);
-
-                    for (GeoServerConnection connection : connectionList) {
-                        if (!geoServerConnectState.isConnected(connection)) {
-                            connectButton.setEnabled(true);
-                        }
+        connectButton.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        connectButtonPressed();
                     }
-                }
-            }
-        });
+                });
 
         panel.add(connectButton);
 
         //
         // Disconnect button
         //
-        disconnectButton = new ToolButton(Localisation.getString(GeoServerConnectionTool.class,
-                "GeoServerConnectionTool.disconnect"), "tool/disconnect.png");
+        disconnectButton =
+                new ToolButton(
+                        Localisation.getString(
+                                GeoServerConnectionTool.class,
+                                "GeoServerConnectionTool.disconnect"),
+                        "tool/disconnect.png");
         disconnectButton.setEnabled(false);
-        disconnectButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (geoServerConnectState != null) {
-                    connectButton.setEnabled(false);
-                    disconnectButton.setEnabled(false);
-                    geoServerConnectState.disconnect(connectionList);
-                }
-            }
-        });
+        disconnectButton.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        disconnectButtonPressed();
+                    }
+                });
 
         panel.add(disconnectButton);
         panel.setPreferredSize(new Dimension(PANEL_WIDTH, ToolPanel.TOOL_PANEL_HEIGHT));
@@ -137,7 +129,7 @@ public class GeoServerConnectionTool implements ToolInterface {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.tool.ToolInterface#getPanel()
      */
     @Override
@@ -147,12 +139,12 @@ public class GeoServerConnectionTool implements ToolInterface {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.tool.ToolInterface#setSelectedItems(java.util.List, java.util.List)
      */
     @Override
-    public void setSelectedItems(List<NodeInterface> nodeTypeList,
-            List<SLDDataInterface> sldDataList) {
+    public void setSelectedItems(
+            List<NodeInterface> nodeTypeList, List<SLDDataInterface> sldDataList) {
         connectionList.clear();
 
         for (NodeInterface node : nodeTypeList) {
@@ -166,9 +158,7 @@ public class GeoServerConnectionTool implements ToolInterface {
         updateButtonState();
     }
 
-    /**
-     * Update button state.
-     */
+    /** Update button state. */
     private void updateButtonState() {
         int connected = 0;
         int disconnected = 0;
@@ -183,16 +173,8 @@ public class GeoServerConnectionTool implements ToolInterface {
             }
         }
 
-        boolean connectedEnabled = false;
-        boolean disconnectedEnabled = false;
-
-        if ((connected == 0) || (disconnected == 0)) {
-            if (connected > 0) {
-                disconnectedEnabled = true;
-            } else if (disconnected > 0) {
-                connectedEnabled = true;
-            }
-        }
+        boolean connectedEnabled = (disconnected > 0);
+        boolean disconnectedEnabled = (connected > 0);
 
         connectButton.setEnabled(connectedEnabled);
         disconnectButton.setEnabled(disconnectedEnabled);
@@ -200,7 +182,7 @@ public class GeoServerConnectionTool implements ToolInterface {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.tool.ToolInterface#getToolName()
      */
     @Override
@@ -210,14 +192,18 @@ public class GeoServerConnectionTool implements ToolInterface {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.tool.ToolInterface#supports(java.util.List, java.util.List)
      */
     @Override
-    public boolean supports(List<Class<?>> uniqueNodeTypeList, List<NodeInterface> nodeTypeList,
+    public boolean supports(
+            List<Class<?>> uniqueNodeTypeList,
+            List<NodeInterface> nodeTypeList,
             List<SLDDataInterface> sldDataList) {
-        if (uniqueNodeTypeList.size() == 1) {
-            return true;
+        if (uniqueNodeTypeList != null) {
+            if (uniqueNodeTypeList.size() == 1) {
+                return true;
+            }
         }
         return false;
     }
@@ -229,5 +215,29 @@ public class GeoServerConnectionTool implements ToolInterface {
      */
     public void populateComplete(GeoServerConnection connection) {
         updateButtonState();
+    }
+
+    /** Connect button pressed. */
+    protected void connectButtonPressed() {
+        if (geoServerConnectState != null) {
+            connectButton.setEnabled(false);
+            disconnectButton.setEnabled(false);
+            geoServerConnectState.connect(connectionList);
+
+            for (GeoServerConnection connection : connectionList) {
+                if (!geoServerConnectState.isConnected(connection)) {
+                    connectButton.setEnabled(true);
+                }
+            }
+        }
+    }
+
+    /** Disconnect button pressed. */
+    protected void disconnectButtonPressed() {
+        if (geoServerConnectState != null) {
+            connectButton.setEnabled(false);
+            disconnectButton.setEnabled(false);
+            geoServerConnectState.disconnect(connectionList);
+        }
     }
 }

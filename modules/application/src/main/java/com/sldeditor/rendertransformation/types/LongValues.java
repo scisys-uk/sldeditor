@@ -19,19 +19,17 @@
 
 package com.sldeditor.rendertransformation.types;
 
+import com.sldeditor.ui.detail.config.FieldConfigBase;
+import com.sldeditor.ui.detail.config.FieldConfigCommonData;
+import com.sldeditor.ui.detail.config.FieldConfigInteger;
+import com.sldeditor.ui.detail.config.symboltype.SymbolTypeConfig;
 import java.util.Arrays;
 import java.util.List;
-
 import org.geotools.filter.AttributeExpressionImpl;
 import org.geotools.filter.FunctionExpressionImpl;
 import org.geotools.filter.LiteralExpressionImpl;
 import org.geotools.filter.MathExpressionImpl;
 import org.opengis.filter.expression.Expression;
-
-import com.sldeditor.ui.detail.config.FieldConfigBase;
-import com.sldeditor.ui.detail.config.FieldConfigCommonData;
-import com.sldeditor.ui.detail.config.FieldConfigInteger;
-import com.sldeditor.ui.detail.config.symboltype.SymbolTypeConfig;
 
 /**
  * The Class LongValues.
@@ -43,15 +41,12 @@ public class LongValues extends BaseValue implements RenderTransformValueInterfa
     /** The value. */
     private Long value = null;
 
-    /**
-     * Instantiates a new long values.
-     */
-    public LongValues() {
-    }
+    /** Instantiates a new long values. */
+    public LongValues() {}
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.rendertransformation.types.RenderTransformValueInterface#setDefaultValue(java.lang.Object)
      */
     @Override
@@ -70,7 +65,7 @@ public class LongValues extends BaseValue implements RenderTransformValueInterfa
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.rendertransformation.types.RenderTransformValueInterface#getExpression()
      */
     @Override
@@ -78,12 +73,17 @@ public class LongValues extends BaseValue implements RenderTransformValueInterfa
         if (expression != null) {
             return expression;
         }
-        return filterFactory.literal(value);
+
+        if (value != null) {
+            return filterFactory.literal(value);
+        }
+
+        return null;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.rendertransformation.types.RenderTransformValueInterface#setValue(java.lang.Object)
      */
     @Override
@@ -105,7 +105,7 @@ public class LongValues extends BaseValue implements RenderTransformValueInterfa
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.rendertransformation.types.RenderTransformValueInterface#getType()
      */
     @Override
@@ -115,7 +115,7 @@ public class LongValues extends BaseValue implements RenderTransformValueInterfa
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.rendertransformation.types.RenderTransformValueInterface#getField(com.sldeditor.ui.detail.config.FieldConfigCommonData)
      */
     @Override
@@ -125,7 +125,7 @@ public class LongValues extends BaseValue implements RenderTransformValueInterfa
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.rendertransformation.types.RenderTransformValueInterface#createInstance()
      */
     @Override

@@ -19,28 +19,27 @@
 
 package com.sldeditor.test.unit.datasource.impl;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.sldeditor.datasource.SLDEditorFileInterface;
 import com.sldeditor.datasource.impl.CreateExternalDataSource;
 import com.sldeditor.datasource.impl.DataSourceInfo;
+import java.util.List;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for CreateExternalDataSource.
- * 
+ *
  * <p>{@link com.sldeditor.datasource.impl.CreateExternalDataSource}
- * 
+ *
  * @author Robert Ward (SCISYS)
  */
 public class CreateExternalDataSourceTest {
 
     /**
-     * Test method for {@link com.sldeditor.datasource.impl.CreateExternalDataSource#connect(com.sldeditor.datasource.SLDEditorFileInterface)}.
+     * Test method for {@link
+     * com.sldeditor.datasource.impl.CreateExternalDataSource#connect(com.sldeditor.datasource.SLDEditorFileInterface)}.
      */
     @Test
     public void testConnect() {
@@ -55,7 +54,7 @@ public class CreateExternalDataSourceTest {
         assertNull(dsInfo.getTypeName());
 
         DummyExternalSLDFile dummyExternalSLDFile = new DummyExternalSLDFile();
-        SLDEditorFileInterface sldEditor = dummyExternalSLDFile; 
+        SLDEditorFileInterface sldEditor = dummyExternalSLDFile;
         dataSourceInfoList = ds.connect(dummyExternalSLDFile.getTypeName(), null, sldEditor);
         dsInfo = dataSourceInfoList.get(0);
 
@@ -63,5 +62,4 @@ public class CreateExternalDataSourceTest {
         assertTrue(dsInfo.getTypeName() != null);
         assertTrue(dsInfo.getDataStore() != null);
     }
-
 }

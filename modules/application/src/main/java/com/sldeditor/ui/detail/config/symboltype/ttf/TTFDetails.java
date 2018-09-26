@@ -19,12 +19,6 @@
 
 package com.sldeditor.ui.detail.config.symboltype.ttf;
 
-import java.awt.Component;
-import java.awt.EventQueue;
-import java.util.List;
-
-import org.opengis.filter.expression.Expression;
-
 import com.sldeditor.common.Controller;
 import com.sldeditor.common.data.SelectedSymbol;
 import com.sldeditor.common.undo.UndoActionInterface;
@@ -40,14 +34,21 @@ import com.sldeditor.ui.detail.config.FieldConfigStringButtonInterface;
 import com.sldeditor.ui.iface.PopulateDetailsInterface;
 import com.sldeditor.ui.iface.UpdateSymbolInterface;
 import com.sldeditor.ui.ttf.CharMap4;
+import java.awt.Component;
+import java.awt.EventQueue;
+import java.util.List;
+import org.opengis.filter.expression.Expression;
 
 /**
  * The Class TTFDetails panel contains all the fields to configure an TrueType fonts.
- * 
+ *
  * @author Robert Ward (SCISYS)
  */
-public class TTFDetails extends StandardPanel implements PopulateDetailsInterface,
-        UpdateSymbolInterface, UndoActionInterface, FieldConfigStringButtonInterface {
+public class TTFDetails extends StandardPanel
+        implements PopulateDetailsInterface,
+                UpdateSymbolInterface,
+                UndoActionInterface,
+                FieldConfigStringButtonInterface {
 
     /** The Constant PANEL_CONFIG. */
     private static final String PANEL_CONFIG = "symbol/marker/ttf/PanelConfig_TTFSymbol.xml";
@@ -61,21 +62,23 @@ public class TTFDetails extends StandardPanel implements PopulateDetailsInterfac
     /** The old value obj. */
     private Object oldValueObj = null;
 
+    /** The suppress undo events flag. */
+    private boolean suppressUndoEvents = false;
+
     /**
      * Instantiates a new feature type style details.
      *
      * @param parentObj the parent obj
      */
-    public TTFDetails(TTFUpdateInterface parentObj) {
+    public TTFDetails(TTFUpdateInterface parentObj, boolean suppressUndoEvents) {
         super(TTFDetails.class);
 
         this.parentObj = parentObj;
+        this.suppressUndoEvents = suppressUndoEvents;
         createUI();
     }
 
-    /**
-     * Creates the ui.
-     */
+    /** Creates the ui. */
     private void createUI() {
         readConfigFileNoScrollPane(null, getClass(), this, PANEL_CONFIG);
 
@@ -89,8 +92,9 @@ public class TTFDetails extends StandardPanel implements PopulateDetailsInterfac
      */
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.ui.iface.PopulateDetailsInterface#populate(com.sldeditor.ui.detail.SelectedSymbol)
+     *
+     * @see com.sldeditor.ui.iface.PopulateDetailsInterface#populate(com.sldeditor.ui.detail.
+     * SelectedSymbol)
      */
     @Override
     public void populate(SelectedSymbol selectedSymbol) {
@@ -116,7 +120,7 @@ public class TTFDetails extends StandardPanel implements PopulateDetailsInterfac
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.iface.UpdateSymbolInterface#dataChanged()
      */
     @Override
@@ -124,9 +128,7 @@ public class TTFDetails extends StandardPanel implements PopulateDetailsInterfac
         updateSymbol();
     }
 
-    /**
-     * Update symbol.
-     */
+    /** Update symbol. */
     private void updateSymbol() {
         if (!Controller.getInstance().isPopulating()) {
             if (parentObj != null) {
@@ -142,7 +144,7 @@ public class TTFDetails extends StandardPanel implements PopulateDetailsInterfac
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.iface.PopulateDetailsInterface#getFieldDataManager()
      */
     @Override
@@ -157,7 +159,7 @@ public class TTFDetails extends StandardPanel implements PopulateDetailsInterfac
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.iface.PopulateDetailsInterface#isDataPresent()
      */
     @Override
@@ -178,9 +180,7 @@ public class TTFDetails extends StandardPanel implements PopulateDetailsInterfac
         return expression;
     }
 
-    /**
-     * Revert to default value.
-     */
+    /** Revert to default value. */
     public void revertToDefaultValue() {
         List<FieldConfigBase> fieldList = fieldConfigManager.getFields(null);
 
@@ -200,9 +200,13 @@ public class TTFDetails extends StandardPanel implements PopulateDetailsInterfac
      */
     @Override
     public void undoAction(UndoInterface undoRedoObject) {
-        Object oldValue = undoRedoObject.getOldValue();
+        if (undoRedoObject != null) {
+            if (undoRedoObject.getOldValue() instanceof String) {
+                Object oldValue = undoRedoObject.getOldValue();
 
-        fieldConfigVisitor.populateTextField(FieldIdEnum.TTF_SYMBOL, (String) oldValue);
+                fieldConfigVisitor.populateTextField(FieldIdEnum.TTF_SYMBOL, (String) oldValue);
+            }
+        }
     }
 
     /**
@@ -212,9 +216,13 @@ public class TTFDetails extends StandardPanel implements PopulateDetailsInterfac
      */
     @Override
     public void redoAction(UndoInterface undoRedoObject) {
-        String newValue = (String) undoRedoObject.getNewValue();
+        if (undoRedoObject != null) {
+            if (undoRedoObject.getNewValue() instanceof String) {
+                String newValue = (String) undoRedoObject.getNewValue();
 
-        fieldConfigVisitor.populateTextField(FieldIdEnum.TTF_SYMBOL, (String) newValue);
+                fieldConfigVisitor.populateTextField(FieldIdEnum.TTF_SYMBOL, (String) newValue);
+            }
+        }
     }
 
     /**
@@ -235,23 +243,28 @@ public class TTFDetails extends StandardPanel implements PopulateDetailsInterfac
         if (selectedChar != null) {
             fieldConfigVisitor.populateTextField(FieldIdEnum.TTF_SYMBOL, selectedChar);
 
-            UndoManager.getInstance().addUndoEvent(
-                    new UndoEvent(this, FieldIdEnum.TTF_SYMBOL, oldValueObj, selectedChar));
+            if (!suppressUndoEvents) {
+                UndoManager.getInstance()
+                        .addUndoEvent(
+                                new UndoEvent(
+                                        this, FieldIdEnum.TTF_SYMBOL, oldValueObj, selectedChar));
 
-            oldValueObj = selectedChar;
+                oldValueObj = selectedChar;
+            }
 
-            EventQueue.invokeLater(new Runnable() {
+            EventQueue.invokeLater(
+                    new Runnable() {
 
-                public void run() {
-                    updateSymbol();
-                }
-            });
+                        public void run() {
+                            updateSymbol();
+                        }
+                    });
         }
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.iface.PopulateDetailsInterface#initialseFields()
      */
     @Override
@@ -259,12 +272,15 @@ public class TTFDetails extends StandardPanel implements PopulateDetailsInterfac
         setAllDefaultValues();
     }
 
-    /* (non-Javadoc)
-     * @see com.sldeditor.ui.iface.PopulateDetailsInterface#getMinimumVersion(java.lang.Object, java.util.List)
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.sldeditor.ui.iface.PopulateDetailsInterface#getMinimumVersion(java.lang.Object,
+     * java.util.List)
      */
     @Override
-    public void getMinimumVersion(Object parentObj, Object sldObj,
-            List<VendorOptionPresent> vendorOptionsPresentList) {
+    public void getMinimumVersion(
+            Object parentObj, Object sldObj, List<VendorOptionPresent> vendorOptionsPresentList) {
         // No vendor options
     }
 }

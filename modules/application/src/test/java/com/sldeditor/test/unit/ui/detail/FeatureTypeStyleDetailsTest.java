@@ -19,15 +19,8 @@
 
 package com.sldeditor.test.unit.ui.detail;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import org.geotools.styling.FeatureTypeStyle;
-import org.geotools.styling.NamedLayer;
-import org.geotools.styling.Rule;
-import org.geotools.styling.Style;
-import org.geotools.styling.StyledLayerDescriptor;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.sldeditor.common.data.SelectedSymbol;
 import com.sldeditor.common.defaultsymbol.DefaultSymbols;
@@ -35,10 +28,16 @@ import com.sldeditor.common.xml.ui.FieldIdEnum;
 import com.sldeditor.ui.detail.FeatureTypeStyleDetails;
 import com.sldeditor.ui.detail.GraphicPanelFieldManager;
 import com.sldeditor.ui.detail.config.FieldConfigString;
+import org.geotools.styling.FeatureTypeStyle;
+import org.geotools.styling.NamedLayer;
+import org.geotools.styling.Rule;
+import org.geotools.styling.Style;
+import org.geotools.styling.StyledLayerDescriptor;
+import org.junit.jupiter.api.Test;
 
 /**
  * The unit test for StyleDetails.
- * 
+ *
  * <p>{@link com.sldeditor.ui.detail.StyleDetails}
  *
  * @author Robert Ward (SCISYS)
@@ -46,12 +45,16 @@ import com.sldeditor.ui.detail.config.FieldConfigString;
 public class FeatureTypeStyleDetailsTest {
 
     /**
-     * Test method for {@link com.sldeditor.ui.detail.FeatureTypeStyleDetails#FeatureTypeStyleDetails(com.sldeditor.filter.v2.function.FunctionNameInterface)}.
-     * Test method for {@link com.sldeditor.ui.detail.FeatureTypeStyleDetails#populate(com.sldeditor.common.data.SelectedSymbol)}.
-     * Test method for {@link com.sldeditor.ui.detail.FeatureTypeStyleDetails#dataChanged(com.sldeditor.ui.detail.config.FieldId)}.
-     * Test method for {@link com.sldeditor.ui.detail.FeatureTypeStyleDetails#getFieldDataManager()}.
-     * Test method for {@link com.sldeditor.ui.detail.FeatureTypeStyleDetails#isDataPresent()}.
-     * Test method for {@link com.sldeditor.ui.detail.FeatureTypeStyleDetails#preLoadSymbol()}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.FeatureTypeStyleDetails#FeatureTypeStyleDetails(com.sldeditor.filter.v2.function.FunctionNameInterface)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.FeatureTypeStyleDetails#populate(com.sldeditor.common.data.SelectedSymbol)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.FeatureTypeStyleDetails#dataChanged(com.sldeditor.ui.detail.config.FieldId)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.FeatureTypeStyleDetails#getFieldDataManager()}. Test method for
+     * {@link com.sldeditor.ui.detail.FeatureTypeStyleDetails#isDataPresent()}. Test method for
+     * {@link com.sldeditor.ui.detail.FeatureTypeStyleDetails#preLoadSymbol()}.
      */
     @Test
     public void testFeatureTypeStyleDetails() {

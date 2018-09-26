@@ -19,11 +19,6 @@
 
 package com.sldeditor.ui.detail.config.inlinefeature;
 
-import javax.swing.JTabbedPane;
-
-import org.geotools.styling.UserLayer;
-import org.opengis.filter.expression.Expression;
-
 import com.sldeditor.common.Controller;
 import com.sldeditor.common.defaultsymbol.DefaultSymbols;
 import com.sldeditor.common.localisation.Localisation;
@@ -36,15 +31,18 @@ import com.sldeditor.ui.detail.BasePanel;
 import com.sldeditor.ui.detail.config.FieldConfigBase;
 import com.sldeditor.ui.detail.config.FieldConfigCommonData;
 import com.sldeditor.ui.widgets.FieldPanel;
+import javax.swing.JTabbedPane;
+import org.geotools.styling.UserLayer;
+import org.opengis.filter.expression.Expression;
 
 /**
- * The Class FieldConfigInlineFeature wraps a text field GUI component
- * allowing the configuration of inline features
- * 
+ * The Class FieldConfigInlineFeature wraps a text field GUI component allowing the configuration of
+ * inline features
+ *
  * <p>Supports undo/redo functionality.
- * 
+ *
  * <p>Instantiated by {@link com.sldeditor.ui.detail.config.ReadPanelConfig}
- * 
+ *
  * @author Robert Ward (SCISYS)
  */
 public class FieldConfigInlineFeature extends FieldConfigBase
@@ -77,12 +75,10 @@ public class FieldConfigInlineFeature extends FieldConfigBase
         super(commonData);
     }
 
-    /**
-     * Creates the ui.
-     */
+    /** Creates the ui. */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#createUI()
      */
     @Override
@@ -94,20 +90,23 @@ public class FieldConfigInlineFeature extends FieldConfigBase
 
             tabbedPane = new JTabbedPane(JTabbedPane.TOP);
             tabbedPane.addTab(
-                    Localisation.getString(FieldConfigBase.class,
-                            "FieldConfigInlineFeature.feature"),
-                    null, inlineFeature, Localisation.getString(FieldConfigBase.class,
-                            "FieldConfigInlineFeature.feature.tooltip"));
+                    Localisation.getString(
+                            FieldConfigBase.class, "FieldConfigInlineFeature.feature"),
+                    null,
+                    inlineFeature,
+                    Localisation.getString(
+                            FieldConfigBase.class, "FieldConfigInlineFeature.feature.tooltip"));
             tabbedPane.addTab(
                     Localisation.getString(FieldConfigBase.class, "FieldConfigInlineFeature.gml"),
-                    null, inlineGML, Localisation.getString(FieldConfigBase.class,
-                            "FieldConfigInlineFeature.gml.tooltip"));
+                    null,
+                    inlineGML,
+                    Localisation.getString(
+                            FieldConfigBase.class, "FieldConfigInlineFeature.gml.tooltip"));
             tabbedPane.setBounds(0, 0, inlineGML.getWidth(), inlineGML.getHeight());
 
             int xPos = getXPos();
-            FieldPanel fieldPanel = createFieldPanel(xPos, 
-                    BasePanel.WIDGET_HEIGHT * NO_OF_ROWS,
-                    getLabel());
+            FieldPanel fieldPanel =
+                    createFieldPanel(xPos, BasePanel.WIDGET_HEIGHT * NO_OF_ROWS, getLabel());
             fieldPanel.add(tabbedPane);
         }
     }
@@ -119,8 +118,9 @@ public class FieldConfigInlineFeature extends FieldConfigBase
      */
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.ui.iface.AttributeButtonSelectionInterface#attributeSelection(java.lang.String)
+     *
+     * @see
+     * com.sldeditor.ui.iface.AttributeButtonSelectionInterface#attributeSelection(java.lang.String)
      */
     @Override
     public void attributeSelection(String field) {
@@ -134,7 +134,7 @@ public class FieldConfigInlineFeature extends FieldConfigBase
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#setEnabled(boolean)
      */
     @Override
@@ -151,7 +151,7 @@ public class FieldConfigInlineFeature extends FieldConfigBase
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#generateExpression()
      */
     @Override
@@ -174,7 +174,7 @@ public class FieldConfigInlineFeature extends FieldConfigBase
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#isEnabled()
      */
     @Override
@@ -186,12 +186,10 @@ public class FieldConfigInlineFeature extends FieldConfigBase
         return false;
     }
 
-    /**
-     * Revert to default value.
-     */
+    /** Revert to default value. */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#revertToDefaultValue()
      */
     @Override
@@ -206,7 +204,7 @@ public class FieldConfigInlineFeature extends FieldConfigBase
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#populateExpression(java.lang.Object)
      */
     @Override
@@ -319,10 +317,17 @@ public class FieldConfigInlineFeature extends FieldConfigBase
             inlineFeature.setInlineFeatures(value);
         }
 
-        UndoManager.getInstance().addUndoEvent(
-                new UndoEvent(this, getFieldId(), oldValueObj, new String(inlineFeaturesText)));
+        if (!isSuppressUndoEvents()) {
+            UndoManager.getInstance()
+                    .addUndoEvent(
+                            new UndoEvent(
+                                    this,
+                                    getFieldId(),
+                                    oldValueObj,
+                                    new String(inlineFeaturesText)));
 
-        oldValueObj = new String(inlineFeaturesText);
+            oldValueObj = new String(inlineFeaturesText);
+        }
 
         valueUpdated();
     }
@@ -356,19 +361,25 @@ public class FieldConfigInlineFeature extends FieldConfigBase
 
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.ui.detail.config.inlinefeature.InlineFeatureUpdateInterface#inlineFeatureUpdated()
+     *
+     * @see com.sldeditor.ui.detail.config.inlinefeature.InlineFeatureUpdateInterface#
+     * inlineFeatureUpdated()
      */
     @Override
     public void inlineFeatureUpdated() {
         if (!Controller.getInstance().isPopulating()) {
             String value = "";
             if (inlineFeature != null) {
-                value = inlineFeature.getInlineFeatures();
-                UndoManager.getInstance().addUndoEvent(
-                        new UndoEvent(this, getFieldId(), oldValueObj, new String(value)));
+                if (!isSuppressUndoEvents()) {
 
-                oldValueObj = new String(value);
+                    value = inlineFeature.getInlineFeatures();
+                    UndoManager.getInstance()
+                            .addUndoEvent(
+                                    new UndoEvent(
+                                            this, getFieldId(), oldValueObj, new String(value)));
+
+                    oldValueObj = new String(value);
+                }
 
                 if (inlineGML != null) {
                     inlineGML.setInlineFeatures(value);

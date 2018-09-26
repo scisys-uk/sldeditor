@@ -19,6 +19,12 @@
 
 package com.sldeditor.colourramp;
 
+import com.sldeditor.colourramp.ramp.ColourRampData;
+import com.sldeditor.ui.detail.BasePanel;
+import com.sldeditor.ui.detail.config.colourmap.ColourMapModel;
+import com.sldeditor.ui.detail.config.colourmap.ColourMapModelUpdateInterface;
+import com.sldeditor.ui.widgets.ValueComboBox;
+import com.sldeditor.ui.widgets.ValueComboBoxData;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
@@ -28,17 +34,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.JPanel;
-
 import org.geotools.styling.ColorMap;
-
-import com.sldeditor.colourramp.ramp.ColourRampData;
-import com.sldeditor.ui.detail.BasePanel;
-import com.sldeditor.ui.detail.config.colourmap.ColourMapModel;
-import com.sldeditor.ui.detail.config.colourmap.ColourMapModelUpdateInterface;
-import com.sldeditor.ui.widgets.ValueComboBox;
-import com.sldeditor.ui.widgets.ValueComboBoxData;
 
 /**
  * The Class ColourRampConfigPanel.
@@ -74,29 +71,29 @@ public class ColourRampConfigPanel extends JPanel implements ColourRampUpdateInt
      *
      * @param parent the parent
      * @param model the model
+     * @param suppressUndoEvents the suppress undo events
      */
-    public ColourRampConfigPanel(ColourMapModelUpdateInterface parent, ColourMapModel model) {
+    public ColourRampConfigPanel(
+            ColourMapModelUpdateInterface parent,
+            ColourMapModel model,
+            boolean suppressUndoEvents) {
         parentObj = parent;
         colourMapModel = model;
 
-        createUI();
+        createUI(suppressUndoEvents);
     }
 
-    /**
-     * Creates the UI.
-     */
-    private void createUI() {
+    /** Creates the UI. */
+    private void createUI(boolean suppressUndoEvents) {
         setLayout(new BorderLayout());
 
-        colourRampMap = ColourRampFactory.getColourRampMap();
+        colourRampMap = ColourRampFactory.getColourRampMap(suppressUndoEvents);
 
         createTopPanel();
         createEditPanel();
     }
 
-    /**
-     * Creates the edit panel.
-     */
+    /** Creates the edit panel. */
     private void createEditPanel() {
         editPanel = new JPanel();
         add(editPanel, BorderLayout.CENTER);
@@ -114,9 +111,7 @@ public class ColourRampConfigPanel extends JPanel implements ColourRampUpdateInt
         }
     }
 
-    /**
-     * Creates the top panel.
-     */
+    /** Creates the top panel. */
     private void createTopPanel() {
         JPanel topPanel = new JPanel();
         topPanel.setLayout(null);
@@ -144,15 +139,19 @@ public class ColourRampConfigPanel extends JPanel implements ColourRampUpdateInt
         }
         typeComboBox = new ValueComboBox();
         typeComboBox.initialiseSingle(dataList);
-        typeComboBox.setBounds(BasePanel.WIDGET_X_START, 0, BasePanel.WIDGET_EXTENDED_WIDTH,
+        typeComboBox.setBounds(
+                BasePanel.WIDGET_X_START,
+                0,
+                BasePanel.WIDGET_EXTENDED_WIDTH,
                 BasePanel.WIDGET_HEIGHT);
         topPanel.add(typeComboBox);
-        typeComboBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                typeChanged(typeComboBox.getSelectedValue());
-            }
-        });
+        typeComboBox.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        typeChanged(typeComboBox.getSelectedValue());
+                    }
+                });
     }
 
     /**
@@ -176,8 +175,8 @@ public class ColourRampConfigPanel extends JPanel implements ColourRampUpdateInt
 
         ValueComboBoxData selectedValue = typeComboBox.getSelectedValue();
         if (selectedValue != null) {
-            ColourRampPanelInterface selectedPanel = this.colourRampMapCache
-                    .get(selectedValue.getKey());
+            ColourRampPanelInterface selectedPanel =
+                    this.colourRampMapCache.get(selectedValue.getKey());
 
             if (selectedPanel != null) {
                 selectedPanel.populate(value);
@@ -187,8 +186,9 @@ public class ColourRampConfigPanel extends JPanel implements ColourRampUpdateInt
 
     /**
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.colourramp.ColourRampUpdateInterface#colourRampUpdate(com.sldeditor.colourramp.ramp.ColourRampData)
+     *
+     * @see
+     *     com.sldeditor.colourramp.ColourRampUpdateInterface#colourRampUpdate(com.sldeditor.colourramp.ramp.ColourRampData)
      */
     @Override
     public void colourRampUpdate(ColourRampData data) {
@@ -203,12 +203,11 @@ public class ColourRampConfigPanel extends JPanel implements ColourRampUpdateInt
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.colourramp.ColourRampUpdateInterface#getColourMapModel()
      */
     @Override
     public ColourMapModel getColourMapModel() {
         return colourMapModel;
     }
-
 }

@@ -18,7 +18,8 @@
  */
 
 /**
- * @author Robert Ward (SCISYS)
+ * Package containing classes to present vendor options in a table.
  *
+ * @author Robert Ward (SCISYS)
  */
 package com.sldeditor.common.vendoroption.selection;

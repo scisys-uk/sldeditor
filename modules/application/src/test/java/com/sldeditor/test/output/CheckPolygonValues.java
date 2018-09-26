@@ -19,24 +19,21 @@
 
 package com.sldeditor.test.output;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import com.sldeditor.test.SLDTestRunner;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * The Class CheckPolygonValues runs the tests for setting values in polygon slds.
- * 
+ *
  * @author Robert Ward (SCISYS)
  */
 public class CheckPolygonValues {
     /** The test. */
     private static SLDTestRunner test = null;
 
-    /**
-     * Sets the up once.
-     */
-    @BeforeClass
+    /** Sets the up once. */
+    @BeforeAll
     public static void setUpOnce() {
         test = new SLDTestRunner();
     }

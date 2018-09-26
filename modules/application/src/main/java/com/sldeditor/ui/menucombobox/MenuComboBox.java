@@ -19,41 +19,33 @@
 
 package com.sldeditor.ui.menucombobox;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Graphics;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
-import javax.swing.border.EtchedBorder;
-
 import com.sldeditor.common.console.ConsoleManager;
-import com.sldeditor.common.vendoroption.VendorOptionUpdateInterface;
 import com.sldeditor.common.vendoroption.VendorOptionManager;
+import com.sldeditor.common.vendoroption.VendorOptionUpdateInterface;
 import com.sldeditor.common.vendoroption.VersionData;
 import com.sldeditor.ui.iface.ValueComboBoxDataSelectedInterface;
 import com.sldeditor.ui.widgets.ValueComboBoxData;
 import com.sldeditor.ui.widgets.ValueComboBoxDataGroup;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.swing.JButton;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.border.EtchedBorder;
 
 /**
  * The Class MenuComboBox.
- * 
+ *
  * @author Robert Ward (SCISYS)
  */
 public class MenuComboBox extends JMenuBar implements VendorOptionUpdateInterface {
@@ -108,8 +100,8 @@ public class MenuComboBox extends JMenuBar implements VendorOptionUpdateInterfac
                 if (group.isSubMenu()) {
                     JMenu subMenu = new JMenu(group.getGroupName());
                     for (ValueComboBoxData data : group.getDataList()) {
-                        if (VendorOptionManager.getInstance().isAllowed(vendorOptionVersionsList,
-                                data.getVendorOption())) {
+                        if (VendorOptionManager.getInstance()
+                                .isAllowed(vendorOptionVersionsList, data.getVendorOption())) {
                             ComboMenuItem menuItem = new ComboMenuItem(data);
 
                             subMenu.add(menuItem);
@@ -127,8 +119,8 @@ public class MenuComboBox extends JMenuBar implements VendorOptionUpdateInterfac
                     }
                 } else {
                     for (ValueComboBoxData data : group.getDataList()) {
-                        if (VendorOptionManager.getInstance().isAllowed(vendorOptionVersionsList,
-                                data.getVendorOption())) {
+                        if (VendorOptionManager.getInstance()
+                                .isAllowed(vendorOptionVersionsList, data.getVendorOption())) {
                             ComboMenuItem menuItem = new ComboMenuItem(data);
 
                             menu.add(menuItem);
@@ -174,10 +166,9 @@ public class MenuComboBox extends JMenuBar implements VendorOptionUpdateInterfac
     }
 
     /**
-     * The listener interface for receiving menuItem events. 
-     * The class that is interested in processing a menuItem event implements this interface,
-     * and the object created with that class is registered with 
-     * a component using the component's addMenuItemListener method. When the
+     * The listener interface for receiving menuItem events. The class that is interested in
+     * processing a menuItem event implements this interface, and the object created with that class
+     * is registered with a component using the component's addMenuItemListener method. When the
      * menuItem event occurs, that object's appropriate method is invoked.
      *
      * @see MenuItemEvent
@@ -186,7 +177,7 @@ public class MenuComboBox extends JMenuBar implements VendorOptionUpdateInterfac
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
          */
         public void actionPerformed(ActionEvent e) {
@@ -225,7 +216,7 @@ public class MenuComboBox extends JMenuBar implements VendorOptionUpdateInterfac
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.swing.JComponent#setPreferredSize(java.awt.Dimension)
      */
     public void setPreferredSize(Dimension size) {
@@ -234,7 +225,7 @@ public class MenuComboBox extends JMenuBar implements VendorOptionUpdateInterfac
 
     /**
      * (non-Javadoc)
-     * 
+     *
      * @see javax.swing.JComponent#getPreferredSize()
      */
     public Dimension getPreferredSize() {
@@ -273,56 +264,7 @@ public class MenuComboBox extends JMenuBar implements VendorOptionUpdateInterfac
         return d;
     }
 
-    /**
-     * The main method.
-     *
-     * @param args the arguments
-     */
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-        } catch (Exception evt) {
-            // Do nothing
-        }
-
-        List<ValueComboBoxData> list1 = new ArrayList<ValueComboBoxData>();
-        list1.add(new ValueComboBoxData("circle", "Circle", MenuComboBox.class));
-        ValueComboBoxData square = new ValueComboBoxData("square", "Square", MenuComboBox.class);
-        list1.add(square);
-        list1.add(new ValueComboBoxData("triangle", "Triangle", MenuComboBox.class));
-
-        List<ValueComboBoxData> list2 = new ArrayList<ValueComboBoxData>();
-        list2.add(new ValueComboBoxData("shp://lArrow", "shp://lArrow", MenuComboBox.class));
-        list2.add(new ValueComboBoxData("shp://star", "shp://star", MenuComboBox.class));
-        list2.add(new ValueComboBoxData("shp://dot", "shp://dot", MenuComboBox.class));
-
-        List<ValueComboBoxDataGroup> listAll = new ArrayList<ValueComboBoxDataGroup>();
-        listAll.add(new ValueComboBoxDataGroup("", list1, false));
-        listAll.add(new ValueComboBoxDataGroup("Shapes", list2, true));
-
-        MenuComboBox comboMenu = new MenuComboBox(null);
-        comboMenu.initialiseMenu(listAll);
-
-        comboMenu.setSelectedData(square);
-
-        JFrame frame = new JFrame();
-        JPanel panel = new JPanel();
-        panel.add(comboMenu);
-        frame.getContentPane().setLayout(new FlowLayout());
-        frame.getContentPane().add(panel);
-
-        frame.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                System.exit(0);
-            }
-        });
-        frame.setSize(370, 100);
-        frame.setVisible(true);
-    }
-
-    /**
-     * The Class ComboMenuItem.
-     */
+    /** The Class ComboMenuItem. */
     public static class ComboMenuItem extends JMenuItem {
 
         /** The Constant serialVersionUID. */
@@ -351,9 +293,7 @@ public class MenuComboBox extends JMenuBar implements VendorOptionUpdateInterfac
         }
     }
 
-    /**
-     * The Class ComboMenu.
-     */
+    /** The Class ComboMenu. */
     public static class ComboMenu extends JMenu {
 
         /** The Constant serialVersionUID. */
@@ -378,7 +318,7 @@ public class MenuComboBox extends JMenuBar implements VendorOptionUpdateInterfac
 
         /**
          * (non-Javadoc)
-         * 
+         *
          * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
          */
         public void paintComponent(Graphics g) {
@@ -402,9 +342,7 @@ public class MenuComboBox extends JMenuBar implements VendorOptionUpdateInterfac
         refreshMenu();
     }
 
-    /**
-     * Refresh menu.
-     */
+    /** Refresh menu. */
     private void refreshMenu() {
         if (menu != null) {
             // Remove the previous menu
@@ -425,7 +363,7 @@ public class MenuComboBox extends JMenuBar implements VendorOptionUpdateInterfac
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.preferences.iface.PrefUpdateVendorOptionInterface#vendorOptionsUpdated(java.util.List)
      */
     @Override
@@ -460,7 +398,7 @@ public class MenuComboBox extends JMenuBar implements VendorOptionUpdateInterfac
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.swing.JComponent#setEnabled(boolean)
      */
     @Override
@@ -472,7 +410,7 @@ public class MenuComboBox extends JMenuBar implements VendorOptionUpdateInterfac
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.awt.Component#isEnabled()
      */
     @Override

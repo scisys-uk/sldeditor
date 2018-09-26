@@ -19,27 +19,24 @@
 
 package com.sldeditor.test.unit.create.sld;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.sldeditor.create.sld.NewPolygonSLD;
 import org.geotools.styling.NamedLayer;
 import org.geotools.styling.PolygonSymbolizer;
 import org.geotools.styling.StyledLayer;
 import org.geotools.styling.StyledLayerDescriptor;
 import org.geotools.styling.Symbolizer;
-import org.junit.Test;
-
-import com.sldeditor.create.sld.NewPolygonSLD;
+import org.junit.jupiter.api.Test;
 
 /**
  * The Class NewPolygonSLD.
- * 
+ *
  * @author Robert Ward (SCISYS)
  */
 public class NewPolygonSLDTest {
 
-    /**
-     * Test new polygon sld.
-     */
+    /** Test new polygon sld. */
     @Test
     public void testNewPolygonSLD() {
         NewPolygonSLD newData = new NewPolygonSLD();
@@ -52,8 +49,16 @@ public class NewPolygonSLDTest {
 
         NamedLayer namedLayer = (NamedLayer) styledLayer;
 
-        Symbolizer symbolizer = namedLayer.styles().get(0).featureTypeStyles().get(0).rules().get(0)
-                .symbolizers().get(0);
+        Symbolizer symbolizer =
+                namedLayer
+                        .styles()
+                        .get(0)
+                        .featureTypeStyles()
+                        .get(0)
+                        .rules()
+                        .get(0)
+                        .symbolizers()
+                        .get(0);
 
         assertTrue(symbolizer instanceof PolygonSymbolizer);
     }

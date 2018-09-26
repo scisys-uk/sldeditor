@@ -22,7 +22,6 @@ package com.sldeditor.datasource.chooseraster;
 import java.io.File;
 import java.util.Iterator;
 import java.util.Set;
-
 import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.coverage.grid.io.GridFormatFinder;
 import org.geotools.coverage.grid.io.UnknownFormat;
@@ -35,6 +34,9 @@ import org.geotools.factory.GeoTools;
  */
 public class DetermineRasterFormat {
 
+    /** The class under test flag. */
+    private static boolean classUndertest = false;
+
     /**
      * Get user to choose raster format.
      *
@@ -42,13 +44,13 @@ public class DetermineRasterFormat {
      * @param selectionPanel the selection panel
      * @return the abstract grid format
      */
-    public static AbstractGridFormat choose(File rasterFile,
-            ChooseRasterFormatInterface selectionPanel) {
+    public static AbstractGridFormat choose(
+            File rasterFile, ChooseRasterFormatInterface selectionPanel) {
         if (rasterFile != null) {
-            final Set<AbstractGridFormat> formats = GridFormatFinder.findFormats(rasterFile,
-                    GeoTools.getDefaultHints());
+            final Set<AbstractGridFormat> formats =
+                    GridFormatFinder.findFormats(rasterFile, GeoTools.getDefaultHints());
 
-            if (formats.size() > 1) {
+            if (!classUndertest && (formats.size() > 1)) {
                 if (selectionPanel != null) {
                     AbstractGridFormat selectedFormat = selectionPanel.showPanel(formats);
                     if (selectedFormat != null) {
@@ -66,4 +68,8 @@ public class DetermineRasterFormat {
         return new UnknownFormat();
     }
 
+    /** Sets the class under test flag to true. */
+    public static void setClassUndertest() {
+        DetermineRasterFormat.classUndertest = true;
+    }
 }

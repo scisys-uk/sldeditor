@@ -19,128 +19,130 @@
 
 package com.sldeditor.test.unit.filter.v2.function.temporal;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.filter.BinaryComparisonAbstract;
-import org.geotools.filter.temporal.BinaryTemporalOperatorImpl;
-import org.junit.Test;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.sldeditor.filter.v2.function.FilterConfigInterface;
 import com.sldeditor.filter.v2.function.temporal.After;
+import com.sldeditor.filter.v2.function.temporal.AnyInteracts;
 import com.sldeditor.filter.v2.function.temporal.Before;
-import com.sldeditor.filter.v2.function.temporal.Beyond;
+import com.sldeditor.filter.v2.function.temporal.BegunBy;
 import com.sldeditor.filter.v2.function.temporal.During;
+import com.sldeditor.filter.v2.function.temporal.EndedBy;
+import com.sldeditor.filter.v2.function.temporal.Meets;
+import com.sldeditor.filter.v2.function.temporal.MetBy;
 import com.sldeditor.filter.v2.function.temporal.TContains;
 import com.sldeditor.filter.v2.function.temporal.TEquals;
 import com.sldeditor.filter.v2.function.temporal.TOverlaps;
+import java.util.ArrayList;
+import java.util.List;
+import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.filter.temporal.BinaryTemporalOperatorImpl;
+import org.junit.jupiter.api.Test;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.Expression;
 
 /**
- * Unit test for the following classes:
- * {@link com.sldeditor.filter.v2.function.property.IsBetween}.
- * {@link com.sldeditor.filter.v2.function.property.IsEqualTo}.
- * {@link com.sldeditor.filter.v2.function.property.IsGreaterThan}.
- * {@link com.sldeditor.filter.v2.function.property.IsGreaterThanEqualTo}.
- * {@link com.sldeditor.filter.v2.function.property.IsLessThan}.
- * {@link com.sldeditor.filter.v2.function.property.IsLessThanEqualTo}.
- * {@link com.sldeditor.filter.v2.function.property.IsNotEqualTo}.
- * 
- * @author Robert Ward (SCISYS)
+ * Unit tests for the following temporal filter classes.
  *
+ * @author Robert Ward (SCISYS)
  */
 public class TemporalTests {
 
     private FilterFactory ff = CommonFactoryFinder.getFilterFactory();
+    private String category = "Test category";
 
     /**
-     * Unit test for the following class:
-     * {@link com.sldeditor.filter.v2.function.temporal.After}.
+     * Unit test for the following class: {@link com.sldeditor.filter.v2.function.temporal.After}.
      */
     @Test
     public void testAfter() {
-        testClass(new After());
+        testClass(new After(category));
     }
 
     /**
-     * Unit test for the following class:
-     * {@link com.sldeditor.filter.v2.function.temporal.Before}.
+     * Unit test for the following class: {@link com.sldeditor.filter.v2.function.temporal.Before}.
      */
     @Test
     public void testBefore() {
-        testClass(new Before());
+        testClass(new Before(category));
     }
 
     /**
-     * Unit test for the following class:
-     * {@link com.sldeditor.filter.v2.function.temporal.Beyond}.
-     */
-    @Test
-    public void testBeyond() {
-        Beyond objUnderTest = new Beyond();
-
-        assertNotNull(objUnderTest.getFilterConfiguration());
-        assertNotNull(objUnderTest.createFilter());
-        assertNull(objUnderTest.createLogicFilter(null));
-
-        BinaryComparisonAbstract filter = (BinaryComparisonAbstract)objUnderTest.createFilter(null);
-        assertNull(filter.getExpression1());
-        assertNull(filter.getExpression2());
-
-        List<Expression> parameterList = new ArrayList<Expression>();
-        parameterList.add(ff.literal("expr1"));
-
-        filter = (BinaryComparisonAbstract) objUnderTest.createFilter(parameterList);
-        assertNull(filter.getExpression1());
-        assertNull(filter.getExpression2());
-
-        parameterList.add(ff.literal("expr2"));
-        filter = (BinaryComparisonAbstract) objUnderTest.createFilter(parameterList);
-        assertNotNull(filter.getExpression1());
-        assertNotNull(filter.getExpression2());
-
-        System.out.println(filter.toString());
-    }
-
-    /**
-     * Unit test for the following class:
-     * {@link com.sldeditor.filter.v2.function.temporal.During}.
+     * Unit test for the following class: {@link com.sldeditor.filter.v2.function.temporal.During}.
      */
     @Test
     public void testDuring() {
-        testClass(new During());
+        testClass(new During(category));
     }
 
     /**
-     * Unit test for the following class:
-     * {@link com.sldeditor.filter.v2.function.temporal.TContains}.
+     * Unit test for the following class: {@link
+     * com.sldeditor.filter.v2.function.temporal.TContains}.
      */
     @Test
     public void testTContains() {
-        testClass(new TContains());
+        testClass(new TContains(category));
     }
 
     /**
-     * Unit test for the following class:
-     * {@link com.sldeditor.filter.v2.function.temporal.TEquals}.
+     * Unit test for the following class: {@link com.sldeditor.filter.v2.function.temporal.TEquals}.
      */
     @Test
     public void testTEquals() {
-        testClass(new TEquals());
+        testClass(new TEquals(category));
     }
 
     /**
-     * Unit test for the following class:
-     * {@link com.sldeditor.filter.v2.function.temporal.TOverlaps}.
+     * Unit test for the following class: {@link
+     * com.sldeditor.filter.v2.function.temporal.TOverlaps}.
      */
     @Test
     public void testTOverlaps() {
-        testClass(new TOverlaps());
+        testClass(new TOverlaps(category));
+    }
+
+    /**
+     * Unit test for the following class: {@link
+     * com.sldeditor.filter.v2.function.temporal.testBegunBy}.
+     */
+    @Test
+    public void testBegunBy() {
+        testClass(new BegunBy(category));
+    }
+
+    /**
+     * Unit test for the following class: {@link com.sldeditor.filter.v2.function.temporal.EndedBy}.
+     */
+    @Test
+    public void testEndedBy() {
+        testClass(new EndedBy(category));
+    }
+
+    /**
+     * Unit test for the following class: {@link
+     * com.sldeditor.filter.v2.function.temporal.AnyInteracts}.
+     */
+    @Test
+    public void testAnyInteracts() {
+        testClass(new AnyInteracts(category));
+    }
+
+    /**
+     * Unit test for the following class: {@link com.sldeditor.filter.v2.function.temporal.Meets}.
+     */
+    @Test
+    public void testMeets() {
+        testClass(new Meets(category));
+    }
+
+    /**
+     * Unit test for the following class: {@link com.sldeditor.filter.v2.function.temporal.MetBy}.
+     */
+    @Test
+    public void testMetBy() {
+        testClass(new MetBy(category));
     }
 
     /**
@@ -154,7 +156,7 @@ public class TemporalTests {
         assertNull(objUnderTest.createLogicFilter(null));
 
         BinaryTemporalOperatorImpl filter =
-                (BinaryTemporalOperatorImpl)objUnderTest.createFilter(null);
+                (BinaryTemporalOperatorImpl) objUnderTest.createFilter(null);
         assertNull(filter.getExpression1());
         assertNull(filter.getExpression2());
 
@@ -169,6 +171,7 @@ public class TemporalTests {
         filter = (BinaryTemporalOperatorImpl) objUnderTest.createFilter(parameterList);
         assertNotNull(filter.getExpression1());
         assertNotNull(filter.getExpression2());
+        assertTrue(objUnderTest.category().compareTo(category) == 0);
 
         System.out.println(filter.toString());
     }

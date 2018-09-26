@@ -19,24 +19,29 @@
 
 package com.sldeditor.test.unit.ui.detail.config;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
-import org.opengis.filter.expression.Expression;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.sldeditor.common.undo.UndoEvent;
+import com.sldeditor.common.undo.UndoManager;
 import com.sldeditor.common.xml.ui.FieldIdEnum;
 import com.sldeditor.ui.detail.config.FieldConfigBase;
 import com.sldeditor.ui.detail.config.FieldConfigCommonData;
-import com.sldeditor.ui.detail.config.FieldConfigString;
 import com.sldeditor.ui.detail.config.FieldConfigPopulate;
+import com.sldeditor.ui.detail.config.FieldConfigString;
+import com.sldeditor.ui.detail.config.FieldConfigStringButtonInterface;
+import com.sldeditor.ui.iface.UpdateSymbolInterface;
+import java.awt.Component;
+import javax.swing.JButton;
+import org.junit.jupiter.api.Test;
+import org.locationtech.jts.geom.Geometry;
+import org.opengis.filter.expression.Expression;
 
 /**
  * The unit test for FieldConfigString.
- * 
+ *
  * <p>{@link com.sldeditor.ui.detail.config.FieldConfigString}
  *
  * @author Robert Ward (SCISYS)
@@ -44,18 +49,20 @@ import com.sldeditor.ui.detail.config.FieldConfigPopulate;
 public class FieldConfigStringTest {
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigString#internal_setEnabled(boolean)}. Test
-     * method for {@link com.sldeditor.ui.detail.config.FieldConfigString#isEnabled()}. Test method
-     * for {@link com.sldeditor.ui.detail.config.FieldConfigString#createUI(javax.swing.Box)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigString#internal_setEnabled(boolean)}. Test method
+     * for {@link com.sldeditor.ui.detail.config.FieldConfigString#isEnabled()}. Test method for
+     * {@link com.sldeditor.ui.detail.config.FieldConfigString#createUI(javax.swing.Box)}.
      */
     @Test
     public void testSetEnabled() {
         // Value only, no attribute/expression dropdown
         boolean valueOnly = true;
-        FieldConfigString field = new FieldConfigString(
-                new FieldConfigCommonData(String.class, FieldIdEnum.NAME, "test label", valueOnly),
-                "button text");
+        FieldConfigString field =
+                new FieldConfigString(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.NAME, "test label", valueOnly, false),
+                        "button text");
 
         // Text field will not have been created
         boolean expectedValue = true;
@@ -74,9 +81,11 @@ public class FieldConfigStringTest {
 
         // Has attribute/expression dropdown
         valueOnly = false;
-        FieldConfigString field2 = new FieldConfigString(
-                new FieldConfigCommonData(String.class, FieldIdEnum.NAME, "test label", valueOnly),
-                "button text");
+        FieldConfigString field2 =
+                new FieldConfigString(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.NAME, "test label", valueOnly, false),
+                        "button text");
 
         // Text field will not have been created
         expectedValue = true;
@@ -101,9 +110,11 @@ public class FieldConfigStringTest {
     @Test
     public void testSetVisible() {
         boolean valueOnly = true;
-        FieldConfigString field = new FieldConfigString(
-                new FieldConfigCommonData(String.class, FieldIdEnum.NAME, "test label", valueOnly),
-                "button text");
+        FieldConfigString field =
+                new FieldConfigString(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.NAME, "test label", valueOnly, false),
+                        "button text");
 
         boolean expectedValue = true;
         field.setVisible(expectedValue);
@@ -113,10 +124,10 @@ public class FieldConfigStringTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigString#generateExpression()}. Test method
-     * for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigString#populateExpression(java.lang.Object, org.opengis.filter.expression.Expression)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigString#generateExpression()}. Test method for
+     * {@link com.sldeditor.ui.detail.config.FieldConfigString#populateExpression(java.lang.Object,
+     * org.opengis.filter.expression.Expression)}.
      */
     @Test
     public void testGenerateExpression() {
@@ -133,9 +144,11 @@ public class FieldConfigStringTest {
             }
         }
 
-        TestFieldConfigString field = new TestFieldConfigString(
-                new FieldConfigCommonData(String.class, FieldIdEnum.NAME, "test label", valueOnly),
-                "button text");
+        TestFieldConfigString field =
+                new TestFieldConfigString(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.NAME, "test label", valueOnly, false),
+                        "button text");
         Expression actualExpression = field.callGenerateExpression();
         assertNull(actualExpression);
 
@@ -149,21 +162,27 @@ public class FieldConfigStringTest {
         field.populateExpression(expectedValue);
         actualExpression = field.callGenerateExpression();
         assertTrue(expectedValue.compareTo(actualExpression.toString()) == 0);
+
+        // Try with unsupported type
+        field.populateExpression(Integer.valueOf(0));
+        actualExpression = field.callGenerateExpression();
+        assertTrue(expectedValue.compareTo(actualExpression.toString()) == 0);
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigString#revertToDefaultValue()}. Test method
-     * for
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigString#revertToDefaultValue()}. Test method for
      * {@link com.sldeditor.ui.detail.config.FieldConfigString#setDefaultValue(java.lang.String)}.
      * Test method for {@link com.sldeditor.ui.detail.config.FieldConfigString#getStringValue()}.
      */
     @Test
     public void testRevertToDefaultValue() {
         boolean valueOnly = true;
-        FieldConfigString field = new FieldConfigString(
-                new FieldConfigCommonData(String.class, FieldIdEnum.NAME, "test label", valueOnly),
-                "button text");
+        FieldConfigString field =
+                new FieldConfigString(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.NAME, "test label", valueOnly, false),
+                        "button text");
 
         String expectedDefaultValue = "default value";
         field.setDefaultValue(expectedDefaultValue);
@@ -176,15 +195,18 @@ public class FieldConfigStringTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigString#setTestValue(com.sldeditor.ui.detail.config.FieldId, java.lang.String)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigString#setTestValue(com.sldeditor.ui.detail.config.FieldId,
+     * java.lang.String)}.
      */
     @Test
     public void testSetTestValueFieldIdString() {
         boolean valueOnly = true;
-        FieldConfigString field = new FieldConfigString(
-                new FieldConfigCommonData(String.class, FieldIdEnum.NAME, "test label", valueOnly),
-                "button text");
+        FieldConfigString field =
+                new FieldConfigString(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.NAME, "test label", valueOnly, false),
+                        "button text");
 
         String expectedTestValue = "test value";
         field.setTestValue(FieldIdEnum.ANCHOR_POINT_V, expectedTestValue);
@@ -196,8 +218,8 @@ public class FieldConfigStringTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigString#createCopy(com.sldeditor.ui.detail.config.FieldConfigBase)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigString#createCopy(com.sldeditor.ui.detail.config.FieldConfigBase)}.
      */
     @Test
     public void testCreateCopy() {
@@ -214,9 +236,11 @@ public class FieldConfigStringTest {
             }
         }
 
-        TestFieldConfigString field = new TestFieldConfigString(
-                new FieldConfigCommonData(String.class, FieldIdEnum.NAME, "test label", valueOnly),
-                "button text");
+        TestFieldConfigString field =
+                new TestFieldConfigString(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.NAME, "test label", valueOnly, false),
+                        "button text");
         FieldConfigString copy = (FieldConfigString) field.callCreateCopy(null);
         assertNull(copy);
 
@@ -227,32 +251,36 @@ public class FieldConfigStringTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigString#attributeSelection(java.lang.String)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigString#attributeSelection(java.lang.String)}.
      */
     @Test
     public void testAttributeSelection() {
         boolean valueOnly = true;
-        FieldConfigString field = new FieldConfigString(
-                new FieldConfigCommonData(String.class, FieldIdEnum.NAME, "test label", valueOnly),
-                "button text");
+        FieldConfigString field =
+                new FieldConfigString(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.NAME, "test label", valueOnly, false),
+                        "button text");
 
         field.attributeSelection("field");
         // Does nothing
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigString#undoAction(com.sldeditor.common.undo.UndoInterface)}.
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigString#redoAction(com.sldeditor.common.undo.UndoInterface)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigString#undoAction(com.sldeditor.common.undo.UndoInterface)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigString#redoAction(com.sldeditor.common.undo.UndoInterface)}.
      */
     @Test
     public void testUndoAction() {
         boolean valueOnly = true;
-        FieldConfigString field = new FieldConfigString(
-                new FieldConfigCommonData(String.class, FieldIdEnum.NAME, "test label", valueOnly),
-                "button text");
+        FieldConfigString field =
+                new FieldConfigString(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.NAME, "test label", valueOnly, false),
+                        "button text");
 
         field.undoAction(null);
         field.redoAction(null);
@@ -269,8 +297,9 @@ public class FieldConfigStringTest {
         String expectedUndoTestValue = "undo value";
         String expectedRedoTestValue = "redo value";
 
-        UndoEvent undoEvent = new UndoEvent(null, FieldIdEnum.UNKNOWN, expectedUndoTestValue,
-                expectedRedoTestValue);
+        UndoEvent undoEvent =
+                new UndoEvent(
+                        null, FieldIdEnum.UNKNOWN, expectedUndoTestValue, expectedRedoTestValue);
         field.undoAction(undoEvent);
         assertTrue(expectedUndoTestValue.compareTo(field.getStringValue()) == 0);
 
@@ -279,16 +308,162 @@ public class FieldConfigStringTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigString#addButtonPressedListener(com.sldeditor.ui.detail.config.FieldConfigStringButtonInterface)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigString#addButtonPressedListener(com.sldeditor.ui.detail.config.FieldConfigStringButtonInterface)}.
      */
     @Test
     public void testAddButtonPressedListener() {
+        class TestFieldConfigString extends FieldConfigString {
+            /**
+             * Instantiates a new test field config string.
+             *
+             * @param commonData the common data
+             * @param buttonText the button text
+             */
+            public TestFieldConfigString(FieldConfigCommonData commonData, String buttonText) {
+                super(commonData, buttonText);
+            }
+
+            /* (non-Javadoc)
+             * @see com.sldeditor.ui.detail.config.FieldConfigGeometry#externalButtonPressed(javax.swing.JButton)
+             */
+            @Override
+            protected void externalButtonPressed(JButton buttonExternal) {
+                super.externalButtonPressed(buttonExternal);
+            }
+
+            /* (non-Javadoc)
+             * @see com.sldeditor.ui.detail.config.FieldConfigString#valueStored(java.lang.String, java.lang.String)
+             */
+            @Override
+            protected void valueStored(String prev, String text) {
+                super.valueStored(prev, text);
+            }
+        }
+
+        class TestFieldConfigStringButtonInterface implements FieldConfigStringButtonInterface {
+
+            public boolean buttonPressed = false;
+
+            @Override
+            public void buttonPressed(Component buttonExternal) {
+                buttonPressed = true;
+            }
+        };
+
+        TestFieldConfigStringButtonInterface buttonPressedInterface =
+                new TestFieldConfigStringButtonInterface();
+
         boolean valueOnly = true;
-        FieldConfigString field = new FieldConfigString(
-                new FieldConfigCommonData(String.class, FieldIdEnum.NAME, "test label", valueOnly),
-                "button text");
+        TestFieldConfigString field =
+                new TestFieldConfigString(
+                        new FieldConfigCommonData(
+                                Geometry.class, FieldIdEnum.NAME, "label", valueOnly, false),
+                        "button text");
+
         field.addButtonPressedListener(null);
+
+        field.addButtonPressedListener(buttonPressedInterface);
+        assertFalse(buttonPressedInterface.buttonPressed);
+        field.externalButtonPressed(null);
+        assertTrue(buttonPressedInterface.buttonPressed);
     }
 
+    @Test
+    public void testValueStored() {
+        boolean valueOnly = true;
+
+        class TestFieldConfigString extends FieldConfigString {
+            public TestFieldConfigString(FieldConfigCommonData commonData) {
+                super(commonData, "Button");
+            }
+
+            /* (non-Javadoc)
+             * @see com.sldeditor.ui.detail.config.FieldConfigString#valueStored(java.lang.String, java.lang.String)
+             */
+            @Override
+            protected void valueStored(String prev, String text) {
+                super.valueStored(prev, text);
+            }
+        }
+
+        TestFieldConfigString field =
+                new TestFieldConfigString(
+                        new FieldConfigCommonData(
+                                Geometry.class, FieldIdEnum.NAME, "label", valueOnly, false));
+
+        class TestUpdateSymbol implements UpdateSymbolInterface {
+            public boolean dataChanged = false;
+
+            @Override
+            public void dataChanged(FieldIdEnum changedField) {
+                dataChanged = true;
+            }
+        };
+        TestUpdateSymbol update = new TestUpdateSymbol();
+
+        int undoListSize = UndoManager.getInstance().getUndoListSize();
+        field.createUI();
+        field.addDataChangedListener(update);
+        assertFalse(update.dataChanged);
+        field.valueStored("prev value", "test value");
+        assertTrue(update.dataChanged);
+        update.dataChanged = false;
+        field.valueStored("same value", "same value");
+        assertFalse(update.dataChanged);
+
+        assertEquals(undoListSize + 1, UndoManager.getInstance().getUndoListSize());
+        update.dataChanged = false;
+
+        // now suppress undo events
+        field =
+                new TestFieldConfigString(
+                        new FieldConfigCommonData(
+                                Geometry.class, FieldIdEnum.NAME, "label", valueOnly, true));
+
+        undoListSize = UndoManager.getInstance().getUndoListSize();
+        field.addDataChangedListener(update);
+        assertFalse(update.dataChanged);
+        field.valueStored("prev value", "test value again");
+        assertTrue(update.dataChanged);
+
+        assertEquals(undoListSize, UndoManager.getInstance().getUndoListSize());
+    }
+
+    @Test
+    public void testValueStoredRegExp() {
+        boolean valueOnly = true;
+
+        class TestFieldConfigString extends FieldConfigString {
+            public TestFieldConfigString(FieldConfigCommonData commonData) {
+                super(commonData, "Button");
+            }
+
+            /* (non-Javadoc)
+             * @see com.sldeditor.ui.detail.config.FieldConfigString#valueStored(java.lang.String, java.lang.String)
+             */
+            @Override
+            protected void valueStored(String prev, String text) {
+                super.valueStored(prev, text);
+            }
+        }
+
+        TestFieldConfigString field =
+                new TestFieldConfigString(
+                        new FieldConfigCommonData(
+                                Geometry.class, FieldIdEnum.NAME, "label", valueOnly, false));
+
+        field.setMaximumStringSize(1);
+        field.setRegExpString(true);
+
+        field.createUI();
+        String testValue = ".a";
+        field.setTestValue(FieldIdEnum.NAME, testValue);
+        assertEquals(testValue, field.getStringValue());
+
+        field.setTestValue(FieldIdEnum.NAME, "");
+        assertEquals(".", field.getStringValue());
+        field.setTestValue(FieldIdEnum.NAME, ".^");
+        assertEquals(".^", field.getStringValue());
+    }
 }

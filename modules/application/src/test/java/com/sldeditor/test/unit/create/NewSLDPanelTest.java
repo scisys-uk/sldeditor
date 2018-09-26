@@ -1,7 +1,7 @@
 /*
  * SLD Editor - The Open Source Java SLD Editor
  *
- * Copyright (C) 2016, SCISYS UK Limited
+ * Copyright (C) 2018, SCISYS UK Limited
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,39 +19,30 @@
 
 package com.sldeditor.test.unit.create;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
-import java.util.List;
-
-import javax.swing.ComboBoxModel;
-
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.sldeditor.common.SLDDataInterface;
 import com.sldeditor.create.NewSLDPanel;
+import java.util.List;
+import javax.swing.ComboBoxModel;
+import org.junit.jupiter.api.Test;
 
 /**
  * The Class NewSLDPanelTest.
- * 
- * <p>Set to @Ignore currently because it takes focus away from the user when the unit test is run
+ *
+ * <p>Set to @Disabled currently because it takes focus away from the user when the unit test is run
  *
  * @author Robert Ward (SCISYS)
  */
-@Ignore
 public class NewSLDPanelTest {
 
-    /**
-     * The Class TestNewSLDPanel.
-     */
+    /** The Class TestNewSLDPanel. */
     class TestNewSLDPanel extends NewSLDPanel {
         /** The Constant serialVersionUID. */
         private static final long serialVersionUID = 1L;
 
-        /**
-         * Instantiates a new test new sld panel.
-         */
+        /** Instantiates a new test new sld panel. */
         public TestNewSLDPanel() {
             super();
         }
@@ -74,46 +65,28 @@ public class NewSLDPanelTest {
             return comboBoxNewSLD.getModel();
         }
 
-        /**
-         * Ok button.
-         */
+        /** Ok button. */
         public void okButton() {
-            Thread one = new Thread() {
-                public void run() {
-                    try {
-                        Thread.sleep(1000);
-                        okButtonPressed();
-                    } catch (InterruptedException v) {
-                        System.out.println(v);
-                    }
-                }
-            };
-
-            one.start();
+            okButtonPressed();
         }
 
-        /**
-         * Cancel button.
-         */
+        /** Cancel button. */
         public void cancelButton() {
-            Thread one = new Thread() {
-                public void run() {
-                    try {
-                        Thread.sleep(1000);
-                        cancelButtonPressed();
-                    } catch (InterruptedException v) {
-                        System.out.println(v);
-                    }
-                }
-            };
+            cancelButtonPressed();
+        }
 
-            one.start();
+        /*
+         * (non-Javadoc)
+         *
+         * @see com.sldeditor.create.NewSLDPanel#getSelectedSLD()
+         */
+        @Override
+        protected List<SLDDataInterface> getSelectedSLD() {
+            return super.getSelectedSLD();
         }
     }
 
-    /**
-     * Test.
-     */
+    /** Test. */
     @Test
     public void test() {
         TestNewSLDPanel panel = new TestNewSLDPanel();
@@ -122,15 +95,14 @@ public class NewSLDPanelTest {
 
         // Press cancel
         panel.cancelButton();
-        assertNull(panel.showDialog(null));
+        assertNull(panel.getSelectedSLD());
 
         for (int index = 0; index < panel.getData().getSize(); index++) {
             panel.setData(index);
             panel.okButton();
-            List<SLDDataInterface> sldData = panel.showDialog(null);
+            List<SLDDataInterface> sldData = panel.getSelectedSLD();
             assertEquals(1, sldData.size());
             assertEquals(panel.getData().getElementAt(index), sldData.get(0).getLayerName());
         }
     }
-
 }

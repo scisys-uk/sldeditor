@@ -19,12 +19,8 @@
 
 package com.sldeditor.test.unit.ui.detail;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import org.geotools.styling.StyledLayerDescriptor;
-import org.geotools.styling.UserLayer;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.sldeditor.common.data.SelectedSymbol;
 import com.sldeditor.common.defaultsymbol.DefaultSymbols;
@@ -32,10 +28,13 @@ import com.sldeditor.common.xml.ui.FieldIdEnum;
 import com.sldeditor.ui.detail.GraphicPanelFieldManager;
 import com.sldeditor.ui.detail.UserLayerDetails;
 import com.sldeditor.ui.detail.config.FieldConfigString;
+import org.geotools.styling.StyledLayerDescriptor;
+import org.geotools.styling.UserLayer;
+import org.junit.jupiter.api.Test;
 
 /**
  * The unit test for UserLayerDetails.
- * 
+ *
  * <p>{@link com.sldeditor.ui.detail.UserLayerDetails}
  *
  * @author Robert Ward (SCISYS)
@@ -43,12 +42,15 @@ import com.sldeditor.ui.detail.config.FieldConfigString;
 public class UserLayerDetailsTest {
 
     /**
-     * Test method for {@link com.sldeditor.ui.detail.UserLayerDetails#UserLayerDetails(com.sldeditor.filter.v2.function.FunctionNameInterface)}.
-     * Test method for {@link com.sldeditor.ui.detail.UserLayerDetails#populate(com.sldeditor.common.data.SelectedSymbol)}.
-     * Test method for {@link com.sldeditor.ui.detail.UserLayerDetails#dataChanged(com.sldeditor.ui.detail.config.FieldId)}.
-     * Test method for {@link com.sldeditor.ui.detail.UserLayerDetails#getFieldDataManager()}.
-     * Test method for {@link com.sldeditor.ui.detail.UserLayerDetails#isDataPresent()}.
-     * Test method for {@link com.sldeditor.ui.detail.UserLayerDetails#preLoadSymbol()}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.UserLayerDetails#UserLayerDetails(com.sldeditor.filter.v2.function.FunctionNameInterface)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.UserLayerDetails#populate(com.sldeditor.common.data.SelectedSymbol)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.UserLayerDetails#dataChanged(com.sldeditor.ui.detail.config.FieldId)}.
+     * Test method for {@link com.sldeditor.ui.detail.UserLayerDetails#getFieldDataManager()}. Test
+     * method for {@link com.sldeditor.ui.detail.UserLayerDetails#isDataPresent()}. Test method for
+     * {@link com.sldeditor.ui.detail.UserLayerDetails#preLoadSymbol()}.
      */
     @Test
     public void testUserLayerDetails() {

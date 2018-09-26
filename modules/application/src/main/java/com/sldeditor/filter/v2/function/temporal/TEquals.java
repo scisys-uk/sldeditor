@@ -19,34 +19,29 @@
 
 package com.sldeditor.filter.v2.function.temporal;
 
-import java.util.Date;
-import java.util.List;
-
-import org.geotools.filter.temporal.TEqualsImpl;
-import org.opengis.filter.Filter;
-import org.opengis.filter.expression.Expression;
-
 import com.sldeditor.filter.v2.expression.ExpressionTypeEnum;
+import com.sldeditor.filter.v2.function.FilterBase;
 import com.sldeditor.filter.v2.function.FilterConfigInterface;
 import com.sldeditor.filter.v2.function.FilterExtendedInterface;
 import com.sldeditor.filter.v2.function.FilterName;
 import com.sldeditor.filter.v2.function.FilterNameParameter;
+import java.util.Date;
+import java.util.List;
+import org.geotools.filter.temporal.TEqualsImpl;
+import org.opengis.filter.Filter;
+import org.opengis.filter.expression.Expression;
 
 /**
  * The Class TEquals.
  *
  * @author Robert Ward (SCISYS)
  */
-public class TEquals implements FilterConfigInterface {
+public class TEquals extends FilterBase implements FilterConfigInterface {
 
-    /**
-     * The Class TEqualsExtended.
-     */
+    /** The Class TEqualsExtended. */
     public class TEqualsExtended extends TEqualsImpl implements FilterExtendedInterface {
 
-        /**
-         * Instantiates a new t equals extended.
-         */
+        /** Instantiates a new t equals extended. */
         public TEqualsExtended() {
             super(null, null);
         }
@@ -63,7 +58,7 @@ public class TEquals implements FilterConfigInterface {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.lang.Object#toString()
          */
         public String toString() {
@@ -72,7 +67,7 @@ public class TEquals implements FilterConfigInterface {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.sldeditor.filter.v2.function.FilterExtendedInterface#getOriginalFilter()
          */
         @Override
@@ -81,10 +76,9 @@ public class TEquals implements FilterConfigInterface {
         }
     }
 
-    /**
-     * Default constructor.
-     */
-    public TEquals() {
+    /** Default constructor. */
+    public TEquals(String category) {
+        super(category);
     }
 
     /**

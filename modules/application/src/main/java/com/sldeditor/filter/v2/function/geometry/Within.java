@@ -19,34 +19,29 @@
 
 package com.sldeditor.filter.v2.function.geometry;
 
-import java.util.List;
-
-import org.geotools.filter.spatial.WithinImpl;
-import org.opengis.filter.Filter;
-import org.opengis.filter.expression.Expression;
-
 import com.sldeditor.filter.v2.expression.ExpressionTypeEnum;
+import com.sldeditor.filter.v2.function.FilterBase;
 import com.sldeditor.filter.v2.function.FilterConfigInterface;
 import com.sldeditor.filter.v2.function.FilterExtendedInterface;
 import com.sldeditor.filter.v2.function.FilterName;
 import com.sldeditor.filter.v2.function.FilterNameParameter;
-import com.vividsolutions.jts.geom.Geometry;
+import java.util.List;
+import org.geotools.filter.spatial.WithinImpl;
+import org.locationtech.jts.geom.Geometry;
+import org.opengis.filter.Filter;
+import org.opengis.filter.expression.Expression;
 
 /**
  * The Class Within.
  *
  * @author Robert Ward (SCISYS)
  */
-public class Within implements FilterConfigInterface {
+public class Within extends FilterBase implements FilterConfigInterface {
 
-    /**
-     * The Class WithinExtended.
-     */
+    /** The Class WithinExtended. */
     public class WithinExtended extends WithinImpl implements FilterExtendedInterface {
 
-        /**
-         * Instantiates a new within extended.
-         */
+        /** Instantiates a new within extended. */
         public WithinExtended() {
             super(null, null);
         }
@@ -63,16 +58,16 @@ public class Within implements FilterConfigInterface {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see org.geotools.filter.GeometryFilterImpl#toString()
          */
         public String toString() {
-            return "[ " + getExpression1() + " Within " + getExpression2() + " ]";
+            return "[ " + getExpression1() + " within " + getExpression2() + " ]";
         }
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.sldeditor.filter.v2.function.FilterExtendedInterface#getOriginalFilter()
          */
         @Override
@@ -81,10 +76,9 @@ public class Within implements FilterConfigInterface {
         }
     }
 
-    /**
-     * Default constructor.
-     */
-    public Within() {
+    /** Default constructor. */
+    public Within(String category) {
+        super(category);
     }
 
     /**
@@ -97,8 +91,9 @@ public class Within implements FilterConfigInterface {
         FilterName filterName = new FilterName("Within", Boolean.class);
         filterName.addParameter(
                 new FilterNameParameter("property", ExpressionTypeEnum.PROPERTY, Geometry.class));
-        filterName.addParameter(new FilterNameParameter("expression", ExpressionTypeEnum.EXPRESSION,
-                Geometry.class));
+        filterName.addParameter(
+                new FilterNameParameter(
+                        "expression", ExpressionTypeEnum.EXPRESSION, Geometry.class));
 
         return filterName;
     }

@@ -17,8 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Package containing dialogs for editing CQL filters and expressions.
- * 
+ * Package containing dialogs for editing filters and expressions.
+ *
  * @author Robert Ward (SCISYS)
  */
 package com.sldeditor.filter;

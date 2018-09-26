@@ -19,27 +19,6 @@
 
 package com.sldeditor.colourramp.ramp;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-
-import org.geotools.filter.LiteralExpressionImpl;
-import org.geotools.styling.ColorMap;
-import org.geotools.styling.ColorMapEntry;
-import org.opengis.filter.expression.Expression;
-
 import com.sldeditor.colourramp.ColourRamp;
 import com.sldeditor.colourramp.ColourRampConfigPanel;
 import com.sldeditor.colourramp.ColourRampPanelInterface;
@@ -60,6 +39,24 @@ import com.sldeditor.ui.detail.config.colourmap.ColourMapModel;
 import com.sldeditor.ui.widgets.FieldPanel;
 import com.sldeditor.ui.widgets.ValueComboBox;
 import com.sldeditor.ui.widgets.ValueComboBoxData;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import org.geotools.filter.LiteralExpressionImpl;
+import org.geotools.styling.ColorMap;
+import org.geotools.styling.ColorMapEntry;
+import org.opengis.filter.expression.Expression;
 
 /**
  * The Class ColourRampPanel.
@@ -102,27 +99,28 @@ public class ColourRampPanel implements ColourRampPanelInterface, UndoActionInte
      * Instantiates a new colour ramp panel.
      *
      * @param xmlTwoColourRampList the ramp data list
+     * @param suppressUndoEvents the suppress undo events
      */
-    public ColourRampPanel(XMLTwoColourRampList xmlTwoColourRampList) {
+    public ColourRampPanel(XMLTwoColourRampList xmlTwoColourRampList, boolean suppressUndoEvents) {
         this.rampDataList = createColourRampList(xmlTwoColourRampList);
 
-        createUI();
+        createUI(suppressUndoEvents);
     }
 
-    /**
-     * Creates the UI.
-     */
-    private void createUI() {
+    /** Creates the UI. */
+    private void createUI(boolean suppressUndoEvents) {
         panel = new JPanel();
         panel.setLayout(new BorderLayout());
-        createTopPanel();
-        createFieldPanel();
+        createTopPanel(suppressUndoEvents);
+        createFieldPanel(suppressUndoEvents);
     }
 
     /**
      * Creates the top panel.
+     *
+     * @param suppressUndoEvents the suppress undo events
      */
-    private void createTopPanel() {
+    private void createTopPanel(boolean suppressUndoEvents) {
         final UndoActionInterface undoObj = this;
 
         JPanel topPanel = new JPanel();
@@ -134,41 +132,65 @@ public class ColourRampPanel implements ColourRampPanelInterface, UndoActionInte
         List<ValueComboBoxData> dataList = populateColourRamps(false);
         rampComboBox = new ValueComboBox();
         rampComboBox.initialiseSingle(dataList);
-        rampComboBox.setBounds(BasePanel.WIDGET_X_START, 0, BasePanel.WIDGET_EXTENDED_WIDTH,
+        rampComboBox.setBounds(
+                BasePanel.WIDGET_X_START,
+                0,
+                BasePanel.WIDGET_EXTENDED_WIDTH,
                 BasePanel.WIDGET_HEIGHT);
         topPanel.add(rampComboBox);
-        rampComboBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!isPopulating()) {
-                    Integer newValueObj = rampComboBox.getSelectedIndex();
+        rampComboBox.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (!isPopulating()) {
+                            if (!suppressUndoEvents) {
+                                Integer newValueObj = rampComboBox.getSelectedIndex();
 
-                    UndoManager.getInstance().addUndoEvent(new UndoEvent(undoObj,
-                            FieldIdEnum.COLOUR_RAMP_COLOUR, oldColourRampIndex, newValueObj));
+                                UndoManager.getInstance()
+                                        .addUndoEvent(
+                                                new UndoEvent(
+                                                        undoObj,
+                                                        FieldIdEnum.COLOUR_RAMP_COLOUR,
+                                                        oldColourRampIndex,
+                                                        newValueObj));
 
-                    oldColourRampIndex = newValueObj;
-                }
-            }
-        });
+                                oldColourRampIndex = newValueObj;
+                            }
+                        }
+                    }
+                });
 
-        reverseCheckbox = new JCheckBox(
-                Localisation.getString(ColourRampConfigPanel.class, "ColourRampPanel.reverse"));
-        reverseCheckbox.setBounds(rampComboBox.getX() + rampComboBox.getWidth() + 20, 0,
-                BasePanel.WIDGET_STANDARD_WIDTH, BasePanel.WIDGET_HEIGHT);
-        reverseCheckbox.addActionListener(new ActionListener() {
+        reverseCheckbox =
+                new JCheckBox(
+                        Localisation.getString(
+                                ColourRampConfigPanel.class, "ColourRampPanel.reverse"));
+        reverseCheckbox.setBounds(
+                rampComboBox.getX() + rampComboBox.getWidth() + 20,
+                0,
+                BasePanel.WIDGET_STANDARD_WIDTH,
+                BasePanel.WIDGET_HEIGHT);
+        reverseCheckbox.addActionListener(
+                new ActionListener() {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                boolean isSelected = reverseCheckbox.isSelected();
-                Boolean oldValueObj = Boolean.valueOf(!isSelected);
-                Boolean newValueObj = Boolean.valueOf(isSelected);
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        boolean isSelected = reverseCheckbox.isSelected();
 
-                UndoManager.getInstance().addUndoEvent(new UndoEvent(undoObj,
-                        FieldIdEnum.COLOUR_RAMP_REVERSE, oldValueObj, newValueObj));
+                        if (!suppressUndoEvents) {
+                            Boolean oldValueObj = Boolean.valueOf(!isSelected);
+                            Boolean newValueObj = Boolean.valueOf(isSelected);
 
-                reverseColourRamp(isSelected);
-            }
-        });
+                            UndoManager.getInstance()
+                                    .addUndoEvent(
+                                            new UndoEvent(
+                                                    undoObj,
+                                                    FieldIdEnum.COLOUR_RAMP_REVERSE,
+                                                    oldValueObj,
+                                                    newValueObj));
+                        }
+                        reverseColourRamp(isSelected);
+                    }
+                });
         topPanel.add(reverseCheckbox);
     }
 
@@ -185,8 +207,8 @@ public class ColourRampPanel implements ColourRampPanelInterface, UndoActionInte
         if (rampDataList != null) {
             for (ColourRamp data : rampDataList) {
                 String key = data.toString();
-                ValueComboBoxData valueData = new ValueComboBoxData(key,
-                        data.getImageIcon(reverseColours), getClass());
+                ValueComboBoxData valueData =
+                        new ValueComboBoxData(key, data.getImageIcon(reverseColours), getClass());
 
                 dataList.add(valueData);
                 colourRampCache.put(key, data);
@@ -198,8 +220,10 @@ public class ColourRampPanel implements ColourRampPanelInterface, UndoActionInte
 
     /**
      * Creates the field panel.
+     *
+     * @param suppressUndoEvents the suppress undo events
      */
-    private void createFieldPanel() {
+    private void createFieldPanel(boolean suppressUndoEvents) {
         JPanel tablePanel = new JPanel();
         tablePanel.setLayout(new BorderLayout());
         panel.add(tablePanel, BorderLayout.CENTER);
@@ -208,34 +232,47 @@ public class ColourRampPanel implements ColourRampPanelInterface, UndoActionInte
         tablePanel.add(dataPanel, BorderLayout.NORTH);
         dataPanel.setLayout(new BoxLayout(dataPanel, BoxLayout.Y_AXIS));
 
-        minValueSpinner = new FieldConfigInteger(new FieldConfigCommonData(getClass(),
-                FieldIdEnum.UNKNOWN,
-                Localisation.getField(ColourRampConfigPanel.class, "ColourRampPanel.minValue"),
-                true));
+        minValueSpinner =
+                new FieldConfigInteger(
+                        new FieldConfigCommonData(
+                                getClass(),
+                                FieldIdEnum.UNKNOWN,
+                                Localisation.getField(
+                                        ColourRampConfigPanel.class, "ColourRampPanel.minValue"),
+                                true,
+                                suppressUndoEvents));
         minValueSpinner.createUI();
         FieldPanel fieldPanel = minValueSpinner.getPanel();
         dataPanel.add(fieldPanel);
 
-        JButton resetValueButton = new JButton(
-                Localisation.getString(ColourRampConfigPanel.class, "ColourRampPanel.reset"));
-        minValueSpinner.addUI(resetValueButton, 20, BasePanel.WIDGET_BUTTON_WIDTH,
-                BasePanel.WIDGET_HEIGHT);
+        JButton resetValueButton =
+                new JButton(
+                        Localisation.getString(
+                                ColourRampConfigPanel.class, "ColourRampPanel.reset"));
+        minValueSpinner.addUI(
+                resetValueButton, 20, BasePanel.WIDGET_BUTTON_WIDTH, BasePanel.WIDGET_HEIGHT);
         minValueSpinner.populateField(0);
-        resetValueButton.addActionListener(new ActionListener() {
+        resetValueButton.addActionListener(
+                new ActionListener() {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (parentObj != null) {
-                    ColourMapModel model = parentObj.getColourMapModel();
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (parentObj != null) {
+                            ColourMapModel model = parentObj.getColourMapModel();
 
-                    populate(model.getColourMap());
-                }
-            }
-        });
-        maxValueSpinner = new FieldConfigInteger(new FieldConfigCommonData(getClass(),
-                FieldIdEnum.UNKNOWN,
-                Localisation.getField(ColourRampConfigPanel.class, "ColourRampPanel.maxValue"),
-                true));
+                            populate(model.getColourMap());
+                        }
+                    }
+                });
+        maxValueSpinner =
+                new FieldConfigInteger(
+                        new FieldConfigCommonData(
+                                getClass(),
+                                FieldIdEnum.UNKNOWN,
+                                Localisation.getField(
+                                        ColourRampConfigPanel.class, "ColourRampPanel.maxValue"),
+                                true,
+                                suppressUndoEvents));
         maxValueSpinner.createUI();
         maxValueSpinner.populateField(100);
         dataPanel.add(maxValueSpinner.getPanel());
@@ -243,29 +280,30 @@ public class ColourRampPanel implements ColourRampPanelInterface, UndoActionInte
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.setSize(BasePanel.FIELD_PANEL_WIDTH, BasePanel.WIDGET_HEIGHT);
-        JButton applyButton = new JButton(
-                Localisation.getString(ColourRampConfigPanel.class, "common.apply"));
+        JButton applyButton =
+                new JButton(Localisation.getString(ColourRampConfigPanel.class, "common.apply"));
         applyButton.setPreferredSize(
                 new Dimension(BasePanel.WIDGET_BUTTON_WIDTH, BasePanel.WIDGET_HEIGHT));
-        applyButton.addActionListener(new ActionListener() {
+        applyButton.addActionListener(
+                new ActionListener() {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (parentObj != null) {
-                    ColourRampData data = new ColourRampData();
-                    data.setMaxValue(maxValueSpinner.getIntValue());
-                    data.setMinValue(minValueSpinner.getIntValue());
-                    data.setReverseColours(reverseCheckbox.isSelected());
-                    ValueComboBoxData selectedItem = (ValueComboBoxData) rampComboBox
-                            .getSelectedItem();
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (parentObj != null) {
+                            ColourRampData data = new ColourRampData();
+                            data.setMaxValue(maxValueSpinner.getIntValue());
+                            data.setMinValue(minValueSpinner.getIntValue());
+                            data.setReverseColours(reverseCheckbox.isSelected());
+                            ValueComboBoxData selectedItem =
+                                    (ValueComboBoxData) rampComboBox.getSelectedItem();
 
-                    ColourRamp colourRamp = colourRampCache.get(selectedItem.getKey());
-                    data.setColourRamp(colourRamp);
+                            ColourRamp colourRamp = colourRampCache.get(selectedItem.getKey());
+                            data.setColourRamp(colourRamp);
 
-                    parentObj.colourRampUpdate(data);
-                }
-            }
-        });
+                            parentObj.colourRampUpdate(data);
+                        }
+                    }
+                });
         buttonPanel.add(applyButton);
         dataPanel.add(buttonPanel);
     }
@@ -277,7 +315,7 @@ public class ColourRampPanel implements ColourRampPanelInterface, UndoActionInte
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.colourramp.ColourRampPanelInterface#getTitle()
      */
     @Override
@@ -292,7 +330,7 @@ public class ColourRampPanel implements ColourRampPanelInterface, UndoActionInte
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.colourramp.ColourRampPanelInterface#getPanel()
      */
     @Override
@@ -302,8 +340,9 @@ public class ColourRampPanel implements ColourRampPanelInterface, UndoActionInte
 
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.colourramp.ColourRampPanelInterface#populate(org.geotools.styling.ColorMap)
+     *
+     * @see
+     * com.sldeditor.colourramp.ColourRampPanelInterface#populate(org.geotools.styling.ColorMap)
      */
     @Override
     public void populate(ColorMap value) {
@@ -314,7 +353,6 @@ public class ColourRampPanel implements ColourRampPanelInterface, UndoActionInte
                 populateValue(maxValueSpinner, entries[entries.length - 1]);
             }
         }
-
     }
 
     /**
@@ -352,8 +390,9 @@ public class ColourRampPanel implements ColourRampPanelInterface, UndoActionInte
 
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.colourramp.ColourRampPanelInterface#setParent(com.sldeditor.colourramp.ColourRampUpdateInterface)
+     *
+     * @see com.sldeditor.colourramp.ColourRampPanelInterface#setParent(com.sldeditor.colourramp.
+     * ColourRampUpdateInterface)
      */
     @Override
     public void setParent(ColourRampUpdateInterface parent) {
@@ -362,56 +401,62 @@ public class ColourRampPanel implements ColourRampPanelInterface, UndoActionInte
 
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.common.undo.UndoActionInterface#undoAction(com.sldeditor.common.undo.UndoInterface)
+     *
+     * @see com.sldeditor.common.undo.UndoActionInterface#undoAction(com.sldeditor.common.undo.
+     * UndoInterface)
      */
     @Override
     public void undoAction(UndoInterface undoRedoObject) {
         if (undoRedoObject != null) {
             switch (undoRedoObject.getFieldId()) {
-            case COLOUR_RAMP_COLOUR: {
-                int oldValue = ((Integer) undoRedoObject.getOldValue()).intValue();
+                case COLOUR_RAMP_COLOUR:
+                    {
+                        int oldValue = ((Integer) undoRedoObject.getOldValue()).intValue();
 
-                rampComboBox.setSelectedIndex(oldValue);
-            }
-                break;
-            case COLOUR_RAMP_REVERSE: {
-                Boolean oldValueObj = (Boolean) undoRedoObject.getOldValue();
+                        rampComboBox.setSelectedIndex(oldValue);
+                    }
+                    break;
+                case COLOUR_RAMP_REVERSE:
+                    {
+                        Boolean oldValueObj = (Boolean) undoRedoObject.getOldValue();
 
-                reverseCheckbox.setSelected(oldValueObj.booleanValue());
-                reverseColourRamp(oldValueObj.booleanValue());
-            }
-                break;
-            default:
-                break;
+                        reverseCheckbox.setSelected(oldValueObj.booleanValue());
+                        reverseColourRamp(oldValueObj.booleanValue());
+                    }
+                    break;
+                default:
+                    break;
             }
         }
     }
 
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.common.undo.UndoActionInterface#redoAction(com.sldeditor.common.undo.UndoInterface)
+     *
+     * @see com.sldeditor.common.undo.UndoActionInterface#redoAction(com.sldeditor.common.undo.
+     * UndoInterface)
      */
     @Override
     public void redoAction(UndoInterface undoRedoObject) {
         if (undoRedoObject != null) {
             switch (undoRedoObject.getFieldId()) {
-            case COLOUR_RAMP_COLOUR: {
-                int newValue = ((Integer) undoRedoObject.getNewValue()).intValue();
+                case COLOUR_RAMP_COLOUR:
+                    {
+                        int newValue = ((Integer) undoRedoObject.getNewValue()).intValue();
 
-                rampComboBox.setSelectedIndex(newValue);
-            }
-                break;
-            case COLOUR_RAMP_REVERSE: {
-                Boolean newValueObj = (Boolean) undoRedoObject.getNewValue();
+                        rampComboBox.setSelectedIndex(newValue);
+                    }
+                    break;
+                case COLOUR_RAMP_REVERSE:
+                    {
+                        Boolean newValueObj = (Boolean) undoRedoObject.getNewValue();
 
-                reverseCheckbox.setSelected(newValueObj.booleanValue());
-                reverseColourRamp(newValueObj.booleanValue());
-            }
-                break;
-            default:
-                break;
+                        reverseCheckbox.setSelected(newValueObj.booleanValue());
+                        reverseColourRamp(newValueObj.booleanValue());
+                    }
+                    break;
+                default:
+                    break;
             }
         }
     }

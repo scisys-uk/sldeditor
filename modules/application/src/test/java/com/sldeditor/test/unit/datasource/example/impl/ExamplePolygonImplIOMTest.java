@@ -19,24 +19,23 @@
 
 package com.sldeditor.test.unit.datasource.example.impl;
 
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.sldeditor.datasource.example.impl.ExamplePolygonImplIOM;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for ExamplePolygonImplIOM class.
- * 
- * <p>{@link com.sldeditor.datasource.example.impl.ExamplePolygonImplIOM}
- * 
- * @author Robert Ward (SCISYS)
  *
+ * <p>{@link com.sldeditor.datasource.example.impl.ExamplePolygonImplIOM}
+ *
+ * @author Robert Ward (SCISYS)
  */
 public class ExamplePolygonImplIOMTest {
 
     /**
-     * Test method for {@link com.sldeditor.datasource.example.impl.ExamplePolygonImplIOM#getLine()}.
+     * Test method for {@link
+     * com.sldeditor.datasource.example.impl.ExamplePolygonImplIOM#getLine()}.
      */
     @Test
     public void testExample() {

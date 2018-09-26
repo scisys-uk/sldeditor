@@ -19,13 +19,12 @@
 
 package com.sldeditor.colourramp;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.sldeditor.colourramp.ramp.ColourRampPanel;
 import com.sldeditor.common.xml.ParseXML;
 import com.sldeditor.common.xml.ui.ColourRampPresets;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A factory for creating ColourRamp objects.
@@ -41,19 +40,26 @@ public class ColourRampFactory {
     private static final String OUTPUT_SCHEMA_RESOURCE = "/xsd/colourramp.xsd";
 
     /** The colour ramp map. */
-    private static Map<ColourRampPanelInterface, List<ColourRamp>> colourRampMap = 
+    private static Map<ColourRampPanelInterface, List<ColourRamp>> colourRampMap =
             new HashMap<ColourRampPanelInterface, List<ColourRamp>>();
 
     /**
      * Populate.
+     *
+     * @param suppressUndoEvents the suppress undo events
      */
-    private static void populate() {
+    private static void populate(boolean suppressUndoEvents) {
         if (colourRampMap.isEmpty()) {
-            ColourRampPresets colourRampXML = (ColourRampPresets) ParseXML.parseFile("",
-                    ColourRampFactory.COLOUR_RAMP_XML, OUTPUT_SCHEMA_RESOURCE,
-                    ColourRampPresets.class);
+            ColourRampPresets colourRampXML =
+                    (ColourRampPresets)
+                            ParseXML.parseFile(
+                                    "",
+                                    ColourRampFactory.COLOUR_RAMP_XML,
+                                    OUTPUT_SCHEMA_RESOURCE,
+                                    ColourRampPresets.class);
 
-            ColourRampPanel panel = new ColourRampPanel(colourRampXML.getTwoColourRampList());
+            ColourRampPanel panel =
+                    new ColourRampPanel(colourRampXML.getTwoColourRampList(), suppressUndoEvents);
 
             colourRampMap.put(panel, panel.getColourRampList());
         }
@@ -62,10 +68,12 @@ public class ColourRampFactory {
     /**
      * Gets the colour ramp map.
      *
+     * @param suppressUndoEvents the suppress undo events
      * @return the colourRampMap
      */
-    public static Map<ColourRampPanelInterface, List<ColourRamp>> getColourRampMap() {
-        populate();
+    public static Map<ColourRampPanelInterface, List<ColourRamp>> getColourRampMap(
+            boolean suppressUndoEvents) {
+        populate(suppressUndoEvents);
 
         return colourRampMap;
     }

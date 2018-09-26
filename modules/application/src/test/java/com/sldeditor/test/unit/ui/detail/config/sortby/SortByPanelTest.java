@@ -19,18 +19,16 @@
 
 package com.sldeditor.test.unit.ui.detail.config.sortby;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.sldeditor.datasource.impl.GeometryTypeEnum;
+import com.sldeditor.ui.detail.config.sortby.SortByPanel;
+import com.sldeditor.ui.detail.config.sortby.SortByUpdateInterface;
 import java.awt.BorderLayout;
 import java.util.Arrays;
 import java.util.List;
-
 import javax.swing.JDialog;
-
-import org.junit.Test;
-
-import com.sldeditor.ui.detail.config.sortby.SortByPanel;
-import com.sldeditor.ui.detail.config.sortby.SortByUpdateInterface;
+import org.junit.jupiter.api.Test;
 
 /**
  * The Class SortByPanelTest.
@@ -56,7 +54,7 @@ public class SortByPanelTest {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.sldeditor.ui.detail.config.sortby.SortByPanel#moveDestinationDown()
          */
         @Override
@@ -66,7 +64,7 @@ public class SortByPanelTest {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.sldeditor.ui.detail.config.sortby.SortByPanel#moveDestinationUp()
          */
         @Override
@@ -76,7 +74,7 @@ public class SortByPanelTest {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.sldeditor.ui.detail.config.sortby.SortByPanel#moveDestinationToSource()
          */
         @Override
@@ -86,7 +84,7 @@ public class SortByPanelTest {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.sldeditor.ui.detail.config.sortby.SortByPanel#moveSrcToDestination()
          */
         @Override
@@ -96,7 +94,7 @@ public class SortByPanelTest {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.sldeditor.ui.detail.config.sortby.SortByPanel#destinationSelected()
          */
         @Override
@@ -106,7 +104,7 @@ public class SortByPanelTest {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.sldeditor.ui.detail.config.sortby.SortByPanel#sourceSelected()
          */
         @Override
@@ -116,7 +114,7 @@ public class SortByPanelTest {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.sldeditor.ui.detail.config.sortby.SortByPanel#selectDestination(int[])
          */
         @Override
@@ -126,7 +124,7 @@ public class SortByPanelTest {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.sldeditor.ui.detail.config.sortby.SortByPanel#selectSource(int[])
          */
         @Override
@@ -150,7 +148,6 @@ public class SortByPanelTest {
         public void populateFieldNames(List<String> fieldList) {
             super.populateFieldNames(fieldList);
         }
-
     }
 
     class TestSortByUpdate implements SortByUpdateInterface {
@@ -159,7 +156,7 @@ public class SortByPanelTest {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.sldeditor.ui.detail.config.sortby.SortByUpdateInterface#sortByUpdated(java.lang.
          * String)
          */
@@ -168,12 +165,9 @@ public class SortByPanelTest {
             text = sortByString;
             System.out.println(sortByString);
         }
-
     }
 
-    /**
-     * Test method for {@link com.sldeditor.ui.detail.config.sortby.SortByPanel#SortByPanel()}.
-     */
+    /** Test method for {@link com.sldeditor.ui.detail.config.sortby.SortByPanel#SortByPanel()}. */
     @Test
     public void testSortByPanel() {
         TestSortByUpdate output = new TestSortByUpdate();
@@ -191,6 +185,7 @@ public class SortByPanelTest {
         List<String> fieldList = Arrays.asList("Field1", "Field2", "Field3", "Field4", "Field5");
         String selectedFieldList = "Field2 D, Field4 A";
         panel.populateFieldNames(fieldList);
+        panel.setText("");
         panel.setText(selectedFieldList);
 
         assertEquals(selectedFieldList, panel.getText());
@@ -235,8 +230,14 @@ public class SortByPanelTest {
         panel.populateFieldNames(fieldList);
         assertEquals("Field4 A, Field3 A", output.text);
 
+        // Increase code coverage
+        panel.dataSourceLoaded(GeometryTypeEnum.POINT, false);
+        panel.dataSourceAboutToUnloaded(null);
+
+        panel = new TestSortByPanel(null, 6);
+        panel.sortOrderUpdated();
+
         // If the next is uncommented the unit test stops being unattended
         // dialog.setVisible(true);
     }
-
 }

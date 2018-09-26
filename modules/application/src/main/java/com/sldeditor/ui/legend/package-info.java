@@ -18,7 +18,8 @@
  */
 
 /**
- * @author Robert Ward (SCISYS)
+ * Package containing the legend ui classes.
  *
+ * @author Robert Ward (SCISYS)
  */
 package com.sldeditor.ui.legend;

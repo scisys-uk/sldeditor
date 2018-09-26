@@ -18,7 +18,8 @@
  */
 
 /**
- * @author Robert Ward (SCISYS)
+ * Package to supply an abstract interface to the database clients.
  *
+ * @author Robert Ward (SCISYS)
  */
 package com.sldeditor.extension.filesystem.database.client;

@@ -19,46 +19,71 @@
 
 package com.sldeditor.datasource.config;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.table.AbstractTableModel;
-
 import com.sldeditor.common.console.ConsoleManager;
 import com.sldeditor.common.localisation.Localisation;
 import com.sldeditor.datasource.attribute.DataSourceAttributeData;
 import com.sldeditor.datasource.attribute.DataSourceAttributeList;
 import com.sldeditor.datasource.attribute.DataSourceAttributeListInterface;
 import com.sldeditor.datasource.impl.CreateSampleData;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.swing.table.AbstractTableModel;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 
 /**
  * JTable model that allows the viewing and editing of DataSourceAttribute objects.
- * 
+ *
  * @author Robert Ward (SCISYS)
  */
 public class DataSourceAttributeModel extends AbstractTableModel {
 
-    //CHECKSTYLE:OFF
+    // CHECKSTYLE:OFF
     /** The array of geometry names. */
-    private static final String[] GEOMETRY_NAME = { "Geometry (Point)", "Geometry (Multi-Point)",
-            "Geometry (Line)", "Geometry (Multi-Line)", "Geometry (Polygon)",
-            "Geometry (Multi-Polygon)", "String", "Integer", "Long", "Double", "Float", "Short",
-            "DateTime", "Timestamp" };
+    private static final String[] GEOMETRY_NAME = {
+        "Geometry (Point)",
+        "Geometry (Multi-Point)",
+        "Geometry (Line)",
+        "Geometry (Multi-Line)",
+        "Geometry (Polygon)",
+        "Geometry (Multi-Polygon)",
+        "String",
+        "Integer",
+        "Long",
+        "Double",
+        "Float",
+        "Short",
+        "DateTime",
+        "Timestamp",
+        "Object"
+    };
 
     /** The class type array. */
-    private static final  Class<?>[] CLASSTYPE = { Point.class, MultiPoint.class, LineString.class,
-            MultiLineString.class, Polygon.class, MultiPolygon.class, String.class, Integer.class,
-            Long.class, Double.class, Float.class, Short.class, Date.class, java.sql.Timestamp.class };
-    //CHECKSTYLE:ON
+    private static final Class<?>[] CLASSTYPE = {
+        Point.class,
+        MultiPoint.class,
+        LineString.class,
+        MultiLineString.class,
+        Polygon.class,
+        MultiPolygon.class,
+        String.class,
+        Integer.class,
+        Long.class,
+        Double.class,
+        Float.class,
+        Short.class,
+        Date.class,
+        java.sql.Timestamp.class,
+        Object.class
+    };
+    // CHECKSTYLE:ON
 
     /** The type map. */
     private Map<Class<?>, String> typeMap = new HashMap<Class<?>, String>();
@@ -94,16 +119,17 @@ public class DataSourceAttributeModel extends AbstractTableModel {
     /** The is connected to data source. */
     private boolean isConnectedToDataSource = false;
 
-    /**
-     * Instantiates a new render attribute model.
-     */
+    /** Instantiates a new render attribute model. */
     public DataSourceAttributeModel() {
-        columnList.add(Localisation.getString(DataSourceAttributeModel.class,
-                "DataSourceAttributeModel.name"));
-        columnList.add(Localisation.getString(DataSourceAttributeModel.class,
-                "DataSourceAttributeModel.type"));
-        columnList.add(Localisation.getString(DataSourceAttributeModel.class,
-                "DataSourceAttributeModel.value"));
+        columnList.add(
+                Localisation.getString(
+                        DataSourceAttributeModel.class, "DataSourceAttributeModel.name"));
+        columnList.add(
+                Localisation.getString(
+                        DataSourceAttributeModel.class, "DataSourceAttributeModel.type"));
+        columnList.add(
+                Localisation.getString(
+                        DataSourceAttributeModel.class, "DataSourceAttributeModel.value"));
 
         int index = 0;
         while (index < GEOMETRY_NAME.length) {
@@ -138,7 +164,7 @@ public class DataSourceAttributeModel extends AbstractTableModel {
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.swing.table.AbstractTableModel#getColumnName(int)
      */
     @Override
@@ -161,8 +187,8 @@ public class DataSourceAttributeModel extends AbstractTableModel {
             DataSourceAttributeData existingData = valueMap.get(name);
 
             if (existingData != null) {
-                DataSourceAttributeData data = new DataSourceAttributeData(name,
-                        existingData.getType(), objValue);
+                DataSourceAttributeData data =
+                        new DataSourceAttributeData(name, existingData.getType(), objValue);
 
                 attributeList.add(data);
             }
@@ -180,7 +206,7 @@ public class DataSourceAttributeModel extends AbstractTableModel {
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
      */
     @Override
@@ -205,7 +231,7 @@ public class DataSourceAttributeModel extends AbstractTableModel {
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.swing.table.TableModel#getRowCount()
      */
     @Override
@@ -220,7 +246,7 @@ public class DataSourceAttributeModel extends AbstractTableModel {
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.swing.table.TableModel#getColumnCount()
      */
     @Override
@@ -237,7 +263,7 @@ public class DataSourceAttributeModel extends AbstractTableModel {
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.swing.table.TableModel#getValueAt(int, int)
      */
     @Override
@@ -246,14 +272,14 @@ public class DataSourceAttributeModel extends AbstractTableModel {
             DataSourceAttributeData data = valueList.get(rowIndex);
 
             switch (columnIndex) {
-            case FIELD_COLUMN_ID:
-                return data.getName();
-            case TYPE_COLUMN_ID:
-                return getTypeString(data.getType());
-            case VALUE_COLUMN_ID:
-                return data.getValue();
-            default:
-                break;
+                case FIELD_COLUMN_ID:
+                    return data.getName();
+                case TYPE_COLUMN_ID:
+                    return getTypeString(data.getType());
+                case VALUE_COLUMN_ID:
+                    return data.getValue();
+                default:
+                    break;
             }
         }
         return null;
@@ -270,11 +296,15 @@ public class DataSourceAttributeModel extends AbstractTableModel {
 
         if (key == null) {
             if (fieldType == null) {
-                ConsoleManager.getInstance().error(DataSourceAttributeModel.class,
-                        "Data Source : Unknown field type class");
+                ConsoleManager.getInstance()
+                        .error(
+                                DataSourceAttributeModel.class,
+                                "Data Source : Unknown field type class");
             } else {
-                ConsoleManager.getInstance().error(DataSourceAttributeModel.class,
-                        "Data Source : Unknown field type class : " + fieldType.getName());
+                ConsoleManager.getInstance()
+                        .error(
+                                DataSourceAttributeModel.class,
+                                "Data Source : Unknown field type class : " + fieldType.getName());
             }
         }
 
@@ -290,7 +320,7 @@ public class DataSourceAttributeModel extends AbstractTableModel {
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int, int)
      */
     @Override
@@ -298,29 +328,32 @@ public class DataSourceAttributeModel extends AbstractTableModel {
         if ((row >= 0) && (row < valueList.size())) {
             DataSourceAttributeData data = valueList.get(row);
             switch (col) {
-            case FIELD_COLUMN_ID: {
-                valueMap.remove(data.getName());
-                data.setName((String) value);
-                valueMap.put(data.getName(), data);
-                valueList.remove(row);
-                valueList.add(row, data);
-            }
-                break;
-            case TYPE_COLUMN_ID: {
-                Class<?> typeClass = getTypeClass((String) value);
-                data.setType(typeClass);
+                case FIELD_COLUMN_ID:
+                    {
+                        valueMap.remove(data.getName());
+                        data.setName((String) value);
+                        valueMap.put(data.getName(), data);
+                        valueList.remove(row);
+                        valueList.add(row, data);
+                    }
+                    break;
+                case TYPE_COLUMN_ID:
+                    {
+                        Class<?> typeClass = getTypeClass((String) value);
+                        data.setType(typeClass);
 
-                Object samppleValue = CreateSampleData.getFieldTypeValue(row, data.getName(),
-                        typeClass, null);
+                        Object samppleValue =
+                                CreateSampleData.getFieldTypeValue(
+                                        row, data.getName(), typeClass, null);
 
-                data.setValue(samppleValue);
-            }
-                break;
-            case VALUE_COLUMN_ID:
-                data.setValue(value);
-                break;
-            default:
-                break;
+                        data.setValue(samppleValue);
+                    }
+                    break;
+                case VALUE_COLUMN_ID:
+                    data.setValue(value);
+                    break;
+                default:
+                    break;
             }
             fireTableCellUpdated(row, col);
         }
@@ -352,9 +385,7 @@ public class DataSourceAttributeModel extends AbstractTableModel {
         return GEOMETRY_NAME;
     }
 
-    /**
-     * Adds the new field.
-     */
+    /** Adds the new field. */
     public void addNewField() {
         int index = valueMap.size();
         String name = String.format("%s_%d", DEFAULT_NEW_FIELD_NAME, index);

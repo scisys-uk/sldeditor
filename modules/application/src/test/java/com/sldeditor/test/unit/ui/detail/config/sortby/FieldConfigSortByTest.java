@@ -19,24 +19,25 @@
 
 package com.sldeditor.test.unit.ui.detail.config.sortby;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
-import org.opengis.filter.expression.Expression;
-
+import com.sldeditor.common.Controller;
 import com.sldeditor.common.undo.UndoEvent;
+import com.sldeditor.common.undo.UndoManager;
 import com.sldeditor.common.xml.ui.FieldIdEnum;
 import com.sldeditor.ui.detail.config.FieldConfigBase;
 import com.sldeditor.ui.detail.config.FieldConfigCommonData;
 import com.sldeditor.ui.detail.config.FieldConfigPopulate;
 import com.sldeditor.ui.detail.config.sortby.FieldConfigSortBy;
+import org.junit.jupiter.api.Test;
+import org.opengis.filter.expression.Expression;
 
 /**
  * The unit test for FieldConfigSortBy.
- * 
+ *
  * <p>{@link com.sldeditor.ui.detail.config.FieldConfigSortBy}
  *
  * @author Robert Ward (SCISYS)
@@ -44,17 +45,19 @@ import com.sldeditor.ui.detail.config.sortby.FieldConfigSortBy;
 public class FieldConfigSortByTest {
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigSortBy#internal_setEnabled(boolean)}. Test
-     * method for {@link com.sldeditor.ui.detail.config.FieldConfigSortBy#isEnabled()}. Test method
-     * for {@link com.sldeditor.ui.detail.config.FieldConfigSortBy#createUI(javax.swing.Box)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigSortBy#internal_setEnabled(boolean)}. Test method
+     * for {@link com.sldeditor.ui.detail.config.FieldConfigSortBy#isEnabled()}. Test method for
+     * {@link com.sldeditor.ui.detail.config.FieldConfigSortBy#createUI(javax.swing.Box)}.
      */
     @Test
     public void testSetEnabled() {
         // Value only, no attribute/expression dropdown
         boolean valueOnly = true;
-        FieldConfigSortBy field = new FieldConfigSortBy(
-                new FieldConfigCommonData(String.class, FieldIdEnum.NAME, "test label", valueOnly));
+        FieldConfigSortBy field =
+                new FieldConfigSortBy(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.NAME, "test label", valueOnly, false));
 
         // Text field will not have been created
         boolean expectedValue = true;
@@ -73,8 +76,10 @@ public class FieldConfigSortByTest {
 
         // Has attribute/expression dropdown
         valueOnly = false;
-        FieldConfigSortBy field2 = new FieldConfigSortBy(
-                new FieldConfigCommonData(String.class, FieldIdEnum.NAME, "test label", valueOnly));
+        FieldConfigSortBy field2 =
+                new FieldConfigSortBy(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.NAME, "test label", valueOnly, false));
 
         // Text field will not have been created
         expectedValue = true;
@@ -99,8 +104,10 @@ public class FieldConfigSortByTest {
     @Test
     public void testSetVisible() {
         boolean valueOnly = true;
-        FieldConfigSortBy field = new FieldConfigSortBy(
-                new FieldConfigCommonData(String.class, FieldIdEnum.NAME, "test label", valueOnly));
+        FieldConfigSortBy field =
+                new FieldConfigSortBy(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.NAME, "test label", valueOnly, false));
 
         boolean expectedValue = true;
         field.setVisible(expectedValue);
@@ -110,10 +117,10 @@ public class FieldConfigSortByTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigSortBy#generateExpression()}. Test method
-     * for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigSortBy#populateExpression(java.lang.Object, org.opengis.filter.expression.Expression)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigSortBy#generateExpression()}. Test method for
+     * {@link com.sldeditor.ui.detail.config.FieldConfigSortBy#populateExpression(java.lang.Object,
+     * org.opengis.filter.expression.Expression)}.
      */
     @Test
     public void testGenerateExpression() {
@@ -130,8 +137,10 @@ public class FieldConfigSortByTest {
             }
         }
 
-        TestFieldConfigSortBy field = new TestFieldConfigSortBy(
-                new FieldConfigCommonData(String.class, FieldIdEnum.NAME, "test label", valueOnly));
+        TestFieldConfigSortBy field =
+                new TestFieldConfigSortBy(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.NAME, "test label", valueOnly, false));
         Expression actualExpression = field.callGenerateExpression();
         assertNull(actualExpression);
 
@@ -146,6 +155,10 @@ public class FieldConfigSortByTest {
         actualExpression = field.callGenerateExpression();
         assertTrue(expectedValue.compareTo(actualExpression.toString()) == 0);
 
+        field.populateExpression(Integer.valueOf(1));
+        actualExpression = field.callGenerateExpression();
+        assertTrue(expectedValue.compareTo(actualExpression.toString()) == 0);
+
         expectedValue = "test A, test2 D, test3 D";
         field.populateField(expectedValue);
         field.sortByUpdated(expectedValue);
@@ -154,17 +167,18 @@ public class FieldConfigSortByTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigSortBy#revertToDefaultValue()}. Test method
-     * for
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigSortBy#revertToDefaultValue()}. Test method for
      * {@link com.sldeditor.ui.detail.config.FieldConfigSortBy#setDefaultValue(java.lang.String)}.
      * Test method for {@link com.sldeditor.ui.detail.config.FieldConfigSortBy#getStringValue()}.
      */
     @Test
     public void testRevertToDefaultValue() {
         boolean valueOnly = true;
-        FieldConfigSortBy field = new FieldConfigSortBy(
-                new FieldConfigCommonData(String.class, FieldIdEnum.NAME, "test label", valueOnly));
+        FieldConfigSortBy field =
+                new FieldConfigSortBy(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.NAME, "test label", valueOnly, false));
 
         String expectedDefaultValue = "default value";
         field.setDefaultValue(expectedDefaultValue);
@@ -176,8 +190,8 @@ public class FieldConfigSortByTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigSortBy#createCopy(com.sldeditor.ui.detail.config.FieldConfigBase)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigSortBy#createCopy(com.sldeditor.ui.detail.config.FieldConfigBase)}.
      */
     @Test
     public void testCreateCopy() {
@@ -194,8 +208,10 @@ public class FieldConfigSortByTest {
             }
         }
 
-        TestFieldConfigSortBy field = new TestFieldConfigSortBy(
-                new FieldConfigCommonData(String.class, FieldIdEnum.NAME, "test label", valueOnly));
+        TestFieldConfigSortBy field =
+                new TestFieldConfigSortBy(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.NAME, "test label", valueOnly, false));
         FieldConfigSortBy copy = (FieldConfigSortBy) field.callCreateCopy(null);
         assertNull(copy);
 
@@ -206,30 +222,34 @@ public class FieldConfigSortByTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigSortBy#attributeSelection(java.lang.String)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigSortBy#attributeSelection(java.lang.String)}.
      */
     @Test
     public void testAttributeSelection() {
         boolean valueOnly = true;
-        FieldConfigSortBy field = new FieldConfigSortBy(
-                new FieldConfigCommonData(String.class, FieldIdEnum.NAME, "test label", valueOnly));
+        FieldConfigSortBy field =
+                new FieldConfigSortBy(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.NAME, "test label", valueOnly, false));
 
         field.attributeSelection("field");
         // Does nothing
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigSortBy#undoAction(com.sldeditor.common.undo.UndoInterface)}.
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigSortBy#redoAction(com.sldeditor.common.undo.UndoInterface)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigSortBy#undoAction(com.sldeditor.common.undo.UndoInterface)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigSortBy#redoAction(com.sldeditor.common.undo.UndoInterface)}.
      */
     @Test
     public void testUndoAction() {
         boolean valueOnly = true;
-        FieldConfigSortBy field = new FieldConfigSortBy(
-                new FieldConfigCommonData(String.class, FieldIdEnum.NAME, "test label", valueOnly));
+        FieldConfigSortBy field =
+                new FieldConfigSortBy(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.NAME, "test label", valueOnly, false));
 
         field.undoAction(null);
         field.redoAction(null);
@@ -246,12 +266,39 @@ public class FieldConfigSortByTest {
         String expectedUndoTestValue = "test2 D";
         String expectedRedoTestValue = "test A, test2 D";
 
-        UndoEvent undoEvent = new UndoEvent(null, FieldIdEnum.UNKNOWN, expectedUndoTestValue,
-                expectedRedoTestValue);
+        UndoEvent undoEvent =
+                new UndoEvent(
+                        null, FieldIdEnum.UNKNOWN, expectedUndoTestValue, expectedRedoTestValue);
         field.undoAction(undoEvent);
         assertTrue(expectedUndoTestValue.compareTo(field.getStringValue()) == 0);
 
         field.redoAction(undoEvent);
         assertTrue(expectedRedoTestValue.compareTo(field.getStringValue()) == 0);
+    }
+
+    @Test
+    public void testUndoActionSuppressed() {
+        boolean valueOnly = true;
+        FieldConfigSortBy field =
+                new FieldConfigSortBy(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.NAME, "test label", valueOnly, true));
+
+        field.createUI();
+
+        int undoListSize = UndoManager.getInstance().getUndoListSize();
+        String expectedTestValue = "test A, test2 D";
+        field.populateField(expectedTestValue);
+        assertTrue(expectedTestValue.compareTo(field.getStringValue()) == 0);
+
+        assertEquals(undoListSize, UndoManager.getInstance().getUndoListSize());
+
+        Controller.getInstance().setPopulating(true);
+        field.sortByUpdated(null);
+        assertEquals(undoListSize, UndoManager.getInstance().getUndoListSize());
+
+        Controller.getInstance().setPopulating(false);
+        field.sortByUpdated("test");
+        assertEquals(undoListSize, UndoManager.getInstance().getUndoListSize());
     }
 }

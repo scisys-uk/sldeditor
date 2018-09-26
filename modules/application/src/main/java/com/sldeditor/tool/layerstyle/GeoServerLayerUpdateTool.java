@@ -19,18 +19,6 @@
 
 package com.sldeditor.tool.layerstyle;
 
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.tree.TreeNode;
-
 import com.sldeditor.common.NodeInterface;
 import com.sldeditor.common.SLDDataInterface;
 import com.sldeditor.common.data.GeoServerConnection;
@@ -43,10 +31,20 @@ import com.sldeditor.datasource.extension.filesystem.node.geoserver.GeoServerWor
 import com.sldeditor.tool.ToolButton;
 import com.sldeditor.tool.ToolInterface;
 import com.sldeditor.tool.ToolPanel;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.tree.TreeNode;
 
 /**
  * Tool to allow the GeoServer layers to be updated.
- * 
+ *
  * @author Robert Ward (SCISYS)
  */
 public class GeoServerLayerUpdateTool implements ToolInterface {
@@ -64,10 +62,10 @@ public class GeoServerLayerUpdateTool implements ToolInterface {
     private GeoServerLayerUpdateInterface geoServerLayerUpdate = null;
 
     /** The layer list. */
-    private List<GeoServerLayer> layerList = new ArrayList<GeoServerLayer>();
+    protected List<GeoServerLayer> layerList = new ArrayList<GeoServerLayer>();
 
     /** The connection data. */
-    private GeoServerConnection connection = null;
+    protected GeoServerConnection connection = null;
 
     /** The supported node type list. */
     private static List<Class<?>> supportedNodeTypeList = new ArrayList<Class<?>>();
@@ -87,9 +85,7 @@ public class GeoServerLayerUpdateTool implements ToolInterface {
         createUI();
     }
 
-    /**
-     * Populate supported node types.
-     */
+    /** Populate supported node types. */
     private void populateSupportedTypes() {
         if (supportedNodeTypeList.isEmpty()) {
             supportedNodeTypeList.add(GeoServerLayerHeadingNode.class);
@@ -98,30 +94,27 @@ public class GeoServerLayerUpdateTool implements ToolInterface {
         }
     }
 
-    /**
-     * Creates the ui.
-     */
+    /** Creates the ui. */
     private void createUI() {
         panel = new JPanel();
-        panel.setBorder(BorderFactory.createTitledBorder(Localisation
-                .getString(GeoServerLayerUpdateTool.class, "GeoServerLayerUpdateTool.title")));
+        panel.setBorder(
+                BorderFactory.createTitledBorder(
+                        Localisation.getString(
+                                GeoServerLayerUpdateTool.class, "GeoServerLayerUpdateTool.title")));
 
-        button = new ToolButton(Localisation.getString(GeoServerLayerUpdateTool.class,
-                "GeoServerLayerUpdateTool.layer"), "tool/layerupdate.png");
+        button =
+                new ToolButton(
+                        Localisation.getString(
+                                GeoServerLayerUpdateTool.class, "GeoServerLayerUpdateTool.layer"),
+                        "tool/layerupdate.png");
         button.setEnabled(true);
-        button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        button.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
 
-                ConfigureLayerStyleDialog dlg = new ConfigureLayerStyleDialog();
-
-                Map<String, List<StyleWrapper>> styleMap = geoServerLayerUpdate
-                        .getStyleMap(connection);
-
-                if (dlg.populate(styleMap, layerList)) {
-                    geoServerLayerUpdate.updateLayerStyle(dlg.getUpdatedLayerStyles());
-                }
-            }
-        });
+                        layerUpdateButtonPressed();
+                    }
+                });
 
         panel.add(button);
         panel.setPreferredSize(new Dimension(PANEL_WIDTH, ToolPanel.TOOL_PANEL_HEIGHT));
@@ -129,7 +122,7 @@ public class GeoServerLayerUpdateTool implements ToolInterface {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.tool.ToolInterface#getPanel()
      */
     @Override
@@ -139,12 +132,12 @@ public class GeoServerLayerUpdateTool implements ToolInterface {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.tool.ToolInterface#setSelectedItems(java.util.List, java.util.List)
      */
     @Override
-    public void setSelectedItems(List<NodeInterface> nodeTypeList,
-            List<SLDDataInterface> sldDataList) {
+    public void setSelectedItems(
+            List<NodeInterface> nodeTypeList, List<SLDDataInterface> sldDataList) {
         layerList.clear();
         connection = null;
 
@@ -163,8 +156,9 @@ public class GeoServerLayerUpdateTool implements ToolInterface {
 
                 connection = layerHeadingNode.getConnection();
 
-                for (int workspaceIndex = 0; workspaceIndex < layerHeadingNode
-                        .getChildCount(); workspaceIndex++) {
+                for (int workspaceIndex = 0;
+                        workspaceIndex < layerHeadingNode.getChildCount();
+                        workspaceIndex++) {
                     TreeNode treeNode = layerHeadingNode.getChildAt(workspaceIndex);
                     if (treeNode instanceof GeoServerWorkspaceNode) {
                         GeoServerWorkspaceNode workspaceNode = (GeoServerWorkspaceNode) treeNode;
@@ -199,7 +193,7 @@ public class GeoServerLayerUpdateTool implements ToolInterface {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.tool.ToolInterface#getToolName()
      */
     @Override
@@ -209,11 +203,13 @@ public class GeoServerLayerUpdateTool implements ToolInterface {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.tool.ToolInterface#supports(java.util.List, java.util.List)
      */
     @Override
-    public boolean supports(List<Class<?>> uniqueNodeTypeList, List<NodeInterface> nodeTypeList,
+    public boolean supports(
+            List<Class<?>> uniqueNodeTypeList,
+            List<NodeInterface> nodeTypeList,
             List<SLDDataInterface> sldDataList) {
         if (uniqueNodeTypeList.size() == 1) {
             NodeInterface node = nodeTypeList.get(0);
@@ -230,5 +226,18 @@ public class GeoServerLayerUpdateTool implements ToolInterface {
             }
         }
         return false;
+    }
+
+    /** Layer update button pressed. */
+    protected void layerUpdateButtonPressed() {
+        ConfigureLayerStyleDialog dlg = new ConfigureLayerStyleDialog();
+
+        if (geoServerLayerUpdate != null) {
+            Map<String, List<StyleWrapper>> styleMap = geoServerLayerUpdate.getStyleMap(connection);
+
+            if (dlg.populate(styleMap, layerList)) {
+                geoServerLayerUpdate.updateLayerStyle(dlg.getUpdatedLayerStyles());
+            }
+        }
     }
 }

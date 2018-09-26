@@ -39,11 +39,11 @@ public class FieldConfigCommonData {
 
     /**
      * The value only flag:
+     *
      * <ul>
-     * <li>true - do not display a value/attribute/expression drop down list</li>
-     * <li>false- display a value/attribute/expression drop down list</li>
+     *   <li>true - do not display a value/attribute/expression drop down list
+     *   <li>false- display a value/attribute/expression drop down list
      * </ul>
-     * .
      */
     private boolean valueOnly = false;
 
@@ -53,6 +53,9 @@ public class FieldConfigCommonData {
     /** The optional field checkbox. */
     private boolean optionalField = false;
 
+    /** The suppress undo events flag. */
+    private boolean suppressUndoEvents = false;
+
     /**
      * Instantiates a new field config common data.
      *
@@ -61,15 +64,22 @@ public class FieldConfigCommonData {
      * @param label the label
      * @param valueOnly the value only
      * @param rasterSymbol the raster symbol
+     * @param suppressUndoEvents the suppress undo events
      */
-    public FieldConfigCommonData(Class<?> panelId, FieldIdEnum id, String label, boolean valueOnly,
-            boolean rasterSymbol) {
+    public FieldConfigCommonData(
+            Class<?> panelId,
+            FieldIdEnum id,
+            String label,
+            boolean valueOnly,
+            boolean rasterSymbol,
+            boolean suppressUndoEvents) {
         super();
         this.panelId = panelId;
         this.id = id;
         this.label = label;
         this.valueOnly = valueOnly;
         this.rasterSymbol = rasterSymbol;
+        this.suppressUndoEvents = suppressUndoEvents;
     }
 
     /**
@@ -81,9 +91,16 @@ public class FieldConfigCommonData {
      * @param valueOnly the value only
      * @param rasterSymbol the raster symbol
      * @param optionalCheckbox the optional checkbox
+     * @param suppressUndoEvents the suppress undo events
      */
-    public FieldConfigCommonData(Class<?> panelId, FieldIdEnum id, String label, boolean valueOnly,
-            boolean rasterSymbol, boolean optionalCheckbox) {
+    public FieldConfigCommonData(
+            Class<?> panelId,
+            FieldIdEnum id,
+            String label,
+            boolean valueOnly,
+            boolean rasterSymbol,
+            boolean optionalCheckbox,
+            boolean suppressUndoEvents) {
         super();
         this.panelId = panelId;
         this.id = id;
@@ -91,6 +108,7 @@ public class FieldConfigCommonData {
         this.valueOnly = valueOnly;
         this.rasterSymbol = rasterSymbol;
         this.optionalField = optionalCheckbox;
+        this.suppressUndoEvents = suppressUndoEvents;
     }
 
     /**
@@ -100,14 +118,20 @@ public class FieldConfigCommonData {
      * @param id the id
      * @param label the label
      * @param valueOnly the value only
+     * @param suppressUndoEvents the suppress undo events
      */
-    public FieldConfigCommonData(Class<?> panelId, FieldIdEnum id, String label,
-            boolean valueOnly) {
+    public FieldConfigCommonData(
+            Class<?> panelId,
+            FieldIdEnum id,
+            String label,
+            boolean valueOnly,
+            boolean suppressUndoEvents) {
         super();
         this.panelId = panelId;
         this.id = id;
         this.label = label;
         this.valueOnly = valueOnly;
+        this.suppressUndoEvents = suppressUndoEvents;
     }
 
     /**
@@ -123,6 +147,7 @@ public class FieldConfigCommonData {
             this.valueOnly = commonData.valueOnly;
             this.rasterSymbol = commonData.rasterSymbol;
             this.optionalField = commonData.optionalField;
+            this.suppressUndoEvents = commonData.suppressUndoEvents;
         }
     }
 
@@ -187,5 +212,23 @@ public class FieldConfigCommonData {
      */
     public boolean isOptionalField() {
         return optionalField;
+    }
+
+    /**
+     * Checks if is suppress undo events flag is set.
+     *
+     * @return the suppressUndoEvents
+     */
+    public boolean isSuppressUndoEvents() {
+        return suppressUndoEvents;
+    }
+
+    /**
+     * Sets the suppress undo events.
+     *
+     * @param suppressUndoEvents the suppressUndoEvents to set
+     */
+    public void setSuppressUndoEvents(boolean suppressUndoEvents) {
+        this.suppressUndoEvents = suppressUndoEvents;
     }
 }

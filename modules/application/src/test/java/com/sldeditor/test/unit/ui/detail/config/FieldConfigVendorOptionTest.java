@@ -19,14 +19,9 @@
 
 package com.sldeditor.test.unit.ui.detail.config;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.sldeditor.common.vendoroption.GeoServerVendorOption;
 import com.sldeditor.common.vendoroption.VersionData;
@@ -35,13 +30,18 @@ import com.sldeditor.ui.detail.RasterSymbolizerDetails;
 import com.sldeditor.ui.detail.config.FieldConfigBase;
 import com.sldeditor.ui.detail.config.FieldConfigCommonData;
 import com.sldeditor.ui.detail.config.FieldConfigPopulate;
+import com.sldeditor.ui.detail.config.FieldConfigString;
 import com.sldeditor.ui.detail.config.FieldConfigVendorOption;
 import com.sldeditor.ui.detail.vendor.geoserver.VendorOptionInterface;
 import com.sldeditor.ui.detail.vendor.geoserver.raster.VendorOptionRasterFactory;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.opengis.filter.expression.Expression;
 
 /**
  * The unit test for FieldConfigVendorOption.
- * 
+ *
  * <p>{@link com.sldeditor.ui.detail.config.FieldConfigVendorOption}
  *
  * @author Robert Ward (SCISYS)
@@ -49,19 +49,21 @@ import com.sldeditor.ui.detail.vendor.geoserver.raster.VendorOptionRasterFactory
 public class FieldConfigVendorOptionTest {
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigVendorOption#internal_setEnabled(boolean)}.
-     * Test method for {@link com.sldeditor.ui.detail.config.FieldConfigVendorOption#isEnabled()}.
-     * Test method for {@link com.sldeditor.ui.detail.config.FieldConfigVendorOption#createUI()}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigVendorOption#internal_setEnabled(boolean)}. Test
+     * method for {@link com.sldeditor.ui.detail.config.FieldConfigVendorOption#isEnabled()}. Test
+     * method for {@link com.sldeditor.ui.detail.config.FieldConfigVendorOption#createUI()}.
      */
     @Test
     public void testSetEnabled() {
         // Value only, no attribute/expression dropdown
         List<VendorOptionInterface> veList = null;
         boolean valueOnly = true;
-        FieldConfigVendorOption field = new FieldConfigVendorOption(
-                new FieldConfigCommonData(Double.class, FieldIdEnum.NAME, "label", valueOnly),
-                veList);
+        FieldConfigVendorOption field =
+                new FieldConfigVendorOption(
+                        new FieldConfigCommonData(
+                                Double.class, FieldIdEnum.NAME, "label", valueOnly, false),
+                        veList);
 
         // Text field will not have been created
         boolean expectedValue = true;
@@ -80,9 +82,11 @@ public class FieldConfigVendorOptionTest {
 
         // Has attribute/expression dropdown
         valueOnly = false;
-        FieldConfigVendorOption field2 = new FieldConfigVendorOption(
-                new FieldConfigCommonData(Double.class, FieldIdEnum.NAME, "label", valueOnly),
-                veList);
+        FieldConfigVendorOption field2 =
+                new FieldConfigVendorOption(
+                        new FieldConfigCommonData(
+                                Double.class, FieldIdEnum.NAME, "label", valueOnly, false),
+                        veList);
 
         // Text field will not have been created
         expectedValue = true;
@@ -101,16 +105,18 @@ public class FieldConfigVendorOptionTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigVendorOption#setVisible(boolean)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigVendorOption#setVisible(boolean)}.
      */
     @Test
     public void testSetVisible() {
         List<VendorOptionInterface> veList = null;
         boolean valueOnly = true;
-        FieldConfigVendorOption field = new FieldConfigVendorOption(
-                new FieldConfigCommonData(Double.class, FieldIdEnum.NAME, "label", valueOnly),
-                veList);
+        FieldConfigVendorOption field =
+                new FieldConfigVendorOption(
+                        new FieldConfigCommonData(
+                                Double.class, FieldIdEnum.NAME, "label", valueOnly, false),
+                        veList);
 
         boolean expectedValue = true;
         field.setVisible(expectedValue);
@@ -122,36 +128,56 @@ public class FieldConfigVendorOptionTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigVendorOption#generateExpression()}. Test
-     * method for {@link com.sldeditor.ui.detail.config.FieldConfigVendorOption#getStringValue()}.
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigVendorOption#populateExpression(java.lang.Object)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigVendorOption#generateExpression()}. Test method for
+     * {@link com.sldeditor.ui.detail.config.FieldConfigVendorOption#getStringValue()}. Test method
+     * for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigVendorOption#populateExpression(java.lang.Object)}.
      */
     @Test
     public void testGenerateExpression() {
         boolean valueOnly = true;
         List<VendorOptionInterface> veList = null;
-        FieldConfigVendorOption field = new FieldConfigVendorOption(
-                new FieldConfigCommonData(Double.class, FieldIdEnum.NAME, "label", valueOnly),
-                veList);
+
+        class TestFieldConfigVendorOption extends FieldConfigVendorOption {
+            public TestFieldConfigVendorOption(
+                    FieldConfigCommonData commonData, List<VendorOptionInterface> veList) {
+                super(commonData, veList);
+            }
+
+            /* (non-Javadoc)
+             * @see com.sldeditor.ui.detail.config.FieldConfigVendorOption#generateExpression()
+             */
+            @Override
+            protected Expression generateExpression() {
+                return super.generateExpression();
+            }
+        }
+
+        TestFieldConfigVendorOption field =
+                new TestFieldConfigVendorOption(
+                        new FieldConfigCommonData(
+                                Double.class, FieldIdEnum.NAME, "label", valueOnly, false),
+                        veList);
 
         assertNull(field.getStringValue());
         field.populateExpression(null);
-
+        assertNull(field.generateExpression());
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigVendorOption#revertToDefaultValue()}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigVendorOption#revertToDefaultValue()}.
      */
     @Test
     public void testRevertToDefaultValue() {
         List<VendorOptionInterface> veList = null;
         boolean valueOnly = true;
-        FieldConfigVendorOption field = new FieldConfigVendorOption(
-                new FieldConfigCommonData(Double.class, FieldIdEnum.NAME, "label", valueOnly),
-                veList);
+        FieldConfigVendorOption field =
+                new FieldConfigVendorOption(
+                        new FieldConfigCommonData(
+                                Double.class, FieldIdEnum.NAME, "label", valueOnly, false),
+                        veList);
 
         field.revertToDefaultValue();
 
@@ -160,16 +186,16 @@ public class FieldConfigVendorOptionTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigVendorOption#createCopy(com.sldeditor.ui.detail.config.FieldConfigBase)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigVendorOption#createCopy(com.sldeditor.ui.detail.config.FieldConfigBase)}.
      */
     @Test
     public void testCreateCopy() {
         boolean valueOnly = true;
 
         class TestFieldConfigVendorOption extends FieldConfigVendorOption {
-            public TestFieldConfigVendorOption(FieldConfigCommonData commonData,
-                    List<VendorOptionInterface> veList) {
+            public TestFieldConfigVendorOption(
+                    FieldConfigCommonData commonData, List<VendorOptionInterface> veList) {
                 super(commonData, veList);
             }
 
@@ -178,9 +204,11 @@ public class FieldConfigVendorOptionTest {
             }
         }
 
-        TestFieldConfigVendorOption field = new TestFieldConfigVendorOption(
-                new FieldConfigCommonData(Double.class, FieldIdEnum.NAME, "label", valueOnly),
-                null);
+        TestFieldConfigVendorOption field =
+                new TestFieldConfigVendorOption(
+                        new FieldConfigCommonData(
+                                Double.class, FieldIdEnum.NAME, "label", valueOnly, false),
+                        null);
         FieldConfigVendorOption copy = (FieldConfigVendorOption) field.callCreateCopy(null);
         assertNull(copy);
 
@@ -188,39 +216,58 @@ public class FieldConfigVendorOptionTest {
         assertEquals(field.getFieldId(), copy.getFieldId());
         assertTrue(field.getLabel().compareTo(copy.getLabel()) == 0);
         assertEquals(field.isValueOnly(), copy.isValueOnly());
+
+        // Try and copy something that isn't a FieldConfigVendorOption
+        assertNull(
+                field.callCreateCopy(
+                        new FieldConfigString(
+                                new FieldConfigCommonData(
+                                        String.class,
+                                        FieldIdEnum.NAME,
+                                        "test label",
+                                        valueOnly,
+                                        false),
+                                "button text")));
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigVendorOption#addToOptionBox(javax.swing.Box)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigVendorOption#addToOptionBox(javax.swing.Box)}.
      */
     @Test
     public void testAddToOptionBox() {
-        FieldConfigVendorOption field = new FieldConfigVendorOption(
-                new FieldConfigCommonData(Double.class, FieldIdEnum.NAME, "label", false), null);
+        FieldConfigVendorOption field =
+                new FieldConfigVendorOption(
+                        new FieldConfigCommonData(
+                                Double.class, FieldIdEnum.NAME, "label", false, false),
+                        null);
         field.addToOptionBox(null);
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigVendorOption#vendorOptionsUpdated(java.util.List)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigVendorOption#vendorOptionsUpdated(java.util.List)}.
      */
     @Test
     public void testVendorOptionsUpdated() {
         RasterSymbolizerDetails panel = new RasterSymbolizerDetails();
-        VendorOptionRasterFactory vendorOptionRasterFactory = new VendorOptionRasterFactory(
-                getClass(), panel);
+        VendorOptionRasterFactory vendorOptionRasterFactory =
+                new VendorOptionRasterFactory(getClass(), panel);
 
-        //CHECKSTYLE:OFF
-        List<VendorOptionInterface> veList = vendorOptionRasterFactory.getVendorOptionList(
-                "com.sldeditor.ui.detail.vendor.geoserver.raster.VOGeoServerContrastEnhancementNormalizeOverall");
-        //CHECKSTYLE:ON
+        // CHECKSTYLE:OFF
+        List<VendorOptionInterface> veList =
+                vendorOptionRasterFactory.getVendorOptionList(
+                        "com.sldeditor.ui.detail.vendor.geoserver.raster.VOGeoServerContrastEnhancementNormalizeOverall");
+        // CHECKSTYLE:ON
 
         for (VendorOptionInterface extension : veList) {
             extension.setParentPanel(panel);
         }
-        FieldConfigVendorOption field = new FieldConfigVendorOption(
-                new FieldConfigCommonData(Double.class, FieldIdEnum.NAME, "label", false), veList);
+        FieldConfigVendorOption field =
+                new FieldConfigVendorOption(
+                        new FieldConfigCommonData(
+                                Double.class, FieldIdEnum.NAME, "label", false, false),
+                        veList);
         field.vendorOptionsUpdated(null);
         field.createUI();
 
@@ -230,15 +277,17 @@ public class FieldConfigVendorOptionTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigVendorOption#attributeSelection(java.lang.String)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigVendorOption#attributeSelection(java.lang.String)}.
      */
     @Test
     public void testAttributeSelection() {
         boolean valueOnly = true;
-        FieldConfigVendorOption field = new FieldConfigVendorOption(
-                new FieldConfigCommonData(Double.class, FieldIdEnum.NAME, "label", valueOnly),
-                null);
+        FieldConfigVendorOption field =
+                new FieldConfigVendorOption(
+                        new FieldConfigCommonData(
+                                Double.class, FieldIdEnum.NAME, "label", valueOnly, false),
+                        null);
         field.attributeSelection(null);
 
         field.createUI();
@@ -249,5 +298,4 @@ public class FieldConfigVendorOptionTest {
         field.attributeSelection(null);
         assertTrue(field.isEnabled());
     }
-
 }

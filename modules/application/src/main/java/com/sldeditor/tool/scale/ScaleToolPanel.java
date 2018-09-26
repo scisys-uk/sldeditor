@@ -19,30 +19,27 @@
 
 package com.sldeditor.tool.scale;
 
+import com.sldeditor.common.Controller;
+import com.sldeditor.common.SLDDataInterface;
+import com.sldeditor.common.SLDEditorInterface;
+import com.sldeditor.common.localisation.Localisation;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-
 import org.geotools.styling.FeatureTypeStyleImpl;
 import org.geotools.styling.RuleImpl;
 
-import com.sldeditor.common.Controller;
-import com.sldeditor.common.SLDDataInterface;
-import com.sldeditor.common.SLDEditorInterface;
-import com.sldeditor.common.localisation.Localisation;
-
 /**
- * Dialog that displays one or more slds in table showing the scales at which 
- * rules are displayed. User is able to update and save the scales.
+ * Dialog that displays one or more slds in table showing the scales at which rules are displayed.
+ * User is able to update and save the scales.
  */
 public class ScaleToolPanel extends JDialog implements ScaleToolUpdate {
 
@@ -53,7 +50,7 @@ public class ScaleToolPanel extends JDialog implements ScaleToolUpdate {
     private JTable table;
 
     /** The table model. */
-    private ScaleSLDModel dataModel = null;
+    protected ScaleSLDModel dataModel = null;
 
     /** The application. */
     private SLDEditorInterface application = null;
@@ -82,9 +79,7 @@ public class ScaleToolPanel extends JDialog implements ScaleToolUpdate {
         Controller.getInstance().centreDialog(this);
     }
 
-    /**
-     * Creates the ui.
-     */
+    /** Creates the ui. */
     private void createUI() {
         dataModel = new ScaleSLDModel(this);
 
@@ -105,46 +100,35 @@ public class ScaleToolPanel extends JDialog implements ScaleToolUpdate {
 
         btnRevert = new JButton(Localisation.getString(ScaleToolPanel.class, "common.revert"));
         btnRevert.setEnabled(false);
-        btnRevert.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dataModel.revertData();
-            }
-        });
+        btnRevert.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        revertData();
+                    }
+                });
 
         buttonPanel.add(btnRevert);
 
         btnSave = new JButton(Localisation.getString(ScaleToolPanel.class, "common.save"));
         btnSave.setEnabled(false);
-        btnSave.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                saveData();
-            }
-        });
+        btnSave.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        saveData();
+                    }
+                });
         buttonPanel.add(btnSave);
     }
 
-    /**
-     * Save data.
-     */
-    private void saveData() {
+    /** Save data. */
+    protected void saveData() {
         if (dataModel.applyData(application)) {
             if (application != null) {
                 application.refreshPanel(FeatureTypeStyleImpl.class, RuleImpl.class);
             }
         }
-    }
-
-    /**
-     * The main method.
-     *
-     * @param args the arguments
-     */
-    public static void main(String[] args) {
-        ScaleToolPanel dlg = new ScaleToolPanel(null);
-
-        dlg.setVisible(true);
     }
 
     /**
@@ -167,7 +151,7 @@ public class ScaleToolPanel extends JDialog implements ScaleToolUpdate {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.tool.scale.ScaleToolUpdate#dataUpdated()
      */
     @Override
@@ -176,4 +160,8 @@ public class ScaleToolPanel extends JDialog implements ScaleToolUpdate {
         btnSave.setEnabled(true);
     }
 
+    /** Revert data. */
+    protected void revertData() {
+        dataModel.revertData();
+    }
 }

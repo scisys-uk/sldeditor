@@ -19,16 +19,11 @@
 
 package com.sldeditor.test.unit.ui.detail.config;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.sldeditor.common.Controller;
 import com.sldeditor.common.undo.UndoEvent;
@@ -41,10 +36,13 @@ import com.sldeditor.ui.detail.config.FieldConfigSymbolType;
 import com.sldeditor.ui.detail.config.symboltype.FieldConfigMarker;
 import com.sldeditor.ui.widgets.ValueComboBoxData;
 import com.sldeditor.ui.widgets.ValueComboBoxDataGroup;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.jupiter.api.Test;
 
 /**
  * The unit test for FieldConfigBase.
- * 
+ *
  * <p>{@link com.sldeditor.ui.detail.config.FieldConfigBase}
  *
  * @author Robert Ward (SCISYS)
@@ -52,16 +50,18 @@ import com.sldeditor.ui.widgets.ValueComboBoxDataGroup;
 public class FieldConfigSymbolTypeTest {
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigSymbolType#internal_setEnabled(boolean)}.
-     * Test method for {@link com.sldeditor.ui.detail.config.FieldConfigSymbolType#isEnabled()}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigSymbolType#internal_setEnabled(boolean)}. Test
+     * method for {@link com.sldeditor.ui.detail.config.FieldConfigSymbolType#isEnabled()}.
      */
     @Test
     public void testSetEnabled() {
         // Value only, no attribute/expression dropdown
         boolean valueOnly = true;
-        FieldConfigSymbolType field = new FieldConfigSymbolType(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        FieldConfigSymbolType field =
+                new FieldConfigSymbolType(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
 
         // Text field will not have been created
         boolean expectedValue = true;
@@ -80,8 +80,10 @@ public class FieldConfigSymbolTypeTest {
 
         // Has attribute/expression dropdown
         valueOnly = false;
-        FieldConfigSymbolType field2 = new FieldConfigSymbolType(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        FieldConfigSymbolType field2 =
+                new FieldConfigSymbolType(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
 
         // Text field will not have been created
         expectedValue = true;
@@ -101,14 +103,16 @@ public class FieldConfigSymbolTypeTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigSymbolType#setVisible(boolean)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigSymbolType#setVisible(boolean)}.
      */
     @Test
     public void testSetVisible() {
         boolean valueOnly = true;
-        FieldConfigSymbolType field = new FieldConfigSymbolType(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        FieldConfigSymbolType field =
+                new FieldConfigSymbolType(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
 
         boolean expectedValue = true;
         field.setVisible(expectedValue);
@@ -120,27 +124,29 @@ public class FieldConfigSymbolTypeTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigSymbolType#generateExpression()}. Test
-     * method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigSymbolType#populateExpression(java.lang.Object, org.opengis.filter.expression.Expression)}.
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigSymbolType#populateField(java.lang.String)}.
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigSymbolType#setTestValue(com.sldeditor.ui.detail.config.FieldId, java.lang.String)}.
-     * Test method for {@link com.sldeditor.ui.detail.config.FieldConfigSymbolType#getEnumValue()}.
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigSymbolType#FieldConfigSymbolType(java.lang.Class, com.sldeditor.ui.detail.config.FieldId, java.lang.String, boolean)}.
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigSymbolType#getStringValue()}. Test method
-     * for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigSymbolType#addField(com.sldeditor.ui.detail.config.symboltype.SymbolTypeInterface)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigSymbolType#generateExpression()}. Test method for
+     * {@link
+     * com.sldeditor.ui.detail.config.FieldConfigSymbolType#populateExpression(java.lang.Object,
+     * org.opengis.filter.expression.Expression)}. Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigSymbolType#populateField(java.lang.String)}. Test
+     * method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigSymbolType#setTestValue(com.sldeditor.ui.detail.config.FieldId,
+     * java.lang.String)}. Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigSymbolType#getEnumValue()}. Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigSymbolType#FieldConfigSymbolType(java.lang.Class,
+     * com.sldeditor.ui.detail.config.FieldId, java.lang.String, boolean)}. Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigSymbolType#getStringValue()}. Test method for
+     * {@link
+     * com.sldeditor.ui.detail.config.FieldConfigSymbolType#addField(com.sldeditor.ui.detail.config.symboltype.SymbolTypeInterface)}.
      */
     @Test
     public void testGenerateExpression() {
         boolean valueOnly = true;
-        FieldConfigSymbolType field = new FieldConfigSymbolType(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        FieldConfigSymbolType field =
+                new FieldConfigSymbolType(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
 
         field.populateExpression(null);
         field.setTestValue(FieldIdEnum.UNKNOWN, (String) null);
@@ -156,9 +162,13 @@ public class FieldConfigSymbolTypeTest {
         String actualValue1 = field.getStringValue();
         assertNull(actualValue1);
 
-        FieldConfigMarker marker = new FieldConfigMarker(
-                new FieldConfigCommonData(String.class, FieldIdEnum.ANGLE, "label", valueOnly),
-                null, null, null);
+        FieldConfigMarker marker =
+                new FieldConfigMarker(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.ANGLE, "label", valueOnly, false),
+                        null,
+                        null,
+                        null);
         marker.createUI();
 
         List<ValueComboBoxData> dataList = new ArrayList<ValueComboBoxData>();
@@ -166,8 +176,7 @@ public class FieldConfigSymbolTypeTest {
         dataList.add(new ValueComboBoxData("key 2", "Value 2", Integer.class));
         dataList.add(new ValueComboBoxData("key 3", "Value 3", Boolean.class));
 
-        List<ValueComboBoxDataGroup> combinedSymbolList =
-                new ArrayList<ValueComboBoxDataGroup>();
+        List<ValueComboBoxDataGroup> combinedSymbolList = new ArrayList<ValueComboBoxDataGroup>();
         combinedSymbolList.add(new ValueComboBoxDataGroup(dataList));
 
         field.createUI();
@@ -210,22 +219,24 @@ public class FieldConfigSymbolTypeTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigSymbolType#revertToDefaultValue()}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigSymbolType#revertToDefaultValue()}.
      */
     @Test
     public void testRevertToDefaultValue() {
         boolean valueOnly = true;
-        FieldConfigSymbolType field = new FieldConfigSymbolType(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        FieldConfigSymbolType field =
+                new FieldConfigSymbolType(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
 
         field.revertToDefaultValue();
         // Does nothing
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigSymbolType#createCopy(com.sldeditor.ui.detail.config.FieldConfigBase)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigSymbolType#createCopy(com.sldeditor.ui.detail.config.FieldConfigBase)}.
      */
     @Test
     public void testCreateCopy() {
@@ -241,8 +252,10 @@ public class FieldConfigSymbolTypeTest {
             }
         }
 
-        TestFieldConfigSymbolType field = new TestFieldConfigSymbolType(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        TestFieldConfigSymbolType field =
+                new TestFieldConfigSymbolType(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
         FieldConfigSymbolType copy = (FieldConfigSymbolType) field.callCreateCopy(null);
         assertNull(copy);
 
@@ -253,40 +266,48 @@ public class FieldConfigSymbolTypeTest {
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigSymbolType#attributeSelection(java.lang.String)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigSymbolType#attributeSelection(java.lang.String)}.
      */
     @Test
     public void testAttributeSelection() {
         boolean valueOnly = true;
-        FieldConfigSymbolType field = new FieldConfigSymbolType(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        FieldConfigSymbolType field =
+                new FieldConfigSymbolType(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
         field.attributeSelection(null);
 
         // Do nothing
     }
 
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigSymbolType#undoAction(com.sldeditor.common.undo.UndoInterface)}.
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigSymbolType#redoAction(com.sldeditor.common.undo.UndoInterface)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigSymbolType#undoAction(com.sldeditor.common.undo.UndoInterface)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigSymbolType#redoAction(com.sldeditor.common.undo.UndoInterface)}.
      */
     @Test
     public void testUndoAction() {
         UndoManager.getInstance().setPopulationCheck(Controller.getInstance());
         boolean valueOnly = true;
-        FieldConfigSymbolType field = new FieldConfigSymbolType(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        FieldConfigSymbolType field =
+                new FieldConfigSymbolType(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
         field.undoAction(null);
         field.redoAction(null);
 
         field.createUI();
         field.createUI();
 
-        FieldConfigMarker marker = new FieldConfigMarker(
-                new FieldConfigCommonData(String.class, FieldIdEnum.ANGLE, "label", valueOnly),
-                null, null, null);
+        FieldConfigMarker marker =
+                new FieldConfigMarker(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.ANGLE, "label", valueOnly, false),
+                        null,
+                        null,
+                        null);
         marker.createUI();
 
         List<ValueComboBoxData> dataList = new ArrayList<ValueComboBoxData>();
@@ -338,17 +359,63 @@ public class FieldConfigSymbolTypeTest {
         UndoManager.getInstance().setPopulationCheck(null);
     }
 
+    @Test
+    public void testUndoActionSuppress() {
+        UndoManager.getInstance().setPopulationCheck(Controller.getInstance());
+        boolean valueOnly = true;
+        FieldConfigSymbolType field =
+                new FieldConfigSymbolType(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, true));
+        field.undoAction(null);
+        field.redoAction(null);
+
+        field.createUI();
+        field.createUI();
+
+        FieldConfigMarker marker =
+                new FieldConfigMarker(
+                        new FieldConfigCommonData(
+                                String.class, FieldIdEnum.ANGLE, "label", valueOnly, false),
+                        null,
+                        null,
+                        null);
+        marker.createUI();
+
+        List<ValueComboBoxData> dataList = new ArrayList<ValueComboBoxData>();
+        dataList.add(new ValueComboBoxData("key 1", "Value 1", FieldConfigMarker.class));
+        dataList.add(new ValueComboBoxData("key 2", "Value 2", FieldConfigMarker.class));
+        dataList.add(new ValueComboBoxData("key 3", "Value 3", FieldConfigMarker.class));
+
+        List<ValueComboBoxDataGroup> combinedSymbolList = new ArrayList<ValueComboBoxDataGroup>();
+        combinedSymbolList.add(new ValueComboBoxDataGroup(dataList));
+
+        field.createUI();
+        field.addField(marker);
+        field.populate(null, combinedSymbolList);
+
+        int undoSizeList = UndoManager.getInstance().getUndoListSize();
+
+        String expectedValue2 = "key 2";
+        field.populateExpression(expectedValue2);
+        String actualValue2 = field.getStringValue();
+        assertTrue(actualValue2.compareTo(field.getStringValue()) == 0);
+
+        assertEquals(undoSizeList, UndoManager.getInstance().getUndoListSize());
+    }
+
     /**
-     * Test method for
-     * {@link com.sldeditor.ui.detail.config.FieldConfigSymbolType#optionSelected(com.sldeditor.ui.widgets.ValueComboBoxData)}.
+     * Test method for {@link
+     * com.sldeditor.ui.detail.config.FieldConfigSymbolType#optionSelected(com.sldeditor.ui.widgets.ValueComboBoxData)}.
      */
     @Test
     public void testOptionSelected() {
         boolean valueOnly = true;
-        FieldConfigSymbolType field = new FieldConfigSymbolType(
-                new FieldConfigCommonData(Integer.class, FieldIdEnum.NAME, "label", valueOnly));
+        FieldConfigSymbolType field =
+                new FieldConfigSymbolType(
+                        new FieldConfigCommonData(
+                                Integer.class, FieldIdEnum.NAME, "label", valueOnly, false));
 
         field.optionSelected(null);
     }
-
 }

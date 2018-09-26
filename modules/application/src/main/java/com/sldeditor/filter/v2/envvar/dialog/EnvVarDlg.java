@@ -19,6 +19,11 @@
 
 package com.sldeditor.filter.v2.envvar.dialog;
 
+import com.sldeditor.common.Controller;
+import com.sldeditor.common.console.ConsoleManager;
+import com.sldeditor.common.localisation.Localisation;
+import com.sldeditor.filter.v2.envvar.EnvVar;
+import com.sldeditor.filter.v2.envvar.EnvironmentManagerInterface;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -26,12 +31,8 @@ import java.awt.event.ActionListener;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.BoxLayout;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
@@ -45,13 +46,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 
-import com.sldeditor.common.Controller;
-import com.sldeditor.common.console.ConsoleManager;
-import com.sldeditor.common.localisation.Localisation;
-import com.sldeditor.filter.v2.envvar.EnvVar;
-import com.sldeditor.filter.v2.envvar.EnvironmentManagerInterface;
-import com.sldeditor.filter.v2.envvar.EnvironmentVariableManager;
-
 /**
  * The Class EnvVarDlg.
  *
@@ -59,16 +53,17 @@ import com.sldeditor.filter.v2.envvar.EnvironmentVariableManager;
  */
 public class EnvVarDlg extends JDialog {
 
+    /** The Constant WMS_ENV_PARAMETER. */
     private static final String WMS_ENV_PARAMETER = "env";
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
     /** The table. */
-    private JTable table;
+    protected JTable table;
 
     /** The text field. */
-    private JTextField textField;
+    protected JTextField textField;
 
     /** The data model. */
     private EnvVarModel dataModel = null;
@@ -76,6 +71,7 @@ public class EnvVarDlg extends JDialog {
     /** The ok button pressed. */
     private boolean okButtonPressed = false;
 
+    /** The btn remove. */
     private JButton btnRemove;
 
     /** The environment variable manager. */
@@ -83,10 +79,14 @@ public class EnvVarDlg extends JDialog {
 
     /**
      * Instantiates a new env var dlg.
+     *
+     * @param envVarMgr the env var mgr
      */
     public EnvVarDlg(EnvironmentManagerInterface envVarMgr) {
-        super(Controller.getInstance().getFrame(),
-                Localisation.getString(EnvVarDlg.class, "EnvVarDlg.title"), true);
+        super(
+                Controller.getInstance().getFrame(),
+                Localisation.getString(EnvVarDlg.class, "EnvVarDlg.title"),
+                true);
 
         this.envVarMgr = envVarMgr;
 
@@ -97,9 +97,7 @@ public class EnvVarDlg extends JDialog {
         Controller.getInstance().centreDialog(this);
     }
 
-    /**
-     * Creates the ui.
-     */
+    /** Creates the ui. */
     private void createUI() {
         JPanel buttonPanel = new JPanel();
         FlowLayout flowLayout = (FlowLayout) buttonPanel.getLayout();
@@ -107,24 +105,23 @@ public class EnvVarDlg extends JDialog {
         getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 
         JButton btnOk = new JButton(Localisation.getString(EnvVarDlg.class, "common.ok"));
-        btnOk.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                okButtonPressed = true;
-
-                dataModel.updateEnvVarManager();
-                setVisible(false);
-            }
-        });
+        btnOk.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        okButtonPressed();
+                    }
+                });
         buttonPanel.add(btnOk);
 
         JButton btnCancel = new JButton(Localisation.getString(EnvVarDlg.class, "common.cancel"));
-        btnCancel.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                okButtonPressed = false;
+        btnCancel.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        okButtonPressed = false;
 
-                setVisible(false);
-            }
-        });
+                        setVisible(false);
+                    }
+                });
         buttonPanel.add(btnCancel);
 
         JPanel panel = new JPanel();
@@ -143,43 +140,33 @@ public class EnvVarDlg extends JDialog {
         JScrollPane scrollPane = new JScrollPane(table);
         panel.add(scrollPane, BorderLayout.CENTER);
 
-        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+        table.getSelectionModel()
+                .addListSelectionListener(
+                        new ListSelectionListener() {
 
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                boolean enableRemoveButton = false;
+                            @Override
+                            public void valueChanged(ListSelectionEvent e) {
+                                boolean enableRemoveButton = false;
 
-                EnvVar envVar = dataModel.getEnvVar(table.getSelectedRow());
-                if (envVar != null) {
-                    enableRemoveButton = !envVar.isPredefined();
-                }
-                btnRemove.setEnabled(enableRemoveButton);
-            }
-        });
+                                EnvVar envVar = dataModel.getEnvVar(table.getSelectedRow());
+                                if (envVar != null) {
+                                    enableRemoveButton = !envVar.isPredefined();
+                                }
+                                btnRemove.setEnabled(enableRemoveButton);
+                            }
+                        });
         JPanel panelWMS = new JPanel();
         panel.add(panelWMS, BorderLayout.NORTH);
         panelWMS.setLayout(new BoxLayout(panelWMS, BoxLayout.X_AXIS));
 
-        JButton btnDecode = new JButton(
-                Localisation.getString(EnvVarDlg.class, "EnvVarDlg.decode"));
-        btnDecode.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                URL url;
-                try {
-                    url = new URL(textField.getText());
-                    Map<String, List<String>> parameterMap = splitQuery(url);
-
-                    if (parameterMap.containsKey(WMS_ENV_PARAMETER)) {
-                        dataModel.addNew(parameterMap.get(WMS_ENV_PARAMETER));
+        JButton btnDecode =
+                new JButton(Localisation.getString(EnvVarDlg.class, "EnvVarDlg.decode"));
+        btnDecode.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        decodeButtonPressed();
                     }
-                } catch (MalformedURLException e1) {
-                    ConsoleManager.getInstance().exception(this, e1);
-                } catch (UnsupportedEncodingException e1) {
-                    ConsoleManager.getInstance().exception(this, e1);
-                }
-
-            }
-        });
+                });
         panelWMS.add(btnDecode);
 
         textField = new JTextField();
@@ -190,23 +177,28 @@ public class EnvVarDlg extends JDialog {
         panel.add(panel_1, BorderLayout.SOUTH);
 
         JButton btnAdd = new JButton(Localisation.getString(EnvVarDlg.class, "EnvVarDlg.add"));
-        btnAdd.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                dataModel.addNewVariable();
-                btnRemove.setEnabled(false);
-            }
-        });
+        btnAdd.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        addButtonPressed();
+                    }
+                });
         panel_1.add(btnAdd);
 
         btnRemove = new JButton(Localisation.getString(EnvVarDlg.class, "EnvVarDlg.remove"));
         btnRemove.setEnabled(false);
-        btnRemove.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                dataModel.removeEnvVar(table.getSelectedRow());
-                btnRemove.setEnabled(false);
-            }
-        });
+        btnRemove.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        removeButtonPressed();
+                    }
+                });
         panel_1.add(btnRemove);
+    }
+
+    /** Internal show dialog. */
+    protected void internalShowDialog() {
+        dataModel.populate();
     }
 
     /**
@@ -215,44 +207,47 @@ public class EnvVarDlg extends JDialog {
      * @return true, if successful
      */
     public boolean showDialog() {
-        dataModel.populate();
+        internalShowDialog();
+
         setVisible(true);
 
         return okButtonPressed;
     }
 
-    /**
-     * The main method.
-     *
-     * @param args the arguments
-     */
-    public static void main(String[] args) {
-        EnvVarDlg dlg = new EnvVarDlg(EnvironmentVariableManager.getInstance());
+    /** Ok button pressed. */
+    protected void okButtonPressed() {
+        okButtonPressed = true;
 
-        dlg.showDialog();
+        dataModel.updateEnvVarManager();
+        setVisible(false);
     }
 
-    /**
-     * Split query.
-     *
-     * @param url the url
-     * @return the map
-     * @throws UnsupportedEncodingException the unsupported encoding exception
-     */
-    private static Map<String, List<String>> splitQuery(URL url)
-            throws UnsupportedEncodingException {
-        final Map<String, List<String>> query_pairs = new LinkedHashMap<String, List<String>>();
-        final String[] pairs = url.getQuery().split("&");
-        for (String pair : pairs) {
-            final int idx = pair.indexOf("=");
-            final String key = idx > 0 ? URLDecoder.decode(pair.substring(0, idx), "UTF-8") : pair;
-            if (!query_pairs.containsKey(key)) {
-                query_pairs.put(key, new LinkedList<String>());
+    /** Decode button pressed. */
+    protected void decodeButtonPressed() {
+        URL url;
+        try {
+            url = new URL(textField.getText());
+            Map<String, List<String>> parameterMap = SplitURL.splitQuery(url);
+
+            if (parameterMap.containsKey(WMS_ENV_PARAMETER)) {
+                dataModel.addNew(parameterMap.get(WMS_ENV_PARAMETER));
             }
-            final String value = idx > 0 && pair.length() > idx + 1
-                    ? URLDecoder.decode(pair.substring(idx + 1), "UTF-8") : null;
-            query_pairs.get(key).add(value);
+        } catch (MalformedURLException e1) {
+            ConsoleManager.getInstance().exception(this, e1);
+        } catch (UnsupportedEncodingException e1) {
+            ConsoleManager.getInstance().exception(this, e1);
         }
-        return query_pairs;
+    }
+
+    /** Adds the button pressed. */
+    protected void addButtonPressed() {
+        dataModel.addNewVariable();
+        btnRemove.setEnabled(false);
+    }
+
+    /** Removes the button pressed. */
+    protected void removeButtonPressed() {
+        dataModel.removeEnvVar(table.getSelectedRow());
+        btnRemove.setEnabled(false);
     }
 }

@@ -19,34 +19,31 @@
 
 package com.sldeditor.ui.detail.config.transform;
 
+import com.sldeditor.common.console.ConsoleManager;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
-
 import org.geotools.process.function.ProcessFunction;
 import org.opengis.filter.expression.Expression;
 
-import com.sldeditor.common.console.ConsoleManager;
-
 /**
- * The Class ParameterFunctionUtils.
- * 
- * @TODO Isolated functionality to provide a workaround to the
- *       org.geotools.process.function.ParameterFunction class not having public scope.
+ * The Class ParameterFunctionUtils. @TODO Isolated functionality to provide a workaround to the
+ * org.geotools.process.function.ParameterFunction class not having public scope.
  *
  * @author Robert Ward (SCISYS)
  */
 public class ParameterFunctionUtils {
 
+    /** The Constant GET_PARAMETERS. */
+    private static final String GET_PARAMETERS = "getParameters";
+
     /** The Constant PARAMETER_NOT_SET. */
     private static final String PARAMETER_NOT_SET = ":<not set>";
 
     /**
-     * Gets the expression list.
-     * 
-     * @TODO This gets round the issue where the org.geotools.process.function.ParameterFunction
-     *       does not have a public accessor. Using reflection and changing the accessibility flag
-     *       we can read the process function data.
+     * Gets the expression list. @TODO This gets round the issue where the
+     * org.geotools.process.function.ParameterFunction does not have a public accessor. Using
+     * reflection and changing the accessibility flag we can read the process function data.
      *
      * @param parameter the parameter
      * @return the expression list
@@ -55,20 +52,22 @@ public class ParameterFunctionUtils {
     public static List<Expression> getExpressionList(Expression parameter) {
         List<Expression> parameterList = null;
 
-        for (Method method : parameter.getClass().getMethods()) {
-            if (method.getName().compareTo("getParameters") == 0) {
-                try {
-                    method.setAccessible(true);
-                    Object[] args = null;
-                    parameterList = (List<Expression>) method.invoke(parameter, args);
+        if (parameter != null) {
+            for (Method method : parameter.getClass().getMethods()) {
+                if (method.getName().compareTo(GET_PARAMETERS) == 0) {
+                    try {
+                        method.setAccessible(true);
+                        Object[] args = null;
+                        parameterList = (List<Expression>) method.invoke(parameter, args);
 
-                    return parameterList;
-                } catch (IllegalAccessException e) {
-                    ConsoleManager.getInstance().exception(ParameterFunctionUtils.class, e);
-                } catch (IllegalArgumentException e) {
-                    ConsoleManager.getInstance().exception(ParameterFunctionUtils.class, e);
-                } catch (InvocationTargetException e) {
-                    ConsoleManager.getInstance().exception(ParameterFunctionUtils.class, e);
+                        return parameterList;
+                    } catch (IllegalAccessException e) {
+                        ConsoleManager.getInstance().exception(ParameterFunctionUtils.class, e);
+                    } catch (IllegalArgumentException e) {
+                        ConsoleManager.getInstance().exception(ParameterFunctionUtils.class, e);
+                    } catch (InvocationTargetException e) {
+                        ConsoleManager.getInstance().exception(ParameterFunctionUtils.class, e);
+                    }
                 }
             }
         }
@@ -116,5 +115,4 @@ public class ParameterFunctionUtils {
         }
         return sb.toString();
     }
-
 }

@@ -19,34 +19,29 @@
 
 package com.sldeditor.filter.v2.function.geometry;
 
-import java.util.List;
-
-import org.geotools.filter.spatial.BBOXImpl;
-import org.opengis.filter.Filter;
-import org.opengis.filter.expression.Expression;
-import org.opengis.geometry.BoundingBox;
-
 import com.sldeditor.filter.v2.expression.ExpressionTypeEnum;
+import com.sldeditor.filter.v2.function.FilterBase;
 import com.sldeditor.filter.v2.function.FilterConfigInterface;
 import com.sldeditor.filter.v2.function.FilterExtendedInterface;
 import com.sldeditor.filter.v2.function.FilterName;
 import com.sldeditor.filter.v2.function.FilterNameParameter;
+import java.util.List;
+import org.geotools.filter.spatial.BBOXImpl;
+import org.opengis.filter.Filter;
+import org.opengis.filter.expression.Expression;
+import org.opengis.geometry.BoundingBox;
 
 /**
  * The Class BBox.
  *
  * @author Robert Ward (SCISYS)
  */
-public class BBox implements FilterConfigInterface {
+public class BBox extends FilterBase implements FilterConfigInterface {
 
-    /**
-     * The Class BBoxExtended.
-     */
+    /** The Class BBoxExtended. */
     public class BBoxExtended extends BBOXImpl implements FilterExtendedInterface {
 
-        /**
-         * Instantiates a new b box extended.
-         */
+        /** Instantiates a new b box extended. */
         public BBoxExtended() {
             super(null, null);
         }
@@ -63,16 +58,16 @@ public class BBox implements FilterConfigInterface {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see org.geotools.filter.GeometryFilterImpl#toString()
          */
         public String toString() {
-            return "[ " + getExpression1() + " BBox " + getExpression2() + " ]";
+            return "[ " + getExpression1() + " bbox " + getExpression2() + " ]";
         }
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.sldeditor.filter.v2.function.FilterExtendedInterface#getOriginalFilter()
          */
         @Override
@@ -81,10 +76,9 @@ public class BBox implements FilterConfigInterface {
         }
     }
 
-    /**
-     * Default constructor.
-     */
-    public BBox() {
+    /** Default constructor. */
+    public BBox(String category) {
+        super(category);
     }
 
     /**
@@ -95,10 +89,12 @@ public class BBox implements FilterConfigInterface {
     @Override
     public FilterName getFilterConfiguration() {
         FilterName filterName = new FilterName("BBOX", Boolean.class);
-        filterName.addParameter(new FilterNameParameter("property", ExpressionTypeEnum.PROPERTY,
-                BoundingBox.class));
-        filterName.addParameter(new FilterNameParameter("boundingbox", ExpressionTypeEnum.LITERAL,
-                BoundingBox.class));
+        filterName.addParameter(
+                new FilterNameParameter(
+                        "property", ExpressionTypeEnum.PROPERTY, BoundingBox.class));
+        filterName.addParameter(
+                new FilterNameParameter(
+                        "boundingbox", ExpressionTypeEnum.LITERAL, BoundingBox.class));
 
         return filterName;
     }

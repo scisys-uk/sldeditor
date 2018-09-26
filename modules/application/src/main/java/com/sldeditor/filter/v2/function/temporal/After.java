@@ -19,34 +19,29 @@
 
 package com.sldeditor.filter.v2.function.temporal;
 
-import java.util.Date;
-import java.util.List;
-
-import org.geotools.filter.temporal.AfterImpl;
-import org.opengis.filter.Filter;
-import org.opengis.filter.expression.Expression;
-
 import com.sldeditor.filter.v2.expression.ExpressionTypeEnum;
+import com.sldeditor.filter.v2.function.FilterBase;
 import com.sldeditor.filter.v2.function.FilterConfigInterface;
 import com.sldeditor.filter.v2.function.FilterExtendedInterface;
 import com.sldeditor.filter.v2.function.FilterName;
 import com.sldeditor.filter.v2.function.FilterNameParameter;
+import java.util.Date;
+import java.util.List;
+import org.geotools.filter.temporal.AfterImpl;
+import org.opengis.filter.Filter;
+import org.opengis.filter.expression.Expression;
 
 /**
  * The Class After.
  *
  * @author Robert Ward (SCISYS)
  */
-public class After implements FilterConfigInterface {
+public class After extends FilterBase implements FilterConfigInterface {
 
-    /**
-     * The Class AfterExtended.
-     */
+    /** The Class AfterExtended. */
     public class AfterExtended extends AfterImpl implements FilterExtendedInterface {
 
-        /**
-         * Instantiates a new after extended.
-         */
+        /** Instantiates a new after extended. */
         public AfterExtended() {
             super(null, null);
         }
@@ -63,7 +58,7 @@ public class After implements FilterConfigInterface {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.lang.Object#toString()
          */
         public String toString() {
@@ -72,7 +67,7 @@ public class After implements FilterConfigInterface {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.sldeditor.filter.v2.function.FilterExtendedInterface#getOriginalFilter()
          */
         @Override
@@ -81,10 +76,9 @@ public class After implements FilterConfigInterface {
         }
     }
 
-    /**
-     * Default constructor.
-     */
-    public After() {
+    /** Default constructor. */
+    public After(String category) {
+        super(category);
     }
 
     /**

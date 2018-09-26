@@ -19,18 +19,6 @@
 
 package com.sldeditor.ui.detail.config;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.JButton;
-import javax.swing.JTextField;
-
-import org.opengis.filter.expression.Expression;
-
 import com.sldeditor.common.undo.UndoActionInterface;
 import com.sldeditor.common.undo.UndoEvent;
 import com.sldeditor.common.undo.UndoInterface;
@@ -38,15 +26,24 @@ import com.sldeditor.common.undo.UndoManager;
 import com.sldeditor.common.xml.ui.FieldIdEnum;
 import com.sldeditor.ui.detail.BasePanel;
 import com.sldeditor.ui.widgets.FieldPanel;
-import com.vividsolutions.jts.geom.Geometry;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JButton;
+import javax.swing.JTextField;
+import org.locationtech.jts.geom.Geometry;
+import org.opengis.filter.expression.Expression;
 
 /**
  * The Class FieldConfigGeometry wraps a text field that allows the entry of geometry.
- * 
+ *
  * <p>Supports undo/redo functionality.
- * 
+ *
  * <p>Instantiated by {@link com.sldeditor.ui.detail.config.ReadPanelConfig}
- * 
+ *
  * @author Robert Ward (SCISYS)
  */
 public class FieldConfigGeometry extends FieldConfigBase implements UndoActionInterface {
@@ -66,6 +63,9 @@ public class FieldConfigGeometry extends FieldConfigBase implements UndoActionIn
     /** The button pressed listener list. */
     List<FieldConfigStringButtonInterface> buttonPressedListenerList = null;
 
+    /** The original value. */
+    private String originalValue = "";
+
     /**
      * Instantiates a new field config string.
      *
@@ -78,78 +78,67 @@ public class FieldConfigGeometry extends FieldConfigBase implements UndoActionIn
         this.buttonText = buttonText;
     }
 
-    /**
-     * Creates the ui.
-     */
+    /** Creates the ui. */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#createUI()
      */
     @Override
     public void createUI() {
         if (textField == null) {
-            final UndoActionInterface parentObj = this;
 
             int xPos = getXPos();
             FieldPanel fieldPanel = createFieldPanel(xPos, getLabel());
 
             textField = new JTextField();
             textField.setBounds(
-                    xPos + BasePanel.WIDGET_X_START, 0, this.isValueOnly()
-                            ? BasePanel.WIDGET_EXTENDED_WIDTH : BasePanel.WIDGET_STANDARD_WIDTH,
+                    xPos + BasePanel.WIDGET_X_START,
+                    0,
+                    this.isValueOnly()
+                            ? BasePanel.WIDGET_EXTENDED_WIDTH
+                            : BasePanel.WIDGET_STANDARD_WIDTH,
                     BasePanel.WIDGET_HEIGHT);
             fieldPanel.add(textField);
 
-            textField.addFocusListener(new FocusListener() {
-                private String originalValue = "";
+            textField.addFocusListener(
+                    new FocusListener() {
 
-                @Override
-                public void focusGained(FocusEvent e) {
-                    originalValue = textField.getText();
-                }
+                        @Override
+                        public void focusGained(FocusEvent e) {
+                            originalValue = textField.getText();
+                        }
 
-                @Override
-                public void focusLost(FocusEvent e) {
-                    String newValueObj = textField.getText();
-
-                    if (originalValue.compareTo(newValueObj) != 0) {
-                        UndoManager.getInstance().addUndoEvent(
-                                new UndoEvent(parentObj, getFieldId(), oldValueObj, newValueObj));
-
-                        oldValueObj = originalValue;
-
-                        valueUpdated();
-                    }
-
-                }
-            });
+                        @Override
+                        public void focusLost(FocusEvent e) {
+                            valueStored(textField.getText());
+                        }
+                    });
 
             if (buttonText != null) {
                 final JButton buttonExternal = new JButton(buttonText);
-                buttonExternal.addActionListener(new ActionListener() {
+                buttonExternal.addActionListener(
+                        new ActionListener() {
 
-                    public void actionPerformed(ActionEvent e) {
-                        if (buttonPressedListenerList != null) {
-                            //CHECKSTYLE:OFF
-                            for (FieldConfigStringButtonInterface listener : buttonPressedListenerList) {
-                                listener.buttonPressed(buttonExternal);
+                            public void actionPerformed(ActionEvent e) {
+                                externalButtonPressed(buttonExternal);
                             }
-                            //CHECKSTYLE:ON
-                        }
-                    }
-                });
+                        });
 
                 int buttonWidth = 26;
                 int padding = 3;
-                buttonExternal.setBounds(xPos + textField.getX() - buttonWidth - padding, 0,
-                        buttonWidth, BasePanel.WIDGET_HEIGHT);
+                buttonExternal.setBounds(
+                        xPos + textField.getX() - buttonWidth - padding,
+                        0,
+                        buttonWidth,
+                        BasePanel.WIDGET_HEIGHT);
                 fieldPanel.add(buttonExternal);
             }
 
             if (!isValueOnly()) {
-                setAttributeSelectionPanel(fieldPanel.internalCreateAttrButton(Geometry.class, this,
-                        isRasterSymbol()));
+                setAttributeSelectionPanel(
+                        fieldPanel.internalCreateAttrButton(
+                                Geometry.class, this, isRasterSymbol()));
             }
         }
     }
@@ -161,7 +150,7 @@ public class FieldConfigGeometry extends FieldConfigBase implements UndoActionIn
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.sldeditor.ui.iface.AttributeButtonSelectionInterface#attributeSelection(java.lang.String)
      */
@@ -177,7 +166,7 @@ public class FieldConfigGeometry extends FieldConfigBase implements UndoActionIn
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#setEnabled(boolean)
      */
     @Override
@@ -194,7 +183,7 @@ public class FieldConfigGeometry extends FieldConfigBase implements UndoActionIn
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#generateExpression()
      */
     @Override
@@ -215,7 +204,7 @@ public class FieldConfigGeometry extends FieldConfigBase implements UndoActionIn
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#isEnabled()
      */
     @Override
@@ -231,12 +220,10 @@ public class FieldConfigGeometry extends FieldConfigBase implements UndoActionIn
         return false;
     }
 
-    /**
-     * Revert to default value.
-     */
+    /** Revert to default value. */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#revertToDefaultValue()
      */
     @Override
@@ -251,7 +238,7 @@ public class FieldConfigGeometry extends FieldConfigBase implements UndoActionIn
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#populateExpression(java.lang.Object)
      */
     @Override
@@ -328,7 +315,9 @@ public class FieldConfigGeometry extends FieldConfigBase implements UndoActionIn
             buttonPressedListenerList = new ArrayList<FieldConfigStringButtonInterface>();
         }
 
-        buttonPressedListenerList.add(listener);
+        if (listener != null) {
+            buttonPressedListenerList.add(listener);
+        }
     }
 
     /**
@@ -385,6 +374,40 @@ public class FieldConfigGeometry extends FieldConfigBase implements UndoActionIn
     public void setVisible(boolean visible) {
         if (textField != null) {
             textField.setVisible(visible);
+        }
+    }
+
+    /**
+     * Value stored.
+     *
+     * @param text the text
+     */
+    protected void valueStored(String text) {
+        String newValueObj = text;
+
+        if (originalValue.compareTo(newValueObj) != 0) {
+            if (!FieldConfigGeometry.this.isSuppressUndoEvents()) {
+                UndoManager.getInstance()
+                        .addUndoEvent(new UndoEvent(this, getFieldId(), oldValueObj, newValueObj));
+
+                oldValueObj = originalValue;
+            }
+            valueUpdated();
+        }
+    }
+
+    /**
+     * External button pressed.
+     *
+     * @param buttonExternal the button external
+     */
+    protected void externalButtonPressed(final JButton buttonExternal) {
+        if (buttonPressedListenerList != null) {
+            // CHECKSTYLE:OFF
+            for (FieldConfigStringButtonInterface listener : buttonPressedListenerList) {
+                listener.buttonPressed(buttonExternal);
+            }
+            // CHECKSTYLE:ON
         }
     }
 }

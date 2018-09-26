@@ -19,24 +19,25 @@
 
 package com.sldeditor.test.unit.datasource.extension.filesystem.node;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for FileSystemNodeManager.
- * 
- * <p>{@link com.sldeditor.datasource.extension.filesystem.node.FileSystemNodeManager}
- * 
- * @author Robert Ward (SCISYS)
  *
+ * <p>{@link com.sldeditor.datasource.extension.filesystem.node.FileSystemNodeManager}
+ *
+ * @author Robert Ward (SCISYS)
  */
-@Ignore
+@Disabled
 public class FileSystemNodeManagerTest {
 
     /**
-     * Test method for {@link com.sldeditor.datasource.extension.filesystem.node.FileSystemNodeManager#create(com.sldeditor.datasource.extension.filesystem.node.FSTree, javax.swing.tree.DefaultTreeModel)}.
+     * Test method for {@link
+     * com.sldeditor.datasource.extension.filesystem.node.FileSystemNodeManager#create(com.sldeditor.datasource.extension.filesystem.node.FSTree,
+     * javax.swing.tree.DefaultTreeModel)}.
      */
     @Test
     public void testCreate() {
@@ -44,7 +45,9 @@ public class FileSystemNodeManagerTest {
     }
 
     /**
-     * Test method for {@link com.sldeditor.datasource.extension.filesystem.node.FileSystemNodeManager#showNodeInTree(java.net.URL, boolean)}.
+     * Test method for {@link
+     * com.sldeditor.datasource.extension.filesystem.node.FileSystemNodeManager#showNodeInTree(java.net.URL,
+     * boolean)}.
      */
     @Test
     public void testShowNodeInTree() {
@@ -52,7 +55,8 @@ public class FileSystemNodeManagerTest {
     }
 
     /**
-     * Test method for {@link com.sldeditor.datasource.extension.filesystem.node.FileSystemNodeManager#getNode(java.io.File)}.
+     * Test method for {@link
+     * com.sldeditor.datasource.extension.filesystem.node.FileSystemNodeManager#getNode(java.io.File)}.
      */
     @Test
     public void testGetNode() {
@@ -60,11 +64,11 @@ public class FileSystemNodeManagerTest {
     }
 
     /**
-     * Test method for {@link com.sldeditor.datasource.extension.filesystem.node.FileSystemNodeManager#refreshNode(javax.swing.tree.DefaultMutableTreeNode)}.
+     * Test method for {@link
+     * com.sldeditor.datasource.extension.filesystem.node.FileSystemNodeManager#refreshNode(javax.swing.tree.DefaultMutableTreeNode)}.
      */
     @Test
     public void testRefreshNode() {
         fail("Not yet implemented");
     }
-
 }

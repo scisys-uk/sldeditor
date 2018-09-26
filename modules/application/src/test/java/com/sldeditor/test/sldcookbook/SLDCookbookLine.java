@@ -19,18 +19,15 @@
 
 package com.sldeditor.test.sldcookbook;
 
-import java.lang.reflect.InvocationTargetException;
-
-import javax.swing.SwingUtilities;
-
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import com.sldeditor.test.SLDTestRunner;
+import java.lang.reflect.InvocationTargetException;
+import javax.swing.SwingUtilities;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * The Class SLDCookbookLine runs the tests for line slds in the SLD Cookbook.
- * 
+ *
  * @author Robert Ward (SCISYS)
  */
 public class SLDCookbookLine {
@@ -43,14 +40,15 @@ public class SLDCookbookLine {
      * @throws InvocationTargetException the invocation target exception
      * @throws InterruptedException the interrupted exception
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUpOnce() throws InvocationTargetException, InterruptedException {
-        SwingUtilities.invokeAndWait(new Runnable() {
-            @Override
-            public void run() {
-                test = new SLDTestRunner();
-            }
-        });
+        SwingUtilities.invokeAndWait(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        test = new SLDTestRunner();
+                    }
+                });
     }
 
     @Test

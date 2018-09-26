@@ -1,7 +1,7 @@
 /*
  * SLD Editor - The Open Source Java SLD Editor
  *
- * Copyright (C) 2016, SCISYS UK Limited
+ * Copyright (C) 2018, SCISYS UK Limited
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,71 +19,66 @@
 
 package com.sldeditor.filter.v2.function.temporal;
 
-import java.util.List;
-
-import org.geotools.filter.spatial.BeyondImpl;
-import org.opengis.filter.Filter;
-import org.opengis.filter.expression.Expression;
-
 import com.sldeditor.filter.v2.expression.ExpressionTypeEnum;
+import com.sldeditor.filter.v2.function.FilterBase;
 import com.sldeditor.filter.v2.function.FilterConfigInterface;
 import com.sldeditor.filter.v2.function.FilterExtendedInterface;
 import com.sldeditor.filter.v2.function.FilterName;
 import com.sldeditor.filter.v2.function.FilterNameParameter;
+import java.util.Date;
+import java.util.List;
+import org.geotools.filter.temporal.AnyInteractsImpl;
+import org.opengis.filter.Filter;
+import org.opengis.filter.expression.Expression;
 
 /**
- * The Class Beyond.
+ * The Class Ends.
  *
  * @author Robert Ward (SCISYS)
  */
-public class Beyond implements FilterConfigInterface {
+public class AnyInteracts extends FilterBase implements FilterConfigInterface {
 
-    /**
-     * The Class BeyondExtended.
-     */
-    public class BeyondExtended extends BeyondImpl implements FilterExtendedInterface {
+    /** The Class AnyInteractsExtended. */
+    public class AnyInteractsExtended extends AnyInteractsImpl implements FilterExtendedInterface {
 
-        /**
-         * Instantiates a new beyond extended.
-         */
-        public BeyondExtended() {
+        /** Instantiates a new after extended. */
+        public AnyInteractsExtended() {
             super(null, null);
         }
 
         /**
-         * Instantiates a new beyond extended.
+         * Instantiates a new after extended.
          *
          * @param expression1 the expression 1
          * @param expression2 the expression 2
          */
-        public BeyondExtended(Expression expression1, Expression expression2) {
+        public AnyInteractsExtended(Expression expression1, Expression expression2) {
             super(expression1, expression2);
         }
 
         /*
          * (non-Javadoc)
-         * 
-         * @see org.geotools.filter.CartesianDistanceFilter#toString()
+         *
+         * @see java.lang.Object#toString()
          */
         public String toString() {
-            return "[ " + getExpression1() + " Beyond " + getExpression2() + " ]";
+            return "[ " + getExpression1() + " AnyInteracts " + getExpression2() + " ]";
         }
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.sldeditor.filter.v2.function.FilterExtendedInterface#getOriginalFilter()
          */
         @Override
         public Class<?> getOriginalFilter() {
-            return BeyondImpl.class;
+            return AnyInteractsImpl.class;
         }
     }
 
-    /**
-     * Default constructor.
-     */
-    public Beyond() {
+    /** Default constructor. */
+    public AnyInteracts(String category) {
+        super(category);
     }
 
     /**
@@ -93,11 +88,11 @@ public class Beyond implements FilterConfigInterface {
      */
     @Override
     public FilterName getFilterConfiguration() {
-        FilterName filterName = new FilterName("Beyond", Boolean.class);
+        FilterName filterName = new FilterName("AnyInteracts", Boolean.class);
         filterName.addParameter(
-                new FilterNameParameter("property", ExpressionTypeEnum.PROPERTY, Number.class));
+                new FilterNameParameter("property", ExpressionTypeEnum.PROPERTY, Date.class));
         filterName.addParameter(
-                new FilterNameParameter("expression", ExpressionTypeEnum.LITERAL, Number.class));
+                new FilterNameParameter("datetime", ExpressionTypeEnum.LITERAL, Date.class));
 
         return filterName;
     }
@@ -109,7 +104,7 @@ public class Beyond implements FilterConfigInterface {
      */
     @Override
     public Class<?> getFilterClass() {
-        return BeyondImpl.class;
+        return AnyInteractsImpl.class;
     }
 
     /**
@@ -119,7 +114,7 @@ public class Beyond implements FilterConfigInterface {
      */
     @Override
     public Filter createFilter() {
-        return new BeyondExtended();
+        return new AnyInteractsExtended();
     }
 
     /**
@@ -131,12 +126,12 @@ public class Beyond implements FilterConfigInterface {
     @Override
     public Filter createFilter(List<Expression> parameterList) {
 
-        BeyondImpl filter = null;
+        AnyInteractsImpl filter = null;
 
         if ((parameterList == null) || (parameterList.size() != 2)) {
-            filter = new BeyondExtended();
+            filter = new AnyInteractsExtended();
         } else {
-            filter = new BeyondExtended(parameterList.get(0), parameterList.get(1));
+            filter = new AnyInteractsExtended(parameterList.get(0), parameterList.get(1));
         }
 
         return filter;

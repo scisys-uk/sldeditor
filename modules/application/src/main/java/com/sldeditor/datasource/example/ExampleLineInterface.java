@@ -19,11 +19,11 @@
 
 package com.sldeditor.datasource.example;
 
-import com.vividsolutions.jts.geom.LineString;
+import org.locationtech.jts.geom.LineString;
 
 /**
  * The Interface ExampleLineInterface.
- * 
+ *
  * @author Robert Ward (SCISYS)
  */
 public interface ExampleLineInterface {
@@ -34,5 +34,4 @@ public interface ExampleLineInterface {
      * @return the line
      */
     public abstract LineString getLine();
-
 }

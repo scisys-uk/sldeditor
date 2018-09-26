@@ -19,35 +19,29 @@
 
 package com.sldeditor.test.unit.colourramp;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.awt.Color;
-
-import javax.swing.ImageIcon;
-
-import org.geotools.factory.CommonFactoryFinder;
-import org.junit.Test;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.sldeditor.colourramp.ColourRamp;
 import com.sldeditor.colourramp.ramp.ColourRampData;
 import com.sldeditor.common.utils.ColourUtils;
+import java.awt.Color;
+import javax.swing.ImageIcon;
+import org.geotools.factory.CommonFactoryFinder;
+import org.junit.jupiter.api.Test;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.Expression;
 
 /**
  * Unit test for ColourRamp class.
- * 
- * <p>{@link com.sldeditor.colourramp.ColourRamp}
- * 
- * @author Robert Ward (SCISYS)
  *
+ * <p>{@link com.sldeditor.colourramp.ColourRamp}
+ *
+ * @author Robert Ward (SCISYS)
  */
 public class ColourRampTest {
 
-    /**
-     * Test method for {@link com.sldeditor.colourramp.ColourRamp#ColourRamp()}.
-     */
+    /** Test method for {@link com.sldeditor.colourramp.ColourRamp#ColourRamp()}. */
     @Test
     public void testColourRamp() {
         ColourRamp ramp = new ColourRamp();
@@ -98,5 +92,4 @@ public class ColourRampTest {
         // Can't test end value
         //        assertEquals(ColourUtils.toColour(actualEnd.toString()), expectedStart);
     }
-
 }

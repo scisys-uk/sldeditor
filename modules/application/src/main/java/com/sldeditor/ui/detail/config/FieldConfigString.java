@@ -19,18 +19,7 @@
 
 package com.sldeditor.ui.detail.config;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.JButton;
-import javax.swing.JTextField;
-
-import org.opengis.filter.expression.Expression;
-
+import com.sldeditor.common.console.ConsoleManager;
 import com.sldeditor.common.undo.UndoActionInterface;
 import com.sldeditor.common.undo.UndoEvent;
 import com.sldeditor.common.undo.UndoInterface;
@@ -38,15 +27,29 @@ import com.sldeditor.common.undo.UndoManager;
 import com.sldeditor.common.xml.ui.FieldIdEnum;
 import com.sldeditor.ui.detail.BasePanel;
 import com.sldeditor.ui.widgets.FieldPanel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JButton;
+import javax.swing.JTextField;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
+import org.opengis.filter.expression.Expression;
 
 /**
- * The Class FieldConfigString wraps a text field GUI component and an
- * optional value/attribute/expression drop down,
- * 
+ * The Class FieldConfigString wraps a text field GUI component and an optional
+ * value/attribute/expression drop down, Can restrict the maximum number of characters in the
+ * string. Able to mark the string as being a regular expression which removes a preceding '.'
+ * before display and prepends when field is applied.
+ *
  * <p>Supports undo/redo functionality.
- * 
+ *
  * <p>Instantiated by {@link com.sldeditor.ui.detail.config.ReadPanelConfig}
- * 
+ *
  * @author Robert Ward (SCISYS)
  */
 public class FieldConfigString extends FieldConfigBase implements UndoActionInterface {
@@ -66,8 +69,69 @@ public class FieldConfigString extends FieldConfigBase implements UndoActionInte
     /** The button pressed listener list. */
     private List<FieldConfigStringButtonInterface> buttonPressedListenerList = null;
 
-    /** The suppress update on set flag. */
-    private boolean suppressUpdateOnSet = false;
+    /** The maximum string size. */
+    private int maximumStringSize = -1;
+
+    /** The regular expression string flag. */
+    private boolean isRegExpString = false;
+
+    /** The Class JTextFieldLimit. */
+    public class JTextFieldLimit extends PlainDocument {
+
+        /** The Constant serialVersionUID. */
+        private static final long serialVersionUID = 1L;
+
+        /** The maximum number of characters. */
+        private int limit;
+
+        /**
+         * Instantiates a new j text field limit.
+         *
+         * @param fieldConfigString
+         * @param limit the limit
+         */
+        JTextFieldLimit(FieldConfigString fieldConfigString, int limit) {
+            super();
+            this.limit = limit;
+        }
+
+        /*
+         * (non-Javadoc)
+         *
+         * @see javax.swing.text.PlainDocument#insertString(int, java.lang.String,
+         * javax.swing.text.AttributeSet)
+         */
+        public void insertString(int offset, String str, AttributeSet attr)
+                throws BadLocationException {
+            if (str == null) return;
+
+            if ((getLength() + str.length()) <= limit) {
+                String oldValue = this.getText(0, getLength());
+                super.insertString(offset, str, attr);
+                String newValue = this.getText(0, getLength());
+
+                valueStored(oldValue, newValue);
+            }
+        }
+
+        /*
+         * (non-Javadoc)
+         *
+         * @see javax.swing.text.AbstractDocument#remove(int, int)
+         */
+        @Override
+        public void remove(int offs, int len) throws BadLocationException {
+            try {
+                String oldValue = this.getText(0, getLength());
+                super.remove(offs, len);
+                String newValue = this.getText(0, getLength());
+
+                valueStored(oldValue, newValue);
+            } catch (BadLocationException e) {
+                ConsoleManager.getInstance().exception(this, e);
+            }
+        }
+    }
 
     /**
      * Instantiates a new field config string.
@@ -81,74 +145,68 @@ public class FieldConfigString extends FieldConfigBase implements UndoActionInte
         this.buttonText = buttonText;
     }
 
-    /**
-     * Creates the ui.
-     */
+    /** Creates the ui. */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#createUI()
      */
     @Override
     public void createUI() {
         if (textField == null) {
-            final UndoActionInterface parentObj = this;
-
             int xPos = getXPos();
             FieldPanel fieldPanel = createFieldPanel(xPos, getLabel());
 
             textField = new TextFieldPropertyChange();
             textField.setBounds(
-                    xPos + BasePanel.WIDGET_X_START, 0, this.isValueOnly()
-                            ? BasePanel.WIDGET_EXTENDED_WIDTH : BasePanel.WIDGET_STANDARD_WIDTH,
+                    xPos + BasePanel.WIDGET_X_START,
+                    0,
+                    this.isValueOnly()
+                            ? BasePanel.WIDGET_EXTENDED_WIDTH
+                            : BasePanel.WIDGET_STANDARD_WIDTH,
                     BasePanel.WIDGET_HEIGHT);
             fieldPanel.add(textField);
 
-            textField.addPropertyChangeListener(TextFieldPropertyChange.TEXT_PROPERTY,
+            textField.addPropertyChangeListener(
+                    TextFieldPropertyChange.TEXT_PROPERTY,
                     new PropertyChangeListener() {
 
                         /*
                          * (non-Javadoc)
-                         * 
-                         * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+                         *
+                         * @see java.beans.PropertyChangeListener#propertyChange(java.beans.
+                         * PropertyChangeEvent)
                          */
                         @Override
                         public void propertyChange(PropertyChangeEvent evt) {
                             String originalValue = (String) evt.getOldValue();
                             String newValueObj = (String) evt.getNewValue();
 
-                            if ((originalValue.compareTo(newValueObj) != 0)) {
-                                if (!suppressUpdateOnSet) {
-                                    UndoManager.getInstance().addUndoEvent(new UndoEvent(parentObj,
-                                            getFieldId(), oldValueObj, newValueObj));
-
-                                    oldValueObj = originalValue;
-                                }
-
-                                valueUpdated();
-                            }
+                            valueStored(originalValue, newValueObj);
                         }
                     });
 
+            if (maximumStringSize > 0) {
+                textField.setDocument(new JTextFieldLimit(this, maximumStringSize));
+            }
+
             if (buttonText != null) {
                 final JButton buttonExternal = new JButton(buttonText);
-                buttonExternal.addActionListener(new ActionListener() {
+                buttonExternal.addActionListener(
+                        new ActionListener() {
 
-                    public void actionPerformed(ActionEvent e) {
-                        if (buttonPressedListenerList != null) {
-                            //CHECKSTYLE:OFF
-                            for (FieldConfigStringButtonInterface listener : buttonPressedListenerList) {
-                                listener.buttonPressed(buttonExternal);
+                            public void actionPerformed(ActionEvent e) {
+                                externalButtonPressed(buttonExternal);
                             }
-                            //CHECKSTYLE:ON
-                        }
-                    }
-                });
+                        });
 
                 int buttonWidth = 26;
                 int padding = 3;
-                buttonExternal.setBounds(xPos + textField.getX() - buttonWidth - padding, 0,
-                        buttonWidth, BasePanel.WIDGET_HEIGHT);
+                buttonExternal.setBounds(
+                        xPos + textField.getX() - buttonWidth - padding,
+                        0,
+                        buttonWidth,
+                        BasePanel.WIDGET_HEIGHT);
                 fieldPanel.add(buttonExternal);
             }
 
@@ -166,8 +224,9 @@ public class FieldConfigString extends FieldConfigBase implements UndoActionInte
      */
     /*
      * (non-Javadoc)
-     * 
-     * @see com.sldeditor.ui.iface.AttributeButtonSelectionInterface#attributeSelection(java.lang.String)
+     *
+     * @see
+     * com.sldeditor.ui.iface.AttributeButtonSelectionInterface#attributeSelection(java.lang.String)
      */
     @Override
     public void attributeSelection(String field) {
@@ -181,7 +240,7 @@ public class FieldConfigString extends FieldConfigBase implements UndoActionInte
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#setEnabled(boolean)
      */
     @Override
@@ -198,7 +257,7 @@ public class FieldConfigString extends FieldConfigBase implements UndoActionInte
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#generateExpression()
      */
     @Override
@@ -218,7 +277,7 @@ public class FieldConfigString extends FieldConfigBase implements UndoActionInte
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#isEnabled()
      */
     @Override
@@ -233,12 +292,10 @@ public class FieldConfigString extends FieldConfigBase implements UndoActionInte
         return false;
     }
 
-    /**
-     * Revert to default value.
-     */
+    /** Revert to default value. */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#revertToDefaultValue()
      */
     @Override
@@ -253,7 +310,7 @@ public class FieldConfigString extends FieldConfigBase implements UndoActionInte
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sldeditor.ui.detail.config.FieldConfigBase#populateExpression(java.lang.Object)
      */
     @Override
@@ -283,7 +340,13 @@ public class FieldConfigString extends FieldConfigBase implements UndoActionInte
     public String getStringValue() {
         if (textField != null) {
             if (getPanel().isValueReadable()) {
-                return textField.getText();
+                String value = textField.getText();
+
+                // Prepend the regular expression special character
+                if (isRegExpString) {
+                    value = "." + value;
+                }
+                return value;
             }
         }
         return null;
@@ -300,7 +363,10 @@ public class FieldConfigString extends FieldConfigBase implements UndoActionInte
             if (undoRedoObject != null) {
                 String oldValue = (String) undoRedoObject.getOldValue();
 
+                boolean prevValue = this.isSuppressUndoEvents();
+                this.setSuppressUndoEvents(true);
                 textField.setText(oldValue);
+                this.setSuppressUndoEvents(prevValue);
             }
         }
     }
@@ -316,7 +382,10 @@ public class FieldConfigString extends FieldConfigBase implements UndoActionInte
             if (undoRedoObject != null) {
                 String newValue = (String) undoRedoObject.getNewValue();
 
+                boolean prevValue = this.isSuppressUndoEvents();
+                this.setSuppressUndoEvents(true);
                 textField.setText(newValue);
+                this.setSuppressUndoEvents(prevValue);
             }
         }
     }
@@ -332,7 +401,9 @@ public class FieldConfigString extends FieldConfigBase implements UndoActionInte
             buttonPressedListenerList = new ArrayList<FieldConfigStringButtonInterface>();
         }
 
-        buttonPressedListenerList.add(listener);
+        if (listener != null) {
+            buttonPressedListenerList.add(listener);
+        }
     }
 
     /**
@@ -353,17 +424,17 @@ public class FieldConfigString extends FieldConfigBase implements UndoActionInte
      */
     @Override
     public void populateField(String value) {
+        String tmpValue;
+
+        // If regular expression string remove initial '.'
+        if (isRegExpString && value.length() > 1) {
+            tmpValue = value.substring(1, 2);
+        } else {
+            tmpValue = value;
+        }
+
         if (textField != null) {
-            textField.setText(value);
-
-            if (!suppressUpdateOnSet) {
-                UndoManager.getInstance()
-                        .addUndoEvent(new UndoEvent(this, getFieldId(), oldValueObj, value));
-
-                oldValueObj = value;
-
-                valueUpdated();
-            }
+            textField.setText(tmpValue);
         }
     }
 
@@ -379,6 +450,8 @@ public class FieldConfigString extends FieldConfigBase implements UndoActionInte
 
         if (fieldConfigBase != null) {
             copy = new FieldConfigString(fieldConfigBase.getCommonData(), this.buttonText);
+            copy.setMaximumStringSize(this.maximumStringSize);
+            copy.setRegExpString(this.isRegExpString);
         }
         return copy;
     }
@@ -396,11 +469,54 @@ public class FieldConfigString extends FieldConfigBase implements UndoActionInte
     }
 
     /**
-     * Sets the suppress updates on set.
+     * Value stored.
      *
-     * @param suppressUpdateOnSet the new suppress updates on set
+     * @param originalValue the original value
+     * @param newValueObj the new value obj
      */
-    public void setSuppressUpdatesOnSet(boolean suppressUpdateOnSet) {
-        this.suppressUpdateOnSet = suppressUpdateOnSet;
+    protected void valueStored(String originalValue, String newValueObj) {
+        if ((originalValue.compareTo(newValueObj) != 0)) {
+            if (!isSuppressUndoEvents()) {
+                UndoManager.getInstance()
+                        .addUndoEvent(new UndoEvent(this, getFieldId(), oldValueObj, newValueObj));
+
+                oldValueObj = originalValue;
+            }
+
+            valueUpdated();
+        }
+    }
+
+    /**
+     * External button pressed.
+     *
+     * @param buttonExternal the button external
+     */
+    protected void externalButtonPressed(final JButton buttonExternal) {
+        if (buttonPressedListenerList != null) {
+            // CHECKSTYLE:OFF
+            for (FieldConfigStringButtonInterface listener : buttonPressedListenerList) {
+                listener.buttonPressed(buttonExternal);
+            }
+            // CHECKSTYLE:ON
+        }
+    }
+
+    /**
+     * Sets the maximum string size.
+     *
+     * @param maximumStringSize the new maximum string size
+     */
+    public void setMaximumStringSize(int maximumStringSize) {
+        this.maximumStringSize = maximumStringSize;
+    }
+
+    /**
+     * Sets the reg exp string.
+     *
+     * @param isRegExpString the isRegExpString to set
+     */
+    public void setRegExpString(boolean isRegExpString) {
+        this.isRegExpString = isRegExpString;
     }
 }

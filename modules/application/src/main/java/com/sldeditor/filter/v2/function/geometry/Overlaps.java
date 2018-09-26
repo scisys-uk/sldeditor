@@ -19,34 +19,29 @@
 
 package com.sldeditor.filter.v2.function.geometry;
 
-import java.util.List;
-
-import org.geotools.filter.spatial.OverlapsImpl;
-import org.opengis.filter.Filter;
-import org.opengis.filter.expression.Expression;
-
 import com.sldeditor.filter.v2.expression.ExpressionTypeEnum;
+import com.sldeditor.filter.v2.function.FilterBase;
 import com.sldeditor.filter.v2.function.FilterConfigInterface;
 import com.sldeditor.filter.v2.function.FilterExtendedInterface;
 import com.sldeditor.filter.v2.function.FilterName;
 import com.sldeditor.filter.v2.function.FilterNameParameter;
-import com.vividsolutions.jts.geom.Geometry;
+import java.util.List;
+import org.geotools.filter.spatial.OverlapsImpl;
+import org.locationtech.jts.geom.Geometry;
+import org.opengis.filter.Filter;
+import org.opengis.filter.expression.Expression;
 
 /**
  * The Class Overlaps.
  *
  * @author Robert Ward (SCISYS)
  */
-public class Overlaps implements FilterConfigInterface {
+public class Overlaps extends FilterBase implements FilterConfigInterface {
 
-    /**
-     * The Class OverlapsExtended.
-     */
+    /** The Class OverlapsExtended. */
     public class OverlapsExtended extends OverlapsImpl implements FilterExtendedInterface {
 
-        /**
-         * Instantiates a new overlaps extended.
-         */
+        /** Instantiates a new overlaps extended. */
         public OverlapsExtended() {
             super(null, null);
         }
@@ -63,16 +58,16 @@ public class Overlaps implements FilterConfigInterface {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see org.geotools.filter.GeometryFilterImpl#toString()
          */
         public String toString() {
-            return "[ " + getExpression1() + " Overlaps " + getExpression2() + " ]";
+            return "[ " + getExpression1() + " overlaps " + getExpression2() + " ]";
         }
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.sldeditor.filter.v2.function.FilterExtendedInterface#getOriginalFilter()
          */
         @Override
@@ -81,10 +76,9 @@ public class Overlaps implements FilterConfigInterface {
         }
     }
 
-    /**
-     * Default constructor.
-     */
-    public Overlaps() {
+    /** Default constructor. */
+    public Overlaps(String category) {
+        super(category);
     }
 
     /**
@@ -97,8 +91,9 @@ public class Overlaps implements FilterConfigInterface {
         FilterName filterName = new FilterName("Overlaps", Boolean.class);
         filterName.addParameter(
                 new FilterNameParameter("property", ExpressionTypeEnum.PROPERTY, Geometry.class));
-        filterName.addParameter(new FilterNameParameter("expression", ExpressionTypeEnum.EXPRESSION,
-                Geometry.class));
+        filterName.addParameter(
+                new FilterNameParameter(
+                        "expression", ExpressionTypeEnum.EXPRESSION, Geometry.class));
 
         return filterName;
     }

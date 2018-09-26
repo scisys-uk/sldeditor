@@ -18,7 +18,8 @@
  */
 
 /**
- * @author Robert Ward (SCISYS)
+ * Package containing the help functionality.
  *
+ * @author Robert Ward (SCISYS)
  */
 package com.sldeditor.help;

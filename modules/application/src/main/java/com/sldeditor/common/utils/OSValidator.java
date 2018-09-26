@@ -7,15 +7,13 @@
 
 /**
  * Author: Domenico Monaco, Yong Mook Kim
- *  
- * Source: https://gist.github.com/kiuz/816e24aa787c2d102dd0
- *  
- * License: GNU v2 2014
  *
- * Fork / Learned: http://www.mkyong.com/java/how-to-detect-os-in-java-systemgetpropertyosname/
+ * <p>Source: https://gist.github.com/kiuz/816e24aa787c2d102dd0
  *
+ * <p>License: GNU v2 2014
+ *
+ * <p>Fork / Learned: http://www.mkyong.com/java/how-to-detect-os-in-java-systemgetpropertyosname/
  */
-
 package com.sldeditor.common.utils;
 
 /**
@@ -27,28 +25,6 @@ public class OSValidator {
 
     /** The os. */
     private static String OS = System.getProperty("os.name").toLowerCase();
-
-    /**
-     * The main method.
-     *
-     * @param args the arguments
-     */
-    public static void main(String[] args) {
-
-        System.out.println(OS);
-
-        if (isWindows()) {
-            System.out.println("This is Windows");
-        } else if (isMac()) {
-            System.out.println("This is Mac");
-        } else if (isUnix()) {
-            System.out.println("This is Unix or Linux");
-        } else if (isSolaris()) {
-            System.out.println("This is Solaris");
-        } else {
-            System.out.println("Your OS is not support!!");
-        }
-    }
 
     /**
      * Checks if is windows.
@@ -104,5 +80,4 @@ public class OSValidator {
             return "err";
         }
     }
-
 }

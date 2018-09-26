@@ -19,26 +19,25 @@
 
 package com.sldeditor.test.unit.filter.v2.envvar;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.sldeditor.filter.v2.envvar.EnvVar;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for EnvVar class.
- * 
- * <p>{@link com.sldeditor.filter.v2.envvar.EnvVar}
- * 
- * @author Robert Ward (SCISYS)
  *
+ * <p>{@link com.sldeditor.filter.v2.envvar.EnvVar}
+ *
+ * @author Robert Ward (SCISYS)
  */
 public class EnvVarTest {
 
     /**
-     * Test method for {@link com.sldeditor.filter.v2.envvar.EnvVar#EnvVar(java.lang.String, java.lang.Class, boolean)}.
+     * Test method for {@link com.sldeditor.filter.v2.envvar.EnvVar#EnvVar(java.lang.String,
+     * java.lang.Class, boolean)}.
      */
     @Test
     public void testEnvVar() {
