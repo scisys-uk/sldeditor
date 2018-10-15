@@ -38,7 +38,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.geotools.styling.StyledLayerDescriptor;
@@ -126,19 +125,13 @@ public class NewSLDPanel extends JDialog {
     /**
      * Show dialog.
      *
-     * @param parent the parent
      * @return the created SLD if selected
      */
-    public List<SLDDataInterface> showDialog(JFrame parent) {
+    public List<SLDDataInterface> showDialog() {
 
         selected = null;
 
-        if (parent != null) {
-            this.setLocationRelativeTo(parent);
-            int x = ((parent.getWidth() - getWidth()) / 2);
-            int y = ((parent.getHeight() - getHeight()) / 2);
-            this.setLocation(x, y);
-        }
+        Controller.getInstance().centreDialog(this);
 
         setVisible(true);
 

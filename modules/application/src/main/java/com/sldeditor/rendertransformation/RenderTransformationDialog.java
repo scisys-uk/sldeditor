@@ -115,9 +115,6 @@ public class RenderTransformationDialog extends JDialog {
     /** The label showing progress/error messages. */
     private JLabel lblError;
 
-    /** The Edit connection button. */
-    private JButton btnEditConnection;
-
     /** The Connect button. */
     private JButton btnConnect;
 
@@ -208,7 +205,6 @@ public class RenderTransformationDialog extends JDialog {
                 functionParameterTable
                         .getColumnModel()
                         .getColumn(FunctionTableModel.getValueColumn());
-        // col.setCellEditor(new ExpressionEditor(functionParameterTableModel));
 
         col =
                 functionParameterTable
@@ -270,16 +266,16 @@ public class RenderTransformationDialog extends JDialog {
         panel_2.setLayout(new BorderLayout(0, 0));
         getContentPane().add(panel_2, BorderLayout.NORTH);
 
-        btnEditConnection =
-                new JButton(
-                        Localisation.getString(
-                                RenderTransformationDialog.class,
-                                "RenderTransformationDialog.editConnection"));
-        panel_2.add(btnEditConnection, BorderLayout.EAST);
-        btnEditConnection.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {}
-                });
+        //        btnEditConnection =
+        //                new JButton(
+        //                        Localisation.getString(
+        //                                RenderTransformationDialog.class,
+        //                                "RenderTransformationDialog.editConnection"));
+        //        panel_2.add(btnEditConnection, BorderLayout.EAST);
+        //        btnEditConnection.addActionListener(
+        //                new ActionListener() {
+        //                    public void actionPerformed(ActionEvent e) {}
+        //                });
 
         //
         // Connect button
@@ -362,7 +358,6 @@ public class RenderTransformationDialog extends JDialog {
     private void updateButtonState(boolean enabled) {
         btnConnect.setEnabled(enabled);
         connectionComboBox.setEnabled(enabled);
-        btnEditConnection.setEnabled(enabled);
     }
 
     /**

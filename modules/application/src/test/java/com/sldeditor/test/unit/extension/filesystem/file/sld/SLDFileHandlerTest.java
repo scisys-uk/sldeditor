@@ -151,6 +151,7 @@ public class SLDFileHandlerTest {
 
             List<String> expectedLayerNameList =
                     Arrays.asList(
+                            "point_attribute_sldeditor.sld",
                             "point_attribute.sld",
                             "point_pointasgraphic.sld",
                             "point_pointasgraphichttp.sld",
@@ -193,5 +194,10 @@ public class SLDFileHandlerTest {
         SLDData sldData = new SLDData(new StyleWrapper("workspace", "layer.sld"), "sldContents");
         String sldName = handler.getSLDName(sldData);
         assertTrue(sldName.compareTo("layer.sld") == 0);
+    }
+
+    @Test
+    public void testOpen() {
+        assertNull(new SLDFileHandler().open(null));
     }
 }
